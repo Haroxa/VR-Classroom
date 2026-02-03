@@ -1,0 +1,65 @@
+# 生产环境配置
+spring:
+  # 数据源配置
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/vr_classroom_prod?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=UTC&characterSetResults=utf-8}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
+        show_sql: false
+  
+  # 热部署配置
+  devtools:
+    restart:
+      enabled: false
+    livereload:
+      enabled: false
+
+# 日志配置
+logging:
+  level:
+    root: warn
+    com.university.vrclassroombackend: info
+    org.hibernate.SQL: error
+    org.hibernate.type.descriptor.sql.BasicBinder: error
+  
+# 服务器配置
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    context-path: /
+  tomcat:
+    max-threads: 200
+    min-spare-threads: 20
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:vr-classroom-prod-secret-key-2026-hmac-sha256-secure-token-production-environment}
+  expiration: 86400
+
+# OSS配置
+oss:
+  endpoint: ${OSS_ENDPOINT:oss-cn-wuhan-lr.aliyuncs.com}
+  accessKeyId: ${OSS_ACCESS_KEY_ID:LTAI5tSDmSeP9fisj2FsDcjg}
+  accessKeySecret: ${OSS_ACCESS_KEY_SECRET:HNyqYFC7a6ZJHYRIztxhnzIOkl0qNX}
+  bucketName: ${OSS_BUCKET_NAME:vr-classroom-bucket}
+
+# 安全配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never

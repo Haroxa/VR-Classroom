@@ -1,0 +1,15 @@
+# 公共配置
+spring:
+  application:
+    name: vr-classroom-backend
+  
+  # 默认环境
+  profiles:
+    active: dev
+
+  # Hibernate命名策略配置，保持驼峰命名不变
+  jpa:
+    hibernate:
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyJpaCompliantImpl
