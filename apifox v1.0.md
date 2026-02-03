@@ -762,8 +762,8 @@ GET /api/oss/sign
 https://help.aliyun.com/zh/oss/developer-reference/signature-version-4-recommend?spm=a2c4g.11186623.help-menu-31815.d_1_4_5_0.3360349adLsV8m
 
 参数
-AccessKeyId: LTAI5tSDmSeP9fisj2FsDcjg
-AccessKeySecret: HNyqYFC7a6ZJHYRIztxhnzIOkl0qNX
+AccessKeyId: <your-access-key-id>
+AccessKeySecret: <your-access-key-secret>
 region: cn-wuhan-lr
 
 ### 请求参数

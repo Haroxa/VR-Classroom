@@ -9,10 +9,9 @@ spring:
   
   # 数据源配置
   datasource:
-    url: jdbc:mysql://localhost:3306/vr_classroom?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&characterSetResults=utf-8
-    username: root
-    password: 123456
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/vr_classroom?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC&characterSetResults=utf-8}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:123456}
   
   # JPA配置
   jpa:
@@ -23,7 +22,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-        show_sql: true
   
   # 热部署配置
   devtools:
@@ -42,18 +40,18 @@ logging:
   
 # 服务器配置
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
   servlet:
     context-path: /
 
 # JWT配置
 jwt:
-  secret: vr-classroom-dev-secret-key-2026-hmac-sha256-secure-token
+  secret: ${JWT_SECRET:vr-classroom-dev-secret-key-2026-hmac-sha256-secure-token}
   expiration: 86400
 
 # OSS配置
 oss:
-  endpoint: oss-cn-wuhan-lr.aliyuncs.com
-  accessKeyId: LTAI5tSDmSeP9fisj2FsDcjg
-  accessKeySecret: HNyqYFC7a6ZJHYRIztxhnzIOkl0qNX
-  bucketName: vr-classroom-bucket
+  endpoint: ${OSS_ENDPOINT:oss-cn-wuhan-lr.aliyuncs.com}
+  accessKeyId: ${OSS_ACCESS_KEY_ID:<your-access-key-id>}
+  accessKeySecret: ${OSS_ACCESS_KEY_SECRET:<your-access-key-secret>}
+  bucketName: ${OSS_BUCKET_NAME:vr-classroom-bucket}
