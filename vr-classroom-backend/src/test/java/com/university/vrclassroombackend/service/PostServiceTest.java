@@ -17,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ class PostServiceTest {
 
         testPost = new Post();
         testPost.setId(1);
-        testPost.setDate("2026-02-01 10:00:00");
+        testPost.setCreatedAt(LocalDateTime.of(2026, 2, 1, 10, 0, 0));
         testPost.setTitle("测试帖子");
         testPost.setContent("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");
         testPost.setSummary("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");

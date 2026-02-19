@@ -15,8 +15,7 @@ import com.university.vrclassroombackend.vo.UserPublicVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,7 +38,7 @@ public class PostServiceImpl implements PostService {
     public List<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
         List<Post> posts;
         
-        // 首先获取所有已发布的帖子
+        // 首先获取所有已发布的帖子，按创建时间倒序排列
         List<Post> allPublishedPosts = postRepository.findByStatus(Post.STATUS_PUBLISHED);
         
         // 应用筛选条件
@@ -90,7 +89,6 @@ public class PostServiceImpl implements PostService {
     @Override
     public Integer createPost(PostCreateDTO dto, Integer authorId) {
         Post post = new Post();
-        post.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         
         // 确保所有非空字段都有值
         post.setTitle(dto.getTitle() != null ? dto.getTitle() : "");

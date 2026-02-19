@@ -16,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -52,7 +53,7 @@ class CommentServiceTest {
 
         testComment = new Comment();
         testComment.setId(1);
-        testComment.setDate("2026-02-01 10:00:00");
+        testComment.setCreatedAt(LocalDateTime.of(2026, 2, 1, 10, 0, 0));
         testComment.setContent("这是一个测试评论");
         testComment.setCommenterId(1);
         testComment.setPostId(1);

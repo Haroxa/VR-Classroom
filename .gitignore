@@ -1,4 +1,6 @@
 HELP.md
+
+### Maven ###
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -36,3 +38,30 @@ build/
 .env
 .env.local
 .env.*.local
+
+### Logs ###
+logs/
+*.log
+
+### Database ###
+*.db
+*.sqlite
+*.sqlite3
+
+### OS ###
+.DS_Store
+Thumbs.db
+
+### Temporary files ###
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+### Backup files ###
+*.bak
+*.backup
+
+### Local Update log ###
+CHANGELOG.md

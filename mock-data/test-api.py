@@ -7,7 +7,7 @@ import json
 base_url = "http://localhost:8080/api"
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcwMDQ1NDM5LCJleHAiOjE3NzAxMzE4Mzl9.sz9uOmRPVr8qbcjBwIt-aAp1CoAnDo8_2GouzDM50xoiJsiRas4x0zWu_chuIbEb"
+token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcxNTE1NDk0LCJleHAiOjE3NzE2MDE4OTR9.kzLHnNcWfXrH32bZZDiJoM9z3xMqlmAQXiDHXJawAfes0xIqGMiK01fM_Hl_htHO"
 
 # 测试结果存储
 test_results = []

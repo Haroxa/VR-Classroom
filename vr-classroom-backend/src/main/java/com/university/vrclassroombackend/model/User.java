@@ -23,14 +23,6 @@ public class User {
     
     private String collegeId;
     
-    private String email;
-    
-    private String major;
-    
-    private String studentId;
-    
-    private String college;
-    
     @Column(nullable = false)
     private Integer verifyStatus = 0; // 0：未认证，1：审核中，2：已认证
 
@@ -88,37 +80,5 @@ public class User {
 
     public void setVerifyStatus(Integer verifyStatus) {
         this.verifyStatus = verifyStatus;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMajor() {
-        return major;
-    }
-
-    public void setMajor(String major) {
-        this.major = major;
-    }
-
-    public String getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
-    public String getCollege() {
-        return college;
-    }
-
-    public void setCollege(String college) {
-        this.college = college;
     }
 }

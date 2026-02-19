@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS user (
 -- 创建帖子表
 CREATE TABLE IF NOT EXISTS post (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     date VARCHAR(20) NOT NULL,
     title VARCHAR(100) NOT NULL,
     summary VARCHAR(200) NOT NULL,
@@ -36,7 +38,8 @@ CREATE TABLE IF NOT EXISTS post (
     status INT NOT NULL DEFAULT 0,
     rejectReason VARCHAR(200),
     FOREIGN KEY (authorId) REFERENCES user(id),
-    FOREIGN KEY (categoryId) REFERENCES category(id)
+    FOREIGN KEY (categoryId) REFERENCES category(id),
+    INDEX idx_post_created_at (created_at DESC)
 );
 
 -- 创建帖子图片表（对应@ElementCollection注解）
@@ -49,6 +52,8 @@ CREATE TABLE IF NOT EXISTS post_images (
 -- 创建评论表
 CREATE TABLE IF NOT EXISTS comment (
     id INT PRIMARY KEY AUTO_INCREMENT,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     date VARCHAR(20) NOT NULL,
     content TEXT NOT NULL,
     commenterId INT NOT NULL,
@@ -57,5 +62,6 @@ CREATE TABLE IF NOT EXISTS comment (
     status INT NOT NULL DEFAULT 0,
     rejectReason VARCHAR(200),
     FOREIGN KEY (commenterId) REFERENCES user(id),
-    FOREIGN KEY (postId) REFERENCES post(id)
+    FOREIGN KEY (postId) REFERENCES post(id),
+    INDEX idx_comment_created_at (created_at DESC)
 );

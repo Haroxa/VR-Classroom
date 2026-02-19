@@ -15,8 +15,7 @@ import com.university.vrclassroombackend.vo.UserPublicVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,7 +55,6 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Integer createComment(CommentCreateDTO dto, Integer commenterId) {
         Comment comment = new Comment();
-        comment.setDate(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         comment.setContent(dto.getContent());
         comment.setCommenterId(commenterId);
         comment.setPostId(dto.getPostId());
