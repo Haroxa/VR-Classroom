@@ -1,6 +1,7 @@
 package com.university.vrclassroombackend.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.dto.ApiResponse;
 import com.university.vrclassroombackend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,9 +42,9 @@ public class AuthInterceptor implements HandlerInterceptor {
             // 非公开路径需要强制认证
             return handleRequiredAuth(request, response);
         } catch (Exception e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            response.setStatus(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessage.AUTH_FAILED + ": " + e.getMessage())));
+            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.AUTH_FAILED + ": " + e.getMessage())));
             return false;
         }
     }
@@ -63,12 +64,12 @@ public class AuthInterceptor implements HandlerInterceptor {
      */
     private void handleOptionalAuth(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        if (token != null && token.startsWith(Auth.BEARER_PREFIX)) {
+        if (token != null && token.startsWith(AppConstants.Auth.BEARER_PREFIX)) {
             try {
-                token = token.substring(Auth.BEARER_PREFIX.length());
+                token = token.substring(AppConstants.Auth.BEARER_PREFIX.length());
                 if (jwtUtil.validateToken(token)) {
                     Integer userId = jwtUtil.getUserIdFromToken(token);
-                    request.setAttribute(Auth.USER_ID_ATTRIBUTE, userId);
+                    request.setAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE, userId);
                 }
             } catch (Exception e) {
                 // token验证失败不影响访问，只是不设置userId
@@ -82,25 +83,25 @@ public class AuthInterceptor implements HandlerInterceptor {
     private boolean handleRequiredAuth(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String token = request.getHeader("Authorization");
         
-        if (token == null || !token.startsWith(Auth.BEARER_PREFIX)) {
-            response.setStatus(HttpStatus.UNAUTHORIZED);
+        if (token == null || !token.startsWith(AppConstants.Auth.BEARER_PREFIX)) {
+            response.setStatus(AppConstants.HttpStatusCode.UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(HttpStatus.UNAUTHORIZED, ErrorMessage.TOKEN_NOT_PROVIDED)));
+            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.TOKEN_NOT_PROVIDED)));
             return false;
         }
         
-        token = token.substring(Auth.BEARER_PREFIX.length()); // 移除"Bearer "前缀
+        token = token.substring(AppConstants.Auth.BEARER_PREFIX.length()); // 移除"Bearer "前缀
         
         if (!jwtUtil.validateToken(token)) {
-            response.setStatus(HttpStatus.UNAUTHORIZED);
+            response.setStatus(AppConstants.HttpStatusCode.UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(HttpStatus.UNAUTHORIZED, ErrorMessage.INVALID_TOKEN)));
+            response.getWriter().write(objectMapper.writeValueAsString(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.INVALID_TOKEN)));
             return false;
         }
         
         // 将用户ID存入请求属性
         Integer userId = jwtUtil.getUserIdFromToken(token);
-        request.setAttribute(Auth.USER_ID_ATTRIBUTE, userId);
+        request.setAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE, userId);
         
         return true;
     }

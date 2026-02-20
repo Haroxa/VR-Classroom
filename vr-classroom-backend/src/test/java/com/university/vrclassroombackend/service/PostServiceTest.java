@@ -1,15 +1,16 @@
 package com.university.vrclassroombackend.service;
 
-import com.university.vrclassroombackend.dto.PostCreateDTO;
-import com.university.vrclassroombackend.dto.PostUpdateDTO;
-import com.university.vrclassroombackend.model.Category;
-import com.university.vrclassroombackend.model.Post;
-import com.university.vrclassroombackend.repository.CategoryRepository;
-import com.university.vrclassroombackend.repository.PostRepository;
-import com.university.vrclassroombackend.service.impl.PostServiceImpl;
-import com.university.vrclassroombackend.vo.PostDetailVO;
-import com.university.vrclassroombackend.vo.PostVO;
-import com.university.vrclassroombackend.vo.UserPostVO;
+import com.university.vrclassroombackend.domain.forum.dto.PostCreateDTO;
+import com.university.vrclassroombackend.domain.forum.dto.PostUpdateDTO;
+import com.university.vrclassroombackend.domain.forum.model.Post;
+import com.university.vrclassroombackend.domain.forum.repository.PostRepository;
+import com.university.vrclassroombackend.domain.forum.service.impl.PostServiceImpl;
+import com.university.vrclassroombackend.domain.forum.vo.PostDetailVO;
+import com.university.vrclassroombackend.domain.forum.vo.PostVO;
+import com.university.vrclassroombackend.domain.user.service.UserService;
+import com.university.vrclassroombackend.domain.user.vo.UserPostVO;
+import com.university.vrclassroombackend.domain.common.model.Category;
+import com.university.vrclassroombackend.domain.common.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.controller;
 
+import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.dto.ApiResponse;
 import com.university.vrclassroombackend.util.OssUtil;
 import org.slf4j.Logger;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
-
-import static com.university.vrclassroombackend.constant.AppConstants.*;
 
 @RestController
 @RequestMapping("/api")
@@ -31,7 +30,7 @@ public class CommonController {
             return ResponseEntity.ok().body(ApiResponse.success(sign));
         } catch (Exception e) {
             logger.error("获取OSS签名失败", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, ErrorMessage.GET_OSS_SIGN_FAILED));
+            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.GET_OSS_SIGN_FAILED));
         }
     }
 }

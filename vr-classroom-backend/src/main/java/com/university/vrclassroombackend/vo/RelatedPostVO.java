@@ -1,5 +1,7 @@
 package com.university.vrclassroombackend.vo;
 
+import com.university.vrclassroombackend.domain.user.vo.UserPublicVO;
+
 public class RelatedPostVO {
     private Integer id;
     private String date;

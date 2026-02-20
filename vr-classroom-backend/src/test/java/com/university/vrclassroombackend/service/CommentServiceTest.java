@@ -1,14 +1,15 @@
 package com.university.vrclassroombackend.service;
 
-import com.university.vrclassroombackend.dto.CommentCreateDTO;
-import com.university.vrclassroombackend.dto.CommentUpdateDTO;
-import com.university.vrclassroombackend.model.Comment;
-import com.university.vrclassroombackend.model.Post;
-import com.university.vrclassroombackend.repository.CommentRepository;
-import com.university.vrclassroombackend.repository.PostRepository;
-import com.university.vrclassroombackend.service.impl.CommentServiceImpl;
-import com.university.vrclassroombackend.vo.CommentVO;
-import com.university.vrclassroombackend.vo.UserCommentVO;
+import com.university.vrclassroombackend.domain.forum.dto.CommentCreateDTO;
+import com.university.vrclassroombackend.domain.forum.dto.CommentUpdateDTO;
+import com.university.vrclassroombackend.domain.forum.model.Comment;
+import com.university.vrclassroombackend.domain.forum.repository.CommentRepository;
+import com.university.vrclassroombackend.domain.forum.repository.PostRepository;
+import com.university.vrclassroombackend.domain.forum.service.impl.CommentServiceImpl;
+import com.university.vrclassroombackend.domain.forum.vo.CommentVO;
+import com.university.vrclassroombackend.domain.forum.model.Post;
+import com.university.vrclassroombackend.domain.user.service.UserService;
+import com.university.vrclassroombackend.domain.user.vo.UserCommentVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

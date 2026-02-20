@@ -2,9 +2,9 @@
 spring:
   # 数据源配置
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://localhost:3306/vr_classroom_prod?useUnicode=true&characterEncoding=utf-8&useSSL=true&serverTimezone=Asia/Shanghai&characterSetResults=utf-8}
-    username: ${SPRING_DATASOURCE_USERNAME:root}
-    password: ${SPRING_DATASOURCE_PASSWORD:123456}
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
   
   # JPA配置
   jpa:
@@ -42,15 +42,15 @@ server:
 
 # JWT配置
 jwt:
-  secret: ${JWT_SECRET:vr-classroom-prod-secret-key-2026-hmac-sha256-secure-token-production-environment}
+  secret: ${JWT_SECRET}
   expiration: 86400
 
 # OSS配置
 oss:
-  endpoint: ${OSS_ENDPOINT:oss-cn-wuhan-lr.aliyuncs.com}
-  accessKeyId: ${OSS_ACCESS_KEY_ID:<your-access-key-id>}
-  accessKeySecret: ${OSS_ACCESS_KEY_SECRET:<your-access-key-secret>}
-  bucketName: ${OSS_BUCKET_NAME:vr-classroom-bucket}
+  endpoint: ${OSS_ENDPOINT}
+  accessKeyId: ${OSS_ACCESS_KEY_ID}
+  accessKeySecret: ${OSS_ACCESS_KEY_SECRET}
+  bucketName: ${OSS_BUCKET_NAME}
 
 # 安全配置
 management:

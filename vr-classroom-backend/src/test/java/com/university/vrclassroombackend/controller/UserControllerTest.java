@@ -1,6 +1,6 @@
 package com.university.vrclassroombackend.controller;
 
-import com.university.vrclassroombackend.service.UserService;
+import com.university.vrclassroombackend.domain.user.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

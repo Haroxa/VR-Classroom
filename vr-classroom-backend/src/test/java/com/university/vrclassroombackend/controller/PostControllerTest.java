@@ -1,9 +1,9 @@
 package com.university.vrclassroombackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.university.vrclassroombackend.dto.PostCreateDTO;
-import com.university.vrclassroombackend.dto.PostUpdateDTO;
-import com.university.vrclassroombackend.service.PostService;
+import com.university.vrclassroombackend.domain.forum.dto.PostCreateDTO;
+import com.university.vrclassroombackend.domain.forum.dto.PostUpdateDTO;
+import com.university.vrclassroombackend.domain.forum.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;

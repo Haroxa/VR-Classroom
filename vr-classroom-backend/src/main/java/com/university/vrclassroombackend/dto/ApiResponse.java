@@ -28,6 +28,10 @@ public class ApiResponse<T> {
         return new ApiResponse<>(code, msg, null);
     }
     
+    public static <T> ApiResponse<T> error(Integer code, String msg, T data) {
+        return new ApiResponse<>(code, msg, data);
+    }
+    
     public static <T> ApiResponse<T> error(String msg) {
         return new ApiResponse<>(500, msg, null);
     }
