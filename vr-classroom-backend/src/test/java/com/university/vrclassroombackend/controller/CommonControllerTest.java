@@ -43,3 +43,4 @@ class CommonControllerTest {
                 .andExpect(jsonPath("$.msg").exists());
     }
 }
+

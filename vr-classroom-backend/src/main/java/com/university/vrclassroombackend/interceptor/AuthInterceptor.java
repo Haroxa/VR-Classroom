@@ -2,7 +2,7 @@ package com.university.vrclassroombackend.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.university.vrclassroombackend.constant.AppConstants;
-import com.university.vrclassroombackend.dto.ApiResponse;
+import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

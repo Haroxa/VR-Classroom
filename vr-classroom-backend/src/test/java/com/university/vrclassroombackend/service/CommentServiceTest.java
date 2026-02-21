@@ -1,15 +1,15 @@
 package com.university.vrclassroombackend.service;
 
-import com.university.vrclassroombackend.domain.forum.dto.CommentCreateDTO;
-import com.university.vrclassroombackend.domain.forum.dto.CommentUpdateDTO;
-import com.university.vrclassroombackend.domain.forum.model.Comment;
-import com.university.vrclassroombackend.domain.forum.repository.CommentRepository;
-import com.university.vrclassroombackend.domain.forum.repository.PostRepository;
-import com.university.vrclassroombackend.domain.forum.service.impl.CommentServiceImpl;
-import com.university.vrclassroombackend.domain.forum.vo.CommentVO;
-import com.university.vrclassroombackend.domain.forum.model.Post;
-import com.university.vrclassroombackend.domain.user.service.UserService;
-import com.university.vrclassroombackend.domain.user.vo.UserCommentVO;
+import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
+import com.university.vrclassroombackend.module.forum.dto.CommentUpdateDTO;
+import com.university.vrclassroombackend.module.forum.model.Comment;
+import com.university.vrclassroombackend.module.forum.repository.CommentRepository;
+import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.service.impl.CommentServiceImpl;
+import com.university.vrclassroombackend.module.forum.vo.CommentVO;
+import com.university.vrclassroombackend.module.forum.model.Post;
+import com.university.vrclassroombackend.module.user.service.UserService;
+import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +50,7 @@ class CommentServiceTest {
         testPost = new Post();
         testPost.setId(1);
         testPost.setTitle("测试帖子");
-        testPost.setCommentCount(1); // 设置为1，这样删除评论时会调用postRepository.save
+        testPost.setCommentCount(1); // 设置评论数为1，这样删除评论时会调用postRepository.save
 
         testComment = new Comment();
         testComment.setId(1);
@@ -131,7 +131,7 @@ class CommentServiceTest {
         assertTrue(result);
         verify(commentRepository, times(1)).findById(1);
         verify(commentRepository, times(1)).save(any(Comment.class));
-        // postRepository.save会被调用，因为commentCount为1
+        // postRepository.save会被调用，因为commentCount大于0
         verify(postRepository, times(1)).findById(1);
         verify(postRepository, times(1)).save(any(Post.class));
     }
@@ -163,3 +163,4 @@ class CommentServiceTest {
         verify(commentRepository, times(1)).findByCommenterId(1);
     }
 }
+

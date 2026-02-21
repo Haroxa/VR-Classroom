@@ -1,9 +1,9 @@
 package com.university.vrclassroombackend.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.university.vrclassroombackend.domain.forum.dto.PostCreateDTO;
-import com.university.vrclassroombackend.domain.forum.dto.PostUpdateDTO;
-import com.university.vrclassroombackend.domain.forum.service.PostService;
+import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
+import com.university.vrclassroombackend.module.forum.dto.PostUpdateDTO;
+import com.university.vrclassroombackend.module.forum.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -98,3 +98,4 @@ class PostControllerTest {
                 .andExpect(jsonPath("$.msg").value("success"));
     }
 }
+

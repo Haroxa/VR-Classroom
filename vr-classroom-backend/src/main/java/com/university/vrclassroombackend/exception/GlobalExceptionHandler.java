@@ -1,6 +1,6 @@
 package com.university.vrclassroombackend.exception;
 
-import com.university.vrclassroombackend.dto.ApiResponse;
+import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.constant.AppConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,10 +39,18 @@ public class GlobalExceptionHandler {
                 .body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, ex.getMessage()));
     }
     
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponse> handleBusinessException(BusinessException ex) {
+        logger.warn("业务异常: {}", ex.getMessage());
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(ApiResponse.error(ex.getStatusCode(), ex.getMessage()));
+    }
+    
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse> handleGeneralException(Exception ex) {
-        logger.error("服务器内部错误: {}", ex.getMessage(), ex);
+        logger.error("服务器内部错误 {}", ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, "服务器内部错误"));
     }
 }
+

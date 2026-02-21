@@ -1,12 +1,12 @@
 package com.university.vrclassroombackend.service;
 
-import com.university.vrclassroombackend.domain.user.model.User;
-import com.university.vrclassroombackend.domain.user.repository.UserRepository;
-import com.university.vrclassroombackend.domain.user.service.impl.UserServiceImpl;
-import com.university.vrclassroombackend.domain.user.vo.UserProfileVO;
-import com.university.vrclassroombackend.domain.user.vo.UserPublicVO;
-import com.university.vrclassroombackend.domain.common.model.College;
-import com.university.vrclassroombackend.domain.common.repository.CollegeRepository;
+import com.university.vrclassroombackend.module.user.model.User;
+import com.university.vrclassroombackend.module.user.repository.UserRepository;
+import com.university.vrclassroombackend.module.user.service.impl.UserServiceImpl;
+import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
+import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
+import com.university.vrclassroombackend.module.space.model.College;
+import com.university.vrclassroombackend.module.space.repository.CollegeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -139,3 +139,4 @@ class UserServiceTest {
         verify(collegeRepository, times(1)).findById(1);
     }
 }
+

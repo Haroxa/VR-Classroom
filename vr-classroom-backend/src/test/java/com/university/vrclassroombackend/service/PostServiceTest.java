@@ -1,16 +1,16 @@
 package com.university.vrclassroombackend.service;
 
-import com.university.vrclassroombackend.domain.forum.dto.PostCreateDTO;
-import com.university.vrclassroombackend.domain.forum.dto.PostUpdateDTO;
-import com.university.vrclassroombackend.domain.forum.model.Post;
-import com.university.vrclassroombackend.domain.forum.repository.PostRepository;
-import com.university.vrclassroombackend.domain.forum.service.impl.PostServiceImpl;
-import com.university.vrclassroombackend.domain.forum.vo.PostDetailVO;
-import com.university.vrclassroombackend.domain.forum.vo.PostVO;
-import com.university.vrclassroombackend.domain.user.service.UserService;
-import com.university.vrclassroombackend.domain.user.vo.UserPostVO;
-import com.university.vrclassroombackend.domain.common.model.Category;
-import com.university.vrclassroombackend.domain.common.repository.CategoryRepository;
+import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
+import com.university.vrclassroombackend.module.forum.dto.PostUpdateDTO;
+import com.university.vrclassroombackend.module.forum.model.Post;
+import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.service.impl.PostServiceImpl;
+import com.university.vrclassroombackend.module.forum.vo.PostDetailVO;
+import com.university.vrclassroombackend.module.forum.vo.PostVO;
+import com.university.vrclassroombackend.module.user.service.UserService;
+import com.university.vrclassroombackend.module.user.vo.UserPostVO;
+import com.university.vrclassroombackend.module.space.model.Category;
+import com.university.vrclassroombackend.module.space.repository.CategoryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -174,3 +174,4 @@ class PostServiceTest {
         verify(postRepository, times(1)).findByAuthorId(1);
     }
 }
+
