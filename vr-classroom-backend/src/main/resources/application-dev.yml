@@ -1,5 +1,9 @@
 # 开发环境配置
 spring:
+  # 允许循环依赖
+  main:
+    allow-circular-references: true
+  
   # 数据库初始化配置
   sql:
     init:
@@ -29,6 +33,20 @@ spring:
       enabled: true
     livereload:
       enabled: true
+  
+  # Redis 配置
+  redis:
+    host: ${SPRING_REDIS_HOST:localhost}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:123456}
+    database: ${SPRING_REDIS_DATABASE:0}
+    timeout: 10000
+    lettuce:
+      pool:
+        max-active: 8
+        max-wait: -1
+        max-idle: 8
+        min-idle: 0
 
 # 日志配置
 logging:
@@ -55,3 +73,35 @@ oss:
   accessKeyId: ${OSS_ACCESS_KEY_ID}
   accessKeySecret: ${OSS_ACCESS_KEY_SECRET}
   bucketName: ${OSS_BUCKET_NAME}
+
+# 微信登录配置
+wechat:
+  appId: ${WECHAT_APP_ID}
+  appSecret: ${WECHAT_APP_SECRET}
+  code2SessionUrl: https://api.weixin.qq.com/sns/jscode2session
+
+# RocketMQ 配置
+rocketmq:
+  name-server: ${ROCKETMQ_NAME_SERVER:localhost:9876}
+  producer:
+    group: ${ROCKETMQ_PRODUCER_GROUP:payment-producer-group}
+    send-message-timeout: 3000
+    retry-times-when-send-failed: 2
+    retry-times-when-send-async-failed: 2
+  consumer:
+    group: ${ROCKETMQ_CONSUMER_GROUP:payment-consumer-group}
+    consume-thread-min: 20
+    consume-thread-max: 64
+    consume-message-batch-max-size: 1
+
+# Actuator 配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,env,metrics,info,beans
+  endpoint:
+    health:
+      show-details: always
+    env:
+      show-values: always

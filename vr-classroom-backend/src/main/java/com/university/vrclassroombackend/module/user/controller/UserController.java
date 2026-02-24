@@ -7,6 +7,7 @@ import com.university.vrclassroombackend.module.user.model.User;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
 import com.university.vrclassroombackend.util.JwtUtil;
+import com.university.vrclassroombackend.util.WechatUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class UserController {
     
     @Autowired
     private JwtUtil jwtUtil;
+    
+    @Autowired
+    private WechatUtil wechatUtil;
 
     @PostMapping
     public ResponseEntity<?> createUser(@RequestBody User user) {
@@ -65,6 +69,54 @@ public class UserController {
         } catch (Exception e) {
             logger.error("登录失败: phone={}", dto.getPhone(), e);
             return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.LOGIN_FAILED));
+        }
+    }
+    
+    @PostMapping("/wechat/login")
+    public ResponseEntity<?> wechatLogin(@RequestBody Map<String, String> request) {
+        try {
+            String code = request.get("code");
+            if (code == null || code.isEmpty()) {
+                logger.warn("微信登录失败: 缺少 code 参数");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 code 参数"));
+            }
+            
+            // 调用微信接口，使用 code 换取 openId 和 sessionKey
+            Map<String, String> wechatResult = wechatUtil.getOpenIdAndSessionKey(code);
+            String openId = wechatResult.get("openId");
+            if (openId == null || openId.isEmpty()) {
+                logger.warn("微信登录失败: 获取 openId 失败");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "微信登录失败: 获取 openId 失败"));
+            }
+            logger.info("微信登录成功获取 openId: {}", openId);
+            
+            // 根据 openId 查找用户
+            User user = userService.getUserByOpenId(openId);
+            if (user == null) {
+                // 如果用户不存在，创建新用户
+                user = new User();
+                user.setOpenId(openId);
+                user.setName("微信用户");
+                user.setAvatar("assets/default_avatar.png");
+                user.setVerifyStatus(0);
+                user = userService.saveUser(user);
+                logger.info("微信登录成功: 新用户 userId={}, openId={}", user.getId(), openId);
+            } else {
+                logger.info("微信登录成功: 老用户 userId={}, openId={}", user.getId(), openId);
+            }
+            
+            // 生成 JWT token
+            String token = jwtUtil.generateToken(user.getId());
+            
+            // 构建返回数据
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+            data.put("user", userService.getUserProfile(user.getId()));
+            
+            return ResponseEntity.ok().body(ApiResponse.success(data));
+        } catch (Exception e) {
+            logger.error("微信登录失败", e);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, "微信登录失败"));
         }
     }
 

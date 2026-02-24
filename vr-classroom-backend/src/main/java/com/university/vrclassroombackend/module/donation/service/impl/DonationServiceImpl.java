@@ -1,48 +1,168 @@
 package com.university.vrclassroombackend.module.donation.service.impl;
 
+import com.university.vrclassroombackend.module.donation.constant.DonationStatus;
 import com.university.vrclassroombackend.module.donation.model.DonationOrder;
 import com.university.vrclassroombackend.module.donation.repository.DonationRepository;
 import com.university.vrclassroombackend.module.donation.service.DonationService;
+import com.university.vrclassroombackend.module.payment.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-@Deprecated
+/**
+ * 捐赠服务实现类
+ * 用于处理捐赠相关的业务逻辑
+ */
 @Service
 public class DonationServiceImpl implements DonationService {
     
+    private final DonationRepository donationRepository;
+    private PaymentService paymentService;
+    
     @Autowired
-    private DonationRepository donationRepository;
+    public DonationServiceImpl(DonationRepository donationRepository) {
+        this.donationRepository = donationRepository;
+    }
+    
+    @Autowired
+    public void setPaymentService(PaymentService paymentService) {
+        this.paymentService = paymentService;
+    }
 
     @Override
-    @Deprecated
     public DonationOrder createDonation(Integer donorId, Integer seatId, Integer tierId, String message) {
-        return null;
+        // 创建捐赠订单对象
+        DonationOrder donationOrder = new DonationOrder();
+        donationOrder.setDonorId(donorId);
+        donationOrder.setSeatId(seatId);
+        donationOrder.setTierId(tierId);
+        
+        // 根据 tierId 获取捐赠金额
+        // 这里使用简单的映射模拟从数据库获取金额的过程
+        // 实际项目中应该从数据库中获取等级对应的金额
+        BigDecimal amount = getAmountByTierId(tierId);
+        donationOrder.setAmount(amount);
+            
+            donationOrder.setMessage(message);
+            donationOrder.setStatus(DonationStatus.PENDING.getCode()); // 待支付
+            donationOrder.setOrderNo(generateOrderNo());
+            donationOrder.setCreatedAt(LocalDateTime.now());
+        
+        // 保存捐赠订单
+        return donationRepository.save(donationOrder);
+    }
+    
+    /**
+     * 根据等级ID获取捐赠金额
+     * @param tierId 等级ID
+     * @return 捐赠金额
+     */
+    private BigDecimal getAmountByTierId(Integer tierId) {
+        // 简单的等级金额映射
+        // 实际项目中应该从数据库中获取
+        switch (tierId) {
+            case 1:
+                return BigDecimal.valueOf(50.0);
+            case 2:
+                return BigDecimal.valueOf(100.0);
+            case 3:
+                return BigDecimal.valueOf(200.0);
+            case 4:
+                return BigDecimal.valueOf(500.0);
+            case 5:
+                return BigDecimal.valueOf(1000.0);
+            default:
+                return BigDecimal.valueOf(100.0); // 默认金额
+        }
     }
 
     @Override
-    @Deprecated
     public DonationOrder getDonationByOrderNo(String orderNo) {
-        return null;
+        return donationRepository.findByOrderNo(orderNo);
     }
 
     @Override
-    @Deprecated
     public List<DonationOrder> getDonationsByDonorId(Integer donorId) {
-        return null;
+        return donationRepository.findByDonorId(donorId);
     }
 
     @Override
-    @Deprecated
     public boolean completeDonation(Integer donationId) {
-        return false;
+        // 根据ID获取捐赠订单
+        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        if (donationOrder == null) {
+            return false;
+        }
+        
+        // 只有待支付的订单可以完成
+        if (donationOrder.getStatus() != DonationStatus.PENDING.getCode()) {
+            return false;
+        }
+        
+        // 更新捐赠订单状态
+        donationOrder.setStatus(DonationStatus.COMPLETED.getCode()); // 已完成
+        donationOrder.setCompletedAt(LocalDateTime.now());
+        
+        // 保存更新后的捐赠订单
+        donationRepository.save(donationOrder);
+        return true;
     }
 
     @Override
-    @Deprecated
     public boolean cancelDonation(Integer donationId) {
-        return false;
+        // 根据ID获取捐赠订单
+        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        if (donationOrder == null) {
+            return false;
+        }
+        
+        // 只有待支付的订单可以取消
+        if (donationOrder.getStatus() != DonationStatus.PENDING.getCode()) {
+            return false;
+        }
+        
+        // 更新捐赠订单状态
+        donationOrder.setStatus(DonationStatus.CANCELLED.getCode()); // 已取消
+        donationOrder.setCancelledAt(LocalDateTime.now());
+        
+        // 保存更新后的捐赠订单
+        donationRepository.save(donationOrder);
+        return true;
+    }
+    
+    @Override
+    public boolean failDonation(Integer donationId) {
+        // 根据ID获取捐赠订单
+        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        if (donationOrder == null) {
+            return false;
+        }
+        
+        // 只有待支付的订单可以标记为支付失败
+        if (donationOrder.getStatus() != DonationStatus.PENDING.getCode()) {
+            return false;
+        }
+        
+        // 更新捐赠订单状态
+        donationOrder.setStatus(DonationStatus.FAILED.getCode()); // 支付失败
+        donationOrder.setFailedAt(LocalDateTime.now());
+        
+        // 保存更新后的捐赠订单
+        donationRepository.save(donationOrder);
+        return true;
+    }
+    
+    /**
+     * 生成订单号
+     * @return 订单号
+     */
+    private String generateOrderNo() {
+        // 生成唯一的订单号，格式：DON + 时间戳 + 随机数
+        return "DON" + System.currentTimeMillis() + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
     }
 }
 

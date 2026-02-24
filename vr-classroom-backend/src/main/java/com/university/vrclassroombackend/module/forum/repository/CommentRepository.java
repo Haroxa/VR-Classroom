@@ -16,6 +16,9 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
     List<Comment> findByCommenterId(Integer commenterId);
     
     Page<Comment> findByCommenterId(Integer commenterId, Pageable pageable);
+    
+    // 以下是后台审核用的方法
+    Page<Comment> findByStatus(Integer status, Pageable pageable);
 }
 
 

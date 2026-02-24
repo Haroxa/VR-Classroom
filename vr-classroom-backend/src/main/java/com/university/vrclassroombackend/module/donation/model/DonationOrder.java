@@ -42,6 +42,11 @@ public class DonationOrder {
     private LocalDateTime completedAt;
     
     private LocalDateTime cancelledAt;
+    
+    private LocalDateTime failedAt;
+    
+    @Version
+    private Integer version; // 乐观锁版本号
 
     public Integer getId() {
         return id;
@@ -137,6 +142,22 @@ public class DonationOrder {
 
     public void setCancelledAt(LocalDateTime cancelledAt) {
         this.cancelledAt = cancelledAt;
+    }
+
+    public LocalDateTime getFailedAt() {
+        return failedAt;
+    }
+
+    public void setFailedAt(LocalDateTime failedAt) {
+        this.failedAt = failedAt;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }
 

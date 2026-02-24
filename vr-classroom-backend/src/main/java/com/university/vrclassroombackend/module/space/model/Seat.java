@@ -16,10 +16,10 @@ public class Seat {
     private Integer classroomId;
     
     @Column(nullable = false)
-    private String row;
+    private String seatRow;
     
     @Column(nullable = false)
-    private String column;
+    private String seatColumn;
     
     @Column(nullable = false)
     private Integer status = 0;
@@ -48,20 +48,20 @@ public class Seat {
         this.classroomId = classroomId;
     }
 
-    public String getRow() {
-        return row;
+    public String getSeatRow() {
+        return seatRow;
     }
 
-    public void setRow(String row) {
-        this.row = row;
+    public void setSeatRow(String seatRow) {
+        this.seatRow = seatRow;
     }
 
-    public String getColumn() {
-        return column;
+    public String getSeatColumn() {
+        return seatColumn;
     }
 
-    public void setColumn(String column) {
-        this.column = column;
+    public void setSeatColumn(String seatColumn) {
+        this.seatColumn = seatColumn;
     }
 
     public Integer getStatus() {

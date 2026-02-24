@@ -4,6 +4,7 @@ public class CreateDonationRequest {
     private Integer seatId;
     private Integer tierId;
     private String message;
+    private String paymentMethod; // 支付方式
 
     public Integer getSeatId() {
         return seatId;
@@ -27,6 +28,14 @@ public class CreateDonationRequest {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
     }
 }
 
