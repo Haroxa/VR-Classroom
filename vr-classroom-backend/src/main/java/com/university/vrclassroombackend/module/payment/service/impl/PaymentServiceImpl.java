@@ -3,9 +3,10 @@ package com.university.vrclassroombackend.module.payment.service.impl;
 import com.university.vrclassroombackend.module.donation.service.DonationService;
 import com.university.vrclassroombackend.module.payment.constant.PaymentStatus;
 import com.university.vrclassroombackend.module.payment.model.PaymentOrder;
-import com.university.vrclassroombackend.module.payment.repository.PaymentRepository;
+import com.university.vrclassroombackend.module.payment.mapper.PaymentMapper;
 import com.university.vrclassroombackend.module.payment.service.PaymentService;
 import com.university.vrclassroombackend.module.payment.vo.PaymentOrderVO;
+import com.university.vrclassroombackend.util.RedisDistributedLock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -24,14 +25,16 @@ import java.util.UUID;
 @Service
 public class PaymentServiceImpl implements PaymentService {
     
-    private final PaymentRepository paymentRepository;
+    private final PaymentMapper paymentMapper;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisDistributedLock distributedLock;
     private DonationService donationService;
     
     @Autowired
-    public PaymentServiceImpl(PaymentRepository paymentRepository, RedisTemplate<String, Object> redisTemplate) {
-        this.paymentRepository = paymentRepository;
+    public PaymentServiceImpl(PaymentMapper paymentMapper, RedisTemplate<String, Object> redisTemplate, RedisDistributedLock distributedLock) {
+        this.paymentMapper = paymentMapper;
         this.redisTemplate = redisTemplate;
+        this.distributedLock = distributedLock;
     }
     
     @Autowired
@@ -42,38 +45,53 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     @Transactional
     public PaymentOrder createPayment(Integer userId, Double amount, String productType, String productId, String paymentMethod, String remark) {
-        // 检查是否已经存在相同的待支付订单，避免重复支付（使用悲观锁）
-        PaymentOrder existingOrder = paymentRepository.findByUserIdAndProductTypeAndProductIdAndStatusWithLock(userId, productType, productId, PaymentStatus.PENDING.getCode());
-        if (existingOrder != null) {
-            // 如果存在相同的待支付订单，直接返回该订单
-            return existingOrder;
+        String lockKey = String.format("payment:create:%d:%s:%s", userId, productType, productId);
+        
+        if (distributedLock.tryLock(lockKey)) {
+            try {
+                com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentOrder> queryWrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+                queryWrapper.eq(PaymentOrder::getUserId, userId)
+                           .eq(PaymentOrder::getProductType, productType)
+                           .eq(PaymentOrder::getProductId, productId)
+                           .eq(PaymentOrder::getStatus, PaymentStatus.PENDING.getCode());
+                PaymentOrder existingOrder = paymentMapper.selectOne(queryWrapper);
+                
+                if (existingOrder != null) {
+                    return existingOrder;
+                }
+                
+                PaymentOrder paymentOrder = new PaymentOrder();
+                paymentOrder.setUserId(userId);
+                paymentOrder.setAmount(BigDecimal.valueOf(amount));
+                paymentOrder.setOrderNo(generateOrderNo());
+                paymentOrder.setStatus(PaymentStatus.PENDING.getCode());
+                paymentOrder.setPaymentMethod(paymentMethod);
+                paymentOrder.setProductType(productType);
+                paymentOrder.setProductId(productId);
+                paymentOrder.setRemark(remark);
+                paymentOrder.setCreatedAt(LocalDateTime.now());
+                
+                paymentMapper.insert(paymentOrder);
+                
+                try {
+                    String cacheKey = "payment:order:" + paymentOrder.getOrderNo();
+                    redisTemplate.opsForValue().set(cacheKey, paymentOrder, 3600, java.util.concurrent.TimeUnit.SECONDS);
+                } catch (Exception e) {
+                    System.err.println("Redis 缓存失败: " + e.getMessage());
+                }
+                
+                return paymentOrder;
+            } finally {
+                distributedLock.unlock(lockKey);
+            }
+        } else {
+            com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentOrder> queryWrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+            queryWrapper.eq(PaymentOrder::getUserId, userId)
+                       .eq(PaymentOrder::getProductType, productType)
+                       .eq(PaymentOrder::getProductId, productId)
+                       .eq(PaymentOrder::getStatus, PaymentStatus.PENDING.getCode());
+            return paymentMapper.selectOne(queryWrapper);
         }
-        
-        // 创建支付订单对象
-        PaymentOrder paymentOrder = new PaymentOrder();
-        paymentOrder.setUserId(userId);
-        paymentOrder.setAmount(BigDecimal.valueOf(amount));
-        paymentOrder.setOrderNo(generateOrderNo());
-        paymentOrder.setStatus(PaymentStatus.PENDING.getCode()); // 待支付
-        paymentOrder.setPaymentMethod(paymentMethod);
-        paymentOrder.setProductType(productType);
-        paymentOrder.setProductId(productId);
-        paymentOrder.setRemark(remark);
-        paymentOrder.setCreatedAt(LocalDateTime.now());
-        
-        // 保存支付订单
-        PaymentOrder savedOrder = paymentRepository.save(paymentOrder);
-        
-        // 将支付订单存入 Redis 缓存，设置过期时间为 1 小时
-        try {
-            String cacheKey = "payment:order:" + savedOrder.getOrderNo();
-            redisTemplate.opsForValue().set(cacheKey, savedOrder, 3600, java.util.concurrent.TimeUnit.SECONDS);
-        } catch (Exception e) {
-            // Redis 连接失败，不影响主要功能，只记录日志
-            System.err.println("Redis 缓存失败: " + e.getMessage());
-        }
-        
-        return savedOrder;
     }
 
     @Override
@@ -81,9 +99,26 @@ public class PaymentServiceImpl implements PaymentService {
         // 先从 Redis 缓存中获取
         try {
             String cacheKey = "payment:order:" + orderNo;
-            PaymentOrder paymentOrder = (PaymentOrder) redisTemplate.opsForValue().get(cacheKey);
-            if (paymentOrder != null) {
-                return paymentOrder;
+            Object cachedObj = redisTemplate.opsForValue().get(cacheKey);
+            if (cachedObj != null) {
+                if (cachedObj instanceof PaymentOrder) {
+                    return (PaymentOrder) cachedObj;
+                } else if (cachedObj instanceof java.util.Map) {
+                    // 处理类型转换问题，将 LinkedHashMap 转换为 PaymentOrder
+                    java.util.Map<?, ?> map = (java.util.Map<?, ?>) cachedObj;
+                    PaymentOrder paymentOrder = new PaymentOrder();
+                    paymentOrder.setId(map.get("id") != null ? Integer.valueOf(map.get("id").toString()) : null);
+                    paymentOrder.setUserId(map.get("userId") != null ? Integer.valueOf(map.get("userId").toString()) : null);
+                    paymentOrder.setAmount(map.get("amount") != null ? new java.math.BigDecimal(map.get("amount").toString()) : null);
+                    paymentOrder.setOrderNo(map.get("orderNo") != null ? map.get("orderNo").toString() : null);
+                    paymentOrder.setStatus(map.get("status") != null ? Integer.valueOf(map.get("status").toString()) : null);
+                    paymentOrder.setPaymentMethod(map.get("paymentMethod") != null ? map.get("paymentMethod").toString() : null);
+                    paymentOrder.setTransactionId(map.get("transactionId") != null ? map.get("transactionId").toString() : null);
+                    paymentOrder.setProductType(map.get("productType") != null ? map.get("productType").toString() : null);
+                    paymentOrder.setProductId(map.get("productId") != null ? map.get("productId").toString() : null);
+                    paymentOrder.setRemark(map.get("remark") != null ? map.get("remark").toString() : null);
+                    return paymentOrder;
+                }
             }
         } catch (Exception e) {
             // Redis 连接失败，不影响主要功能，只记录日志
@@ -91,7 +126,9 @@ public class PaymentServiceImpl implements PaymentService {
         }
         
         // 从数据库中获取
-        PaymentOrder paymentOrder = paymentRepository.findByOrderNo(orderNo);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentOrder> queryWrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        queryWrapper.eq(PaymentOrder::getOrderNo, orderNo);
+        PaymentOrder paymentOrder = paymentMapper.selectOne(queryWrapper);
         if (paymentOrder != null) {
             // 将结果存入 Redis 缓存，设置过期时间为 1 小时
             try {
@@ -108,7 +145,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentOrder> getPaymentsByUserId(Integer userId) {
-        return paymentRepository.findByUserId(userId);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentOrder> queryWrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        queryWrapper.eq(PaymentOrder::getUserId, userId);
+        queryWrapper.orderByDesc(PaymentOrder::getCreatedAt);
+        return paymentMapper.selectList(queryWrapper);
     }
 
     @Override
@@ -120,7 +160,9 @@ public class PaymentServiceImpl implements PaymentService {
         }
         
         // 根据订单号获取支付订单
-        PaymentOrder paymentOrder = paymentRepository.findByOrderNo(orderNo);
+        com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<PaymentOrder> queryWrapper = new com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper<>();
+        queryWrapper.eq(PaymentOrder::getOrderNo, orderNo);
+        PaymentOrder paymentOrder = paymentMapper.selectOne(queryWrapper);
         if (paymentOrder == null) {
             return;
         }
@@ -156,7 +198,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
         
         // 保存更新后的支付订单
-        paymentRepository.save(paymentOrder);
+        paymentMapper.updateById(paymentOrder);
         
         // 更新 Redis 缓存中的订单信息
         try {
@@ -254,7 +296,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public boolean cancelPayment(Integer paymentId) {
         // 根据ID获取支付订单
-        PaymentOrder paymentOrder = paymentRepository.findById(paymentId).orElse(null);
+        PaymentOrder paymentOrder = paymentMapper.selectById(paymentId);
         if (paymentOrder == null) {
             return false;
         }
@@ -269,7 +311,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentOrder.setCancelledAt(LocalDateTime.now());
         
         // 保存更新后的支付订单
-        paymentRepository.save(paymentOrder);
+        paymentMapper.updateById(paymentOrder);
         
         // 如果是捐赠订单，同步更新对应的捐赠订单状态
         if ("DONATION".equals(paymentOrder.getProductType())) {

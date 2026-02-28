@@ -1,164 +1,53 @@
 package com.university.vrclassroombackend.module.donation.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "donation_order")
+@TableName("donation_order")
 @Data
 public class DonationOrder {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @Column(nullable = false)
+    @TableField("donor_id")
     private Integer donorId;
     
-    @Column(nullable = false)
+    @TableField("seat_id")
     private Integer seatId;
     
-    @Column(nullable = false)
+    @TableField("tier_id")
     private Integer tierId;
     
-    @Column(nullable = false)
+    @TableField
     private BigDecimal amount;
     
     private String message;
     
-    @Column(nullable = false)
+    @TableField
     private Integer status = 0;
     
+    @TableField("order_no")
     private String orderNo;
     
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private LocalDateTime createdAt;
     
+    @TableField("paid_at")
     private LocalDateTime paidAt;
     
+    @TableField("completed_at")
     private LocalDateTime completedAt;
     
+    @TableField("cancelled_at")
     private LocalDateTime cancelledAt;
     
+    @TableField("failed_at")
     private LocalDateTime failedAt;
     
     @Version
     private Integer version; // 乐观锁版本号
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getDonorId() {
-        return donorId;
-    }
-
-    public void setDonorId(Integer donorId) {
-        this.donorId = donorId;
-    }
-
-    public Integer getSeatId() {
-        return seatId;
-    }
-
-    public void setSeatId(Integer seatId) {
-        this.seatId = seatId;
-    }
-
-    public Integer getTierId() {
-        return tierId;
-    }
-
-    public void setTierId(Integer tierId) {
-        this.tierId = tierId;
-    }
-
-    public BigDecimal getAmount() {
-        return amount;
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public String getOrderNo() {
-        return orderNo;
-    }
-
-    public void setOrderNo(String orderNo) {
-        this.orderNo = orderNo;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getPaidAt() {
-        return paidAt;
-    }
-
-    public void setPaidAt(LocalDateTime paidAt) {
-        this.paidAt = paidAt;
-    }
-
-    public LocalDateTime getCompletedAt() {
-        return completedAt;
-    }
-
-    public void setCompletedAt(LocalDateTime completedAt) {
-        this.completedAt = completedAt;
-    }
-
-    public LocalDateTime getCancelledAt() {
-        return cancelledAt;
-    }
-
-    public void setCancelledAt(LocalDateTime cancelledAt) {
-        this.cancelledAt = cancelledAt;
-    }
-
-    public LocalDateTime getFailedAt() {
-        return failedAt;
-    }
-
-    public void setFailedAt(LocalDateTime failedAt) {
-        this.failedAt = failedAt;
-    }
-
-    public Integer getVersion() {
-        return version;
-    }
-
-    public void setVersion(Integer version) {
-        this.version = version;
-    }
 }
 
 

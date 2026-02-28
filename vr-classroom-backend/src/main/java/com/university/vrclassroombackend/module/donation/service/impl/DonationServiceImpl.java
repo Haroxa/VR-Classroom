@@ -2,7 +2,7 @@ package com.university.vrclassroombackend.module.donation.service.impl;
 
 import com.university.vrclassroombackend.module.donation.constant.DonationStatus;
 import com.university.vrclassroombackend.module.donation.model.DonationOrder;
-import com.university.vrclassroombackend.module.donation.repository.DonationRepository;
+import com.university.vrclassroombackend.module.donation.mapper.DonationMapper;
 import com.university.vrclassroombackend.module.donation.service.DonationService;
 import com.university.vrclassroombackend.module.payment.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +20,12 @@ import java.util.UUID;
 @Service
 public class DonationServiceImpl implements DonationService {
     
-    private final DonationRepository donationRepository;
+    private final DonationMapper donationMapper;
     private PaymentService paymentService;
     
     @Autowired
-    public DonationServiceImpl(DonationRepository donationRepository) {
-        this.donationRepository = donationRepository;
+    public DonationServiceImpl(DonationMapper donationMapper) {
+        this.donationMapper = donationMapper;
     }
     
     @Autowired
@@ -53,7 +53,8 @@ public class DonationServiceImpl implements DonationService {
             donationOrder.setCreatedAt(LocalDateTime.now());
         
         // 保存捐赠订单
-        return donationRepository.save(donationOrder);
+        donationMapper.insert(donationOrder);
+        return donationOrder;
     }
     
     /**
@@ -82,18 +83,18 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public DonationOrder getDonationByOrderNo(String orderNo) {
-        return donationRepository.findByOrderNo(orderNo);
+        return donationMapper.selectByOrderNo(orderNo);
     }
 
     @Override
     public List<DonationOrder> getDonationsByDonorId(Integer donorId) {
-        return donationRepository.findByDonorId(donorId);
+        return donationMapper.selectByDonorId(donorId);
     }
 
     @Override
     public boolean completeDonation(Integer donationId) {
         // 根据ID获取捐赠订单
-        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        DonationOrder donationOrder = donationMapper.selectById(donationId);
         if (donationOrder == null) {
             return false;
         }
@@ -108,14 +109,14 @@ public class DonationServiceImpl implements DonationService {
         donationOrder.setCompletedAt(LocalDateTime.now());
         
         // 保存更新后的捐赠订单
-        donationRepository.save(donationOrder);
+        donationMapper.updateById(donationOrder);
         return true;
     }
 
     @Override
     public boolean cancelDonation(Integer donationId) {
         // 根据ID获取捐赠订单
-        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        DonationOrder donationOrder = donationMapper.selectById(donationId);
         if (donationOrder == null) {
             return false;
         }
@@ -130,14 +131,14 @@ public class DonationServiceImpl implements DonationService {
         donationOrder.setCancelledAt(LocalDateTime.now());
         
         // 保存更新后的捐赠订单
-        donationRepository.save(donationOrder);
+        donationMapper.updateById(donationOrder);
         return true;
     }
     
     @Override
     public boolean failDonation(Integer donationId) {
         // 根据ID获取捐赠订单
-        DonationOrder donationOrder = donationRepository.findById(donationId).orElse(null);
+        DonationOrder donationOrder = donationMapper.selectById(donationId);
         if (donationOrder == null) {
             return false;
         }
@@ -152,7 +153,7 @@ public class DonationServiceImpl implements DonationService {
         donationOrder.setFailedAt(LocalDateTime.now());
         
         // 保存更新后的捐赠订单
-        donationRepository.save(donationOrder);
+        donationMapper.updateById(donationOrder);
         return true;
     }
     

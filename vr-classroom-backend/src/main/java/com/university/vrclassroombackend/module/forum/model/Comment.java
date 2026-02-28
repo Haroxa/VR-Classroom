@@ -1,34 +1,27 @@
 package com.university.vrclassroombackend.module.forum.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-@Entity
-@Table(name = "comment")
+@TableName("comment")
 @Data
 public class Comment {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
     
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
     
-    @Column(name = "date", nullable = false)
+    @TableField("date")
     private String date;
     
-    @PrePersist
-    @PreUpdate
-    protected void updateDate() {
+    // MyBatis-Plus 不支持 @PrePersist 和 @PreUpdate，需要在Service层处理
+    public void updateDate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
@@ -39,21 +32,22 @@ public class Comment {
         this.date = createdAt.format(formatter);
     }
     
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @TableField
     private String content;
     
-    @Column(nullable = false)
+    @TableField("commenter_id")
     private Integer commenterId;
     
-    @Column(nullable = false)
+    @TableField("post_id")
     private Integer postId;
     
-    @Column(nullable = false)
+    @TableField("like_count")
     private Integer likeCount = 0;
     
-    @Column(nullable = false)
+    @TableField
     private Integer status = 0;
     
+    @TableField("reject_reason")
     private String rejectReason;
 }
 

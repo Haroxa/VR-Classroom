@@ -1,17 +1,15 @@
 package com.university.vrclassroombackend.module.space.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
-@Entity
-@Table(name = "college")
+@TableName("college")
 @Data
 public class College {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @Column(nullable = false)
+    @TableField
     private String name;
 }
 

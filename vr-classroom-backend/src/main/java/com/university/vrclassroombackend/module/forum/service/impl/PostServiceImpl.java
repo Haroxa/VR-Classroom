@@ -1,12 +1,15 @@
 package com.university.vrclassroombackend.module.forum.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.space.model.Category;
-import com.university.vrclassroombackend.module.space.repository.CategoryRepository;
+import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.PostUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Post;
-import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
 import com.university.vrclassroombackend.module.forum.service.PostService;
 import com.university.vrclassroombackend.module.forum.vo.PostDetailVO;
 import com.university.vrclassroombackend.module.forum.vo.PostVO;
@@ -16,9 +19,6 @@ import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,34 +32,30 @@ public class PostServiceImpl implements PostService {
     private static final Logger logger = LoggerFactory.getLogger(PostServiceImpl.class);
     
     @Autowired
-    private PostRepository postRepository;
+    private PostMapper postMapper;
     
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryMapper categoryMapper;
     
     @Autowired
     private UserService userService;
 
     @Override
     public List<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
-        Pageable pageable = PageRequest.of(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
-        Page<Post> postsPage;
+        LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Post::getStatus, Post.STATUS_PUBLISHED);
         
-        if (keyword != null && !keyword.isEmpty()) {
-            if (categoryId != null) {
-                Page<Post> keywordPosts = postRepository.searchPosts(keyword, pageable);
-                postsPage = keywordPosts;
-            } else {
-                postsPage = postRepository.searchPosts(keyword, pageable);
-            }
-        } else if (categoryId != null) {
-            Page<Post> allPublishedPosts = postRepository.findByStatus(Post.STATUS_PUBLISHED, pageable);
-            postsPage = allPublishedPosts;
-        } else {
-            postsPage = postRepository.findByStatus(Post.STATUS_PUBLISHED, pageable);
+        if (categoryId != null) {
+            queryWrapper.eq(Post::getCategoryId, categoryId);
         }
         
-        List<Post> posts = postsPage.getContent();
+        if (keyword != null && !keyword.isEmpty()) {
+            queryWrapper.like(Post::getTitle, keyword).or().like(Post::getContent, keyword);
+        }
+        
+        queryWrapper.orderByDesc(Post::getDate);
+        
+        List<Post> posts = postMapper.selectList(queryWrapper);
         
         if (posts.isEmpty()) {
             return List.of();
@@ -87,7 +83,7 @@ public class PostServiceImpl implements PostService {
         Map<Integer, Category> categoryMap = categoryIds.stream()
                 .collect(Collectors.toMap(
                         id -> id,
-                        id -> categoryRepository.findById(id).orElse(null),
+                        categoryMapper::selectById,
                         (existing, replacement) -> existing
                 ));
         
@@ -98,7 +94,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PostDetailVO getPostDetail(Integer postId, Integer currentUserId) {
-        Post post = postRepository.findById(postId).orElse(null);
+        Post post = postMapper.selectById(postId);
         if (post == null) {
             return null;
         }
@@ -124,15 +120,18 @@ public class PostServiceImpl implements PostService {
         post.setCommentCount(0);
         post.setStatus(Post.STATUS_PUBLISHED);
         
-        Post savedPost = postRepository.save(post);
-        return savedPost.getId();
+        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PrePersist
+        post.updateDate();
+        
+        postMapper.insert(post);
+        return post.getId();
     }
 
     @Override
     @Transactional
     public boolean updatePost(Integer postId, PostUpdateDTO dto, Integer authorId) {
         logger.info("开始更新帖子 postId={}, authorId={}", postId, authorId);
-        Post post = postRepository.findById(postId).orElse(null);
+        Post post = postMapper.selectById(postId);
         if (post == null || !post.getAuthorId().equals(authorId)) {
             logger.warn("更新帖子失败: 帖子不存在或无权限 postId={}, authorId={}", postId, authorId);
             return false;
@@ -145,7 +144,10 @@ public class PostServiceImpl implements PostService {
         post.setCategoryId(dto.getCategoryId());
         post.setStatus(Post.STATUS_PENDING);
         
-        postRepository.save(post);
+        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PreUpdate
+        post.updateDate();
+        
+        postMapper.updateById(post);
         logger.info("更新帖子成功: postId={}, authorId={}", postId, authorId);
         return true;
     }
@@ -153,19 +155,19 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public boolean deletePost(Integer postId, Integer authorId) {
-        Post post = postRepository.findById(postId).orElse(null);
+        Post post = postMapper.selectById(postId);
         if (post == null || !post.getAuthorId().equals(authorId)) {
             return false;
         }
         
         post.setStatus(Post.STATUS_DELETED);
-        postRepository.save(post);
+        postMapper.updateById(post);
         return true;
     }
 
     @Override
     public List<UserPostVO> getUserPosts(Integer userId, Integer page) {
-        List<Post> posts = postRepository.findByAuthorId(userId);
+        List<Post> posts = postMapper.selectByAuthorId(userId);
         
         int pageSize = AppConstants.Pagination.DEFAULT_PAGE_SIZE;
         int start = page * pageSize;
@@ -227,7 +229,7 @@ public class PostServiceImpl implements PostService {
         }
         
         if (post.getCategoryId() != null) {
-            Category category = categoryRepository.findById(post.getCategoryId()).orElse(null);
+            Category category = categoryMapper.selectById(post.getCategoryId());
             if (category != null) {
                 vo.setCategoryName(category.getName());
             }
@@ -255,7 +257,7 @@ public class PostServiceImpl implements PostService {
         vo.setLiked(false);
         
         if (post.getCategoryId() != null) {
-            Category category = categoryRepository.findById(post.getCategoryId()).orElse(null);
+            Category category = categoryMapper.selectById(post.getCategoryId());
             if (category != null) {
                 vo.setCategoryName(category.getName());
             }

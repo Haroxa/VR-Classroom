@@ -4,10 +4,10 @@ import com.university.vrclassroombackend.module.space.model.Campus;
 import com.university.vrclassroombackend.module.space.model.Building;
 import com.university.vrclassroombackend.module.space.model.ClassRoom;
 import com.university.vrclassroombackend.module.space.model.Seat;
-import com.university.vrclassroombackend.module.space.repository.CampusRepository;
-import com.university.vrclassroombackend.module.space.repository.BuildingRepository;
-import com.university.vrclassroombackend.module.space.repository.ClassRoomRepository;
-import com.university.vrclassroombackend.module.space.repository.SeatRepository;
+import com.university.vrclassroombackend.module.space.mapper.CampusMapper;
+import com.university.vrclassroombackend.module.space.mapper.BuildingMapper;
+import com.university.vrclassroombackend.module.space.mapper.ClassRoomMapper;
+import com.university.vrclassroombackend.module.space.mapper.SeatMapper;
 import com.university.vrclassroombackend.module.space.service.SpaceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,39 +19,39 @@ import java.util.List;
 public class SpaceServiceImpl implements SpaceService {
     
     @Autowired
-    private CampusRepository campusRepository;
+    private CampusMapper campusMapper;
     
     @Autowired
-    private BuildingRepository buildingRepository;
+    private BuildingMapper buildingMapper;
     
     @Autowired
-    private ClassRoomRepository classRoomRepository;
+    private ClassRoomMapper classRoomMapper;
     
     @Autowired
-    private SeatRepository seatRepository;
+    private SeatMapper seatMapper;
 
     @Override
     @Deprecated
     public List<Campus> getCampuses() {
-        return campusRepository.findByActiveTrueOrderBySortOrderAsc();
+        return campusMapper.selectByActiveTrueOrderBySortOrderAsc();
     }
 
     @Override
     @Deprecated
     public List<Building> getBuildings(Integer campusId) {
-        return buildingRepository.findByCampusIdAndActiveTrueOrderBySortOrderAsc(campusId);
+        return buildingMapper.selectByCampusIdAndActiveTrueOrderBySortOrderAsc(campusId);
     }
 
     @Override
     @Deprecated
     public List<ClassRoom> getClassrooms(Integer buildingId) {
-        return classRoomRepository.findByBuildingIdAndActiveTrue(buildingId);
+        return classRoomMapper.selectByBuildingIdAndActiveTrue(buildingId);
     }
 
     @Override
     @Deprecated
     public List<Seat> getSeats(Integer classroomId, Integer page) {
-        return seatRepository.findByClassroomId(classroomId);
+        return seatMapper.selectByClassroomId(classroomId);
     }
 }
 

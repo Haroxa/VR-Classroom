@@ -9,16 +9,7 @@ spring:
     url: jdbc:mysql://localhost:3306/vr_classroom_test?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&characterSetResults=utf-8
     username: root
     password: 123456
-  
-  # JPA配置
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: false
+    driver-class-name: com.mysql.cj.jdbc.Driver
   
   # 热部署配置
   devtools:
@@ -73,16 +64,4 @@ wechat:
   appSecret: ${WECHAT_APP_SECRET}
   code2SessionUrl: https://api.weixin.qq.com/sns/jscode2session
 
-# RocketMQ 配置
-rocketmq:
-  name-server: ${ROCKETMQ_NAME_SERVER:localhost:9876}
-  producer:
-    group: ${ROCKETMQ_PRODUCER_GROUP:payment-producer-group}
-    send-message-timeout: 3000
-    retry-times-when-send-failed: 2
-    retry-times-when-send-async-failed: 2
-  consumer:
-    group: ${ROCKETMQ_CONSUMER_GROUP:payment-consumer-group}
-    consume-thread-min: 20
-    consume-thread-max: 64
-    consume-message-batch-max-size: 1
+

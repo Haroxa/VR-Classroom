@@ -1,7 +1,7 @@
 package com.university.vrclassroombackend.module.certificate.service.impl;
 
 import com.university.vrclassroombackend.module.certificate.model.Certificate;
-import com.university.vrclassroombackend.module.certificate.repository.CertificateRepository;
+import com.university.vrclassroombackend.module.certificate.mapper.CertificateMapper;
 import com.university.vrclassroombackend.module.certificate.service.CertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,18 +13,18 @@ import java.util.List;
 public class CertificateServiceImpl implements CertificateService {
     
     @Autowired
-    private CertificateRepository certificateRepository;
+    private CertificateMapper certificateMapper;
 
     @Override
     @Deprecated
     public Certificate getCertificateByClaimId(Integer claimId) {
-        return null;
+        return certificateMapper.selectByClaimId(claimId);
     }
 
     @Override
     @Deprecated
     public List<Certificate> getCertificatesByDonorId(Integer donorId) {
-        return null;
+        return certificateMapper.selectByDonorId(donorId);
     }
 
     @Override

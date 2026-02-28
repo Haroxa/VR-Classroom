@@ -1,31 +1,30 @@
 package com.university.vrclassroombackend.module.user.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
-@Entity
-@Table(name = "user")
+@TableName("user")
 @Data
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @Column(unique = true)
+    @TableField
     private String phone;
     
-    @Column(unique = true, nullable = false)
+    @TableField(value = "open_id")
     private String openId;
     
-    @Column(nullable = false)
+    @TableField
     private String name = "未认证";
     
-    @Column(nullable = false)
+    @TableField
     private String avatar = "assets/default_avatar.png";
     
+    @TableField("college_id")
     private String collegeId;
     
-    @Column(nullable = false)
+    @TableField("verify_status")
     private Integer verifyStatus = 0;
 }
 

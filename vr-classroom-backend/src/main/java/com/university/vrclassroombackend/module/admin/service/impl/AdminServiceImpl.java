@@ -1,5 +1,8 @@
 package com.university.vrclassroombackend.module.admin.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.admin.dto.PostAuditDTO;
 import com.university.vrclassroombackend.module.admin.dto.CommentAuditDTO;
@@ -7,31 +10,23 @@ import com.university.vrclassroombackend.module.admin.service.AdminService;
 import com.university.vrclassroombackend.module.admin.vo.*;
 import com.university.vrclassroombackend.module.forum.model.Post;
 import com.university.vrclassroombackend.module.forum.model.Comment;
-import com.university.vrclassroombackend.module.forum.repository.PostRepository;
-import com.university.vrclassroombackend.module.forum.repository.CommentRepository;
+import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
+import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
 import com.university.vrclassroombackend.module.space.model.College;
-import com.university.vrclassroombackend.module.space.repository.CollegeRepository;
+import com.university.vrclassroombackend.module.space.mapper.CollegeMapper;
 import com.university.vrclassroombackend.module.space.model.Category;
-import com.university.vrclassroombackend.module.space.repository.CategoryRepository;
+import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import com.university.vrclassroombackend.module.user.model.User;
-import com.university.vrclassroombackend.module.user.repository.UserRepository;
+import com.university.vrclassroombackend.module.user.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Root;
 
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 后台管理服务实现类
@@ -42,54 +37,53 @@ public class AdminServiceImpl implements AdminService {
     private static final Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
     
     @Autowired
-    private PostRepository postRepository;
+    private PostMapper postMapper;
     
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentMapper commentMapper;
     
     @Autowired
-    private UserRepository userRepository;
+    private UserMapper userMapper;
     
     @Autowired
-    private CollegeRepository collegeRepository;
+    private CollegeMapper collegeMapper;
     
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryMapper categoryMapper;
     
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     @Override
     public List<PostAuditVO> getPosts(Integer page, Integer status, Integer categoryId, String keyword) {
-        // 构建排序和分页
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE, sort);
+        // 构建分页
+        Page<Post> pageQuery = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
         
-        // 使用Specification构建动态查询条件
-        Specification<Post> spec = (root, query, criteriaBuilder) -> {
-            List<Predicate> predicates = new ArrayList<>();
-            
-            // 状态条件
-            if (status != null) {
-                predicates.add(criteriaBuilder.equal(root.get("status"), status));
-            }
-            
-            // 分类ID条件
-            if (categoryId != null) {
-                predicates.add(criteriaBuilder.equal(root.get("categoryId"), categoryId));
-            }
-            
-            // 关键词条件
-            if (keyword != null) {
-                Predicate titlePredicate = criteriaBuilder.like(root.get("title"), "%" + keyword + "%");
-                Predicate contentPredicate = criteriaBuilder.like(root.get("content"), "%" + keyword + "%");
-                predicates.add(criteriaBuilder.or(titlePredicate, contentPredicate));
-            }
-            
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        };
+        // 构建查询条件
+        LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Post::getCreatedAt);
+        
+        // 状态条件
+        if (status != null) {
+            queryWrapper.eq(Post::getStatus, status);
+        }
+        
+        // 分类ID条件
+        if (categoryId != null) {
+            queryWrapper.eq(Post::getCategoryId, categoryId);
+        }
+        
+        // 关键词条件
+        if (keyword != null) {
+            queryWrapper.and(wrapper -> {
+                wrapper.like(Post::getTitle, keyword)
+                       .or()
+                       .like(Post::getContent, keyword);
+            });
+        }
         
         // 查询帖子列表
-        List<Post> posts = postRepository.findAll(spec, pageable).getContent();
+        IPage<Post> postsPage = postMapper.selectPage(pageQuery, queryWrapper);
+        List<Post> posts = postsPage.getRecords();
         
         // 转换为VO
         List<PostAuditVO> postAuditVOs = new ArrayList<>();
@@ -105,16 +99,15 @@ public class AdminServiceImpl implements AdminService {
             
             // 获取分类名称
             if (post.getCategoryId() != null) {
-                Optional<Category> categoryOptional = categoryRepository.findById(post.getCategoryId());
-                vo.setCategoryName(categoryOptional.map(Category::getName).orElse("未知分类"));
+                Category category = categoryMapper.selectById(post.getCategoryId());
+                vo.setCategoryName(category != null ? category.getName() : "未知分类");
             } else {
                 vo.setCategoryName("未知分类");
             }
             
             // 获取作者信息
-            Optional<User> userOptional = userRepository.findById(post.getAuthorId());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
+            User user = userMapper.selectById(post.getAuthorId());
+            if (user != null) {
                 UserPublicVO userPublicVO = new UserPublicVO();
                 userPublicVO.setId(user.getId().toString());
                 userPublicVO.setName(user.getName());
@@ -122,15 +115,15 @@ public class AdminServiceImpl implements AdminService {
                 userPublicVO.setCollegeId(user.getCollegeId());
                 
                 // 获取学院名称
-                Optional<College> collegeOptional = Optional.empty();
+                College college = null;
                 try {
                     if (user.getCollegeId() != null) {
-                        collegeOptional = collegeRepository.findById(Integer.parseInt(user.getCollegeId()));
+                        college = collegeMapper.selectById(Integer.parseInt(user.getCollegeId()));
                     }
                 } catch (NumberFormatException e) {
                     logger.warn("学院ID格式错误: collegeId={}", user.getCollegeId());
                 }
-                userPublicVO.setCollegeName(collegeOptional.map(College::getName).orElse("未知学院"));
+                userPublicVO.setCollegeName(college != null ? college.getName() : "未知学院");
                 
                 // 判断是否认证
                 userPublicVO.setVerified(user.getVerifyStatus() == 2);
@@ -146,17 +139,21 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<CommentAuditVO> getComments(Integer page, Integer status) {
-        // 构建排序和分页
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE, sort);
+        // 构建分页
+        Page<Comment> pageQuery = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        
+        // 构建查询条件
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(Comment::getCreatedAt);
+        
+        // 状态条件
+        if (status != null) {
+            queryWrapper.eq(Comment::getStatus, status);
+        }
         
         // 查询评论列表
-        List<Comment> comments;
-        if (status != null) {
-            comments = commentRepository.findByStatus(status, pageable).getContent();
-        } else {
-            comments = commentRepository.findAll(pageable).getContent();
-        }
+        IPage<Comment> commentsPage = commentMapper.selectPage(pageQuery, queryWrapper);
+        List<Comment> comments = commentsPage.getRecords();
         
         // 转换为VO
         List<CommentAuditVO> commentAuditVOs = new ArrayList<>();
@@ -169,9 +166,8 @@ public class AdminServiceImpl implements AdminService {
             vo.setRejectReason(comment.getRejectReason());
             
             // 获取评论人信息
-            Optional<User> userOptional = userRepository.findById(comment.getCommenterId());
-            if (userOptional.isPresent()) {
-                User user = userOptional.get();
+            User user = userMapper.selectById(comment.getCommenterId());
+            if (user != null) {
                 UserPublicVO userPublicVO = new UserPublicVO();
                 userPublicVO.setId(user.getId().toString());
                 userPublicVO.setName(user.getName());
@@ -179,15 +175,15 @@ public class AdminServiceImpl implements AdminService {
                 userPublicVO.setCollegeId(user.getCollegeId());
                 
                 // 获取学院名称
-                Optional<College> collegeOptional = Optional.empty();
+                College college = null;
                 try {
                     if (user.getCollegeId() != null) {
-                        collegeOptional = collegeRepository.findById(Integer.parseInt(user.getCollegeId()));
+                        college = collegeMapper.selectById(Integer.parseInt(user.getCollegeId()));
                     }
                 } catch (NumberFormatException e) {
                     logger.warn("学院ID格式错误: collegeId={}", user.getCollegeId());
                 }
-                userPublicVO.setCollegeName(collegeOptional.map(College::getName).orElse("未知学院"));
+                userPublicVO.setCollegeName(college != null ? college.getName() : "未知学院");
                 
                 // 判断是否认证
                 userPublicVO.setVerified(user.getVerifyStatus() == 2);
@@ -196,9 +192,8 @@ public class AdminServiceImpl implements AdminService {
             }
             
             // 获取关联帖子信息
-            Optional<Post> postOptional = postRepository.findById(comment.getPostId());
-            if (postOptional.isPresent()) {
-                Post post = postOptional.get();
+            Post post = postMapper.selectById(comment.getPostId());
+            if (post != null) {
                 RelatedPostVO relatedPostVO = new RelatedPostVO();
                 relatedPostVO.setId(post.getId().toString());
                 relatedPostVO.setDate(post.getCreatedAt().format(formatter));
@@ -206,9 +201,8 @@ public class AdminServiceImpl implements AdminService {
                 relatedPostVO.setStatus(post.getStatus());
                 
                 // 获取帖子作者信息
-                Optional<User> postUserOptional = userRepository.findById(post.getAuthorId());
-                if (postUserOptional.isPresent()) {
-                    User postUser = postUserOptional.get();
+                User postUser = userMapper.selectById(post.getAuthorId());
+                if (postUser != null) {
                     UserPublicVO postUserPublicVO = new UserPublicVO();
                     postUserPublicVO.setId(postUser.getId().toString());
                     postUserPublicVO.setName(postUser.getName());
@@ -216,15 +210,15 @@ public class AdminServiceImpl implements AdminService {
                     postUserPublicVO.setCollegeId(postUser.getCollegeId());
                     
                     // 获取学院名称
-                    Optional<College> postCollegeOptional = Optional.empty();
+                    College postCollege = null;
                     try {
                         if (postUser.getCollegeId() != null) {
-                            postCollegeOptional = collegeRepository.findById(Integer.parseInt(postUser.getCollegeId()));
+                            postCollege = collegeMapper.selectById(Integer.parseInt(postUser.getCollegeId()));
                         }
                     } catch (NumberFormatException e) {
                         logger.warn("学院ID格式错误: collegeId={}", postUser.getCollegeId());
                     }
-                    postUserPublicVO.setCollegeName(postCollegeOptional.map(College::getName).orElse("未知学院"));
+                    postUserPublicVO.setCollegeName(postCollege != null ? postCollege.getName() : "未知学院");
                     
                     // 判断是否认证
                     postUserPublicVO.setVerified(postUser.getVerifyStatus() == 2);
@@ -245,14 +239,13 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public void auditPost(Integer postId, PostAuditDTO dto) {
         // 查询帖子
-        Optional<Post> postOptional = postRepository.findById(postId);
-        if (postOptional.isPresent()) {
-            Post post = postOptional.get();
+        Post post = postMapper.selectById(postId);
+        if (post != null) {
             // 更新状态和驳回理由
             post.setStatus(dto.getStatus());
             post.setRejectReason(dto.getRejectReason());
             // 保存更新
-            postRepository.save(post);
+            postMapper.updateById(post);
         } else {
             throw new RuntimeException("帖子不存在: postId=" + postId);
         }
@@ -262,14 +255,13 @@ public class AdminServiceImpl implements AdminService {
     @Transactional
     public void auditComment(Integer commentId, CommentAuditDTO dto) {
         // 查询评论
-        Optional<Comment> commentOptional = commentRepository.findById(commentId);
-        if (commentOptional.isPresent()) {
-            Comment comment = commentOptional.get();
+        Comment comment = commentMapper.selectById(commentId);
+        if (comment != null) {
             // 更新状态和驳回理由
             comment.setStatus(dto.getStatus());
             comment.setRejectReason(dto.getRejectReason());
             // 保存更新
-            commentRepository.save(comment);
+            commentMapper.updateById(comment);
         } else {
             throw new RuntimeException("评论不存在: commentId=" + commentId);
         }

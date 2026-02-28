@@ -126,9 +126,15 @@ public class PaymentController {
             @RequestParam String transactionId,
             @RequestParam Integer status,
             @RequestParam String sign) {
-        // 处理支付回调（异步处理，不等待结果）
-        paymentService.handlePaymentCallback(orderNo, transactionId, status, sign);
-        // 直接返回成功，因为回调是异步处理的
+        // 直接处理支付回调
+        try {
+            paymentService.handlePaymentCallback(orderNo, transactionId, status, sign);
+            System.out.println("支付回调处理成功: " + orderNo);
+        } catch (Exception e) {
+            System.err.println("支付回调处理失败: " + e.getMessage());
+            e.printStackTrace();
+        }
+        // 直接返回成功
         return ResponseEntity.ok().body(ApiResponse.success());
     }
 }

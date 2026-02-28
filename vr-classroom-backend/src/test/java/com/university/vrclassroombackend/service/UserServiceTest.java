@@ -1,20 +1,18 @@
 package com.university.vrclassroombackend.service;
 
 import com.university.vrclassroombackend.module.user.model.User;
-import com.university.vrclassroombackend.module.user.repository.UserRepository;
+import com.university.vrclassroombackend.module.user.mapper.UserMapper;
 import com.university.vrclassroombackend.module.user.service.impl.UserServiceImpl;
 import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
 import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
 import com.university.vrclassroombackend.module.space.model.College;
-import com.university.vrclassroombackend.module.space.repository.CollegeRepository;
+import com.university.vrclassroombackend.module.space.mapper.CollegeMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,10 +23,10 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
     @Mock
-    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     @Mock
-    private CollegeRepository collegeRepository;
+    private CollegeMapper collegeMapper;
 
     @InjectMocks
     private UserServiceImpl userService;
@@ -54,63 +52,62 @@ class UserServiceTest {
 
     @Test
     void testGetUserById() {
-        when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
+        when(userMapper.selectById(1)).thenReturn(testUser);
 
         User result = userService.getUserById(1);
 
         assertNotNull(result);
         assertEquals(1, result.getId());
         assertEquals("测试用户", result.getName());
-        verify(userRepository, times(1)).findById(1);
+        verify(userMapper, times(1)).selectById(1);
     }
 
     @Test
     void testGetUserByIdNotFound() {
-        when(userRepository.findById(999)).thenReturn(Optional.empty());
+        when(userMapper.selectById(999)).thenReturn(null);
 
         User result = userService.getUserById(999);
 
         assertNull(result);
-        verify(userRepository, times(1)).findById(999);
+        verify(userMapper, times(1)).selectById(999);
     }
 
     @Test
     void testGetUserByPhone() {
-        when(userRepository.findByPhone("13800138000")).thenReturn(testUser);
+        when(userMapper.selectByPhone("13800138000")).thenReturn(testUser);
 
         User result = userService.getUserByPhone("13800138000");
 
         assertNotNull(result);
         assertEquals("13800138000", result.getPhone());
-        verify(userRepository, times(1)).findByPhone("13800138000");
+        verify(userMapper, times(1)).selectByPhone("13800138000");
     }
 
     @Test
     void testGetUserByOpenId() {
-        when(userRepository.findByOpenId("wx_openid_123")).thenReturn(testUser);
+        when(userMapper.selectByOpenId("wx_openid_123")).thenReturn(testUser);
 
         User result = userService.getUserByOpenId("wx_openid_123");
 
         assertNotNull(result);
         assertEquals("wx_openid_123", result.getOpenId());
-        verify(userRepository, times(1)).findByOpenId("wx_openid_123");
+        verify(userMapper, times(1)).selectByOpenId("wx_openid_123");
     }
 
     @Test
     void testSaveUser() {
-        when(userRepository.save(any(User.class))).thenReturn(testUser);
+        when(userMapper.insert(any(User.class))).thenReturn(1);
 
         User result = userService.saveUser(testUser);
 
         assertNotNull(result);
-        assertEquals(1, result.getId());
-        verify(userRepository, times(1)).save(testUser);
+        verify(userMapper, times(1)).insert(testUser);
     }
 
     @Test
     void testGetUserProfile() {
-        when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
-        when(collegeRepository.findById(1)).thenReturn(Optional.of(testCollege));
+        when(userMapper.selectById(1)).thenReturn(testUser);
+        when(collegeMapper.selectById(1)).thenReturn(testCollege);
 
         UserProfileVO result = userService.getUserProfile(1);
 
@@ -119,14 +116,14 @@ class UserServiceTest {
         assertEquals("测试用户", result.getName());
         assertEquals("计算机学院", result.getCollegeName());
         assertEquals(2, result.getVerifyStatus());
-        verify(userRepository, times(1)).findById(1);
-        verify(collegeRepository, times(1)).findById(1);
+        verify(userMapper, times(1)).selectById(1);
+        verify(collegeMapper, times(1)).selectById(1);
     }
 
     @Test
     void testGetUserPublicInfo() {
-        when(userRepository.findById(1)).thenReturn(Optional.of(testUser));
-        when(collegeRepository.findById(1)).thenReturn(Optional.of(testCollege));
+        when(userMapper.selectById(1)).thenReturn(testUser);
+        when(collegeMapper.selectById(1)).thenReturn(testCollege);
 
         UserPublicVO result = userService.getUserPublicInfo(1);
 
@@ -135,8 +132,8 @@ class UserServiceTest {
         assertEquals("测试用户", result.getName());
         assertEquals("计算机学院", result.getCollegeName());
         assertTrue(result.isVerified());
-        verify(userRepository, times(1)).findById(1);
-        verify(collegeRepository, times(1)).findById(1);
+        verify(userMapper, times(1)).selectById(1);
+        verify(collegeMapper, times(1)).selectById(1);
     }
 }
 

@@ -1,0 +1,42 @@
+# docker-compose-rocketmq.yml
+version: '3.8'
+
+services:
+  nameserver:
+    image: apache/rocketmq:5.1.4
+    container_name: rmq-nameserver
+    ports:
+      - "9876:9876"
+    environment:
+      - JAVA_OPT_EXT=-server -Xms512m -Xmx512m -Xmn256m
+    command: sh mqnamesrv
+    restart: always
+
+  broker:
+    image: apache/rocketmq:5.1.4
+    container_name: rmq-broker
+    ports:
+      - "10911:10911"
+      - "10909:10909"
+    environment:
+      - NAMESRV_ADDR=nameserver:9876
+      - JAVA_OPT_EXT=-server -Xms512m -Xmx512m -Xmn256m
+    depends_on:
+      - nameserver
+    command: sh mqbroker
+    restart: always
+
+  dashboard:
+    image: apacherocketmq/rocketmq-dashboard:latest
+    container_name: rmq-dashboard
+    ports:
+      - "8082:8082"  # 修正为 8082
+    environment:
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=nameserver:9876 -Xms256m -Xmx256m
+      - SERVER_PORT=8082  # 明确指定端口
+    depends_on:
+      - nameserver
+    restart: always
+
+# docker-compose -f docker-compose-rocketmq.yml down
+# docker-compose -f docker-compose-rocketmq.yml up -d

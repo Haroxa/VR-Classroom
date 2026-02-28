@@ -1,0 +1,104 @@
+services:
+  # Spring Boot应用
+  vr-classroom-backend:
+    # 使用 Eclipse Temurin 替代弃用的 openjdk
+    image: eclipse-temurin:17-jre-alpine
+    container_name: vr-classroom-backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro  # 添加 :ro 只读
+    environment:
+      # 数据库配置
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vr_classroom?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: password
+      # Redis配置
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ""
+      SPRING_REDIS_DATABASE: 0
+      # 服务器配置
+      SERVER_PORT: 8080
+      # 环境配置
+      SPRING_PROFILES_ACTIVE: prod
+      # JWT配置（建议从文件挂载或 secrets 读取）
+      JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
+      # OSS配置
+      OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
+      OSS_ACCESS_KEY_ID: your_oss_access_key_id
+      OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
+      OSS_BUCKET_NAME: vr-classroom-bucket
+      # 微信登录配置
+      WECHAT_APP_ID: your-wechat-app-id
+      WECHAT_APP_SECRET: your-wechat-app-secret
+    depends_on:
+      mysql:
+        condition: service_healthy  # 等待 MySQL 健康检查通过
+      redis:
+        condition: service_started
+    restart: unless-stopped
+    # 使用 entrypoint 确保更好的信号处理
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    # 资源限制（可选）
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: vr-classroom-mysql
+    ports:
+      - "3307:3306"  # 修改端口映射，避免与本地MySQL冲突
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: vr_classroom
+      MYSQL_CHARSET: utf8mb4
+      MYSQL_COLLATION: utf8mb4_unicode_ci
+      TZ: Asia/Shanghai  # 添加时区
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./vr-classroom-backend/src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    # 健康检查，确保 MySQL 就绪后再启动后端
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+    command: >
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-time-zone=+08:00
+
+  # Redis服务
+  redis:
+    image: redis:7.0-alpine  # 使用 alpine 版本更轻量
+    container_name: vr-classroom-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+# 可选：定义网络（默认已创建，显式定义更清晰）
+networks:
+  default:
+    name: vr-classroom-network

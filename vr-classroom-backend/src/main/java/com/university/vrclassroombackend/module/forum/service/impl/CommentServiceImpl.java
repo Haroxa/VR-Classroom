@@ -1,12 +1,15 @@
 package com.university.vrclassroombackend.module.forum.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.CommentUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Comment;
 import com.university.vrclassroombackend.module.forum.model.Post;
-import com.university.vrclassroombackend.module.forum.repository.CommentRepository;
-import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
+import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
 import com.university.vrclassroombackend.module.forum.service.CommentService;
 import com.university.vrclassroombackend.module.forum.vo.CommentVO;
 import com.university.vrclassroombackend.module.user.service.UserService;
@@ -16,9 +19,6 @@ import com.university.vrclassroombackend.module.forum.vo.RelatedPostVO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,18 +34,20 @@ public class CommentServiceImpl implements CommentService {
     private static final Logger logger = LoggerFactory.getLogger(CommentServiceImpl.class);
     
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentMapper commentMapper;
     
     @Autowired
-    private PostRepository postRepository;
+    private PostMapper postMapper;
     
     @Autowired
     private UserService userService;
 
     @Override
     public List<CommentVO> getPostComments(Integer postId, Integer page) {
-        List<Comment> comments = commentRepository.findByPostId(postId);
-        comments = comments.stream().filter(c -> c.getStatus() == Post.STATUS_PUBLISHED).collect(Collectors.toList());
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getPostId, postId)
+                   .eq(Comment::getStatus, Post.STATUS_PUBLISHED);
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
         
         int pageSize = Pagination.DEFAULT_PAGE_SIZE;
         int start = page * pageSize;
@@ -87,22 +89,25 @@ public class CommentServiceImpl implements CommentService {
         comment.setLikeCount(0);
         comment.setStatus(Post.STATUS_PUBLISHED);
         
-        Comment savedComment = commentRepository.save(comment);
+        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PrePersist
+        comment.updateDate();
         
-        Post post = postRepository.findById(dto.getPostId()).orElse(null);
+        commentMapper.insert(comment);
+        
+        Post post = postMapper.selectById(dto.getPostId());
         if (post != null) {
             post.setCommentCount(post.getCommentCount() + 1);
-            postRepository.save(post);
+            postMapper.updateById(post);
         }
         
-        return savedComment.getId();
+        return comment.getId();
     }
 
     @Override
     @Transactional
     public boolean updateComment(Integer commentId, CommentUpdateDTO dto, Integer commenterId) {
         logger.info("开始更新评论 commentId={}, commenterId={}", commentId, commenterId);
-        Comment comment = commentRepository.findById(commentId).orElse(null);
+        Comment comment = commentMapper.selectById(commentId);
         if (comment == null || !comment.getCommenterId().equals(commenterId)) {
             logger.warn("更新评论失败: 评论不存在或无权限 commentId={}, commenterId={}", commentId, commenterId);
             return false;
@@ -110,7 +115,11 @@ public class CommentServiceImpl implements CommentService {
         
         comment.setContent(dto.getContent());
         comment.setStatus(Post.STATUS_PENDING);
-        commentRepository.save(comment);
+        
+        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PreUpdate
+        comment.updateDate();
+        
+        commentMapper.updateById(comment);
         logger.info("更新评论成功: commentId={}, commenterId={}", commentId, commenterId);
         return true;
     }
@@ -118,18 +127,18 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public boolean deleteComment(Integer commentId, Integer commenterId) {
-        Comment comment = commentRepository.findById(commentId).orElse(null);
+        Comment comment = commentMapper.selectById(commentId);
         if (comment == null || !comment.getCommenterId().equals(commenterId)) {
             return false;
         }
         
         comment.setStatus(Post.STATUS_DELETED);
-        commentRepository.save(comment);
+        commentMapper.updateById(comment);
         
-        Post post = postRepository.findById(comment.getPostId()).orElse(null);
+        Post post = postMapper.selectById(comment.getPostId());
         if (post != null && post.getCommentCount() > 0) {
             post.setCommentCount(post.getCommentCount() - 1);
-            postRepository.save(post);
+            postMapper.updateById(post);
         }
         
         return true;
@@ -137,9 +146,19 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public List<UserCommentVO> getUserComments(Integer userId, Integer page) {
-        Pageable pageable = PageRequest.of(page, Pagination.DEFAULT_PAGE_SIZE);
-        Page<Comment> commentsPage = commentRepository.findByCommenterId(userId, pageable);
-        List<Comment> comments = commentsPage.getContent();
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Comment::getCommenterId, userId);
+        queryWrapper.orderByDesc(Comment::getDate);
+        
+        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        
+        int pageSize = Pagination.DEFAULT_PAGE_SIZE;
+        int start = page * pageSize;
+        int end = Math.min(start + pageSize, comments.size());
+        if (start >= comments.size()) {
+            return List.of();
+        }
+        comments = comments.subList(start, end);
         
         if (comments.isEmpty()) {
             return List.of();
@@ -154,7 +173,7 @@ public class CommentServiceImpl implements CommentService {
         Map<Integer, Post> postMap = postIds.stream()
                 .collect(Collectors.toMap(
                         id -> id,
-                        id -> postRepository.findById(id).orElse(null),
+                        postMapper::selectById,
                         (existing, replacement) -> existing
                 ));
         

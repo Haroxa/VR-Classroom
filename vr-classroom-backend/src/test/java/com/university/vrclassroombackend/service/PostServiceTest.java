@@ -3,14 +3,14 @@ package com.university.vrclassroombackend.service;
 import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.PostUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Post;
-import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
 import com.university.vrclassroombackend.module.forum.service.impl.PostServiceImpl;
 import com.university.vrclassroombackend.module.forum.vo.PostDetailVO;
 import com.university.vrclassroombackend.module.forum.vo.PostVO;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserPostVO;
 import com.university.vrclassroombackend.module.space.model.Category;
-import com.university.vrclassroombackend.module.space.repository.CategoryRepository;
+import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,7 +21,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -32,10 +31,10 @@ import static org.mockito.Mockito.*;
 class PostServiceTest {
 
     @Mock
-    private PostRepository postRepository;
+    private PostMapper postMapper;
 
     @Mock
-    private CategoryRepository categoryRepository;
+    private CategoryMapper categoryMapper;
 
     @Mock
     private UserService userService;
@@ -69,25 +68,25 @@ class PostServiceTest {
 
     @Test
     void testGetPublicPosts() {
-        when(postRepository.findByStatus(1)).thenReturn(Arrays.asList(testPost));
+        when(postMapper.selectByStatus(1)).thenReturn(Arrays.asList(testPost));
 
         List<PostVO> result = postService.getPublicPosts(0, null, null);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(postRepository, times(1)).findByStatus(1);
+        verify(postMapper, times(1)).selectByStatus(1);
     }
 
     @Test
     void testGetPostDetail() {
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(postMapper.selectById(1)).thenReturn(testPost);
 
         PostDetailVO result = postService.getPostDetail(1, 1);
 
         assertNotNull(result);
         assertEquals("1", result.getId());
         assertEquals("测试帖子", result.getTitle());
-        verify(postRepository, times(1)).findById(1);
+        verify(postMapper, times(1)).selectById(1);
     }
 
     @Test
@@ -98,13 +97,12 @@ class PostServiceTest {
         dto.setImages(Arrays.asList("new-image.jpg"));
         dto.setLikeCount(0);
 
-        when(postRepository.save(any(Post.class))).thenReturn(testPost);
+        when(postMapper.insert(any(Post.class))).thenReturn(1);
 
         Integer result = postService.createPost(dto, 1);
 
         assertNotNull(result);
-        assertEquals(1, result);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(postMapper, times(1)).insert(any(Post.class));
     }
 
     @Test
@@ -115,14 +113,14 @@ class PostServiceTest {
         dto.setImages(Arrays.asList("updated-image.jpg"));
         dto.setCategoryId(1);
 
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
-        when(postRepository.save(any(Post.class))).thenReturn(testPost);
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        when(postMapper.updateById(any(Post.class))).thenReturn(1);
 
         boolean result = postService.updatePost(1, dto, 1);
 
         assertTrue(result);
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, times(1)).updateById(any(Post.class));
     }
 
     @Test
@@ -131,47 +129,48 @@ class PostServiceTest {
         dto.setTitle("更新后的标题");
 
         testPost.setAuthorId(2);
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(postMapper.selectById(1)).thenReturn(testPost);
 
         boolean result = postService.updatePost(1, dto, 1);
 
         assertFalse(result);
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, never()).save(any(Post.class));
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, never()).updateById(any(Post.class));
     }
 
     @Test
     void testDeletePost() {
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        when(postMapper.updateById(any(Post.class))).thenReturn(1);
 
         boolean result = postService.deletePost(1, 1);
 
         assertTrue(result);
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, times(1)).updateById(any(Post.class));
     }
 
     @Test
     void testDeletePostUnauthorized() {
         testPost.setAuthorId(2);
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(postMapper.selectById(1)).thenReturn(testPost);
 
         boolean result = postService.deletePost(1, 1);
 
         assertFalse(result);
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, never()).save(any(Post.class));
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, never()).updateById(any(Post.class));
     }
 
     @Test
     void testGetUserPosts() {
-        when(postRepository.findByAuthorId(1)).thenReturn(Arrays.asList(testPost));
+        when(postMapper.selectByAuthorId(1)).thenReturn(Arrays.asList(testPost));
 
         List<UserPostVO> result = postService.getUserPosts(1, 0);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(postRepository, times(1)).findByAuthorId(1);
+        verify(postMapper, times(1)).selectByAuthorId(1);
     }
 }
 

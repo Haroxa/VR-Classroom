@@ -1,81 +1,29 @@
 package com.university.vrclassroombackend.module.certificate.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "certificate")
+@TableName("certificate")
 @Data
 public class Certificate {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @Column(nullable = false)
+    @TableField("claim_id")
     private Integer claimId;
     
-    @Column(nullable = false)
+    @TableField("donor_id")
     private Integer donorId;
     
-    @Column(nullable = false)
+    @TableField("certificate_no")
     private String certificateNo;
     
-    @Column(nullable = false)
+    @TableField("certificate_url")
     private String certificateUrl;
     
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT, updateStrategy = FieldStrategy.NEVER)
     private LocalDateTime createdAt;
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
-    public Integer getClaimId() {
-        return claimId;
-    }
-
-    public void setClaimId(Integer claimId) {
-        this.claimId = claimId;
-    }
-
-    public Integer getDonorId() {
-        return donorId;
-    }
-
-    public void setDonorId(Integer donorId) {
-        this.donorId = donorId;
-    }
-
-    public String getCertificateNo() {
-        return certificateNo;
-    }
-
-    public void setCertificateNo(String certificateNo) {
-        this.certificateNo = certificateNo;
-    }
-
-    public String getCertificateUrl() {
-        return certificateUrl;
-    }
-
-    public void setCertificateUrl(String certificateUrl) {
-        this.certificateUrl = certificateUrl;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
 }
 
 

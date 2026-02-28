@@ -1,15 +1,12 @@
 package com.university.vrclassroombackend.module.forum.model;
 
-import jakarta.persistence.*;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-@Entity
-@Table(name = "post")
+@TableName("post")
 @Data
 public class Post {
     public static final int STATUS_DELETED = -1;
@@ -18,25 +15,21 @@ public class Post {
     public static final int STATUS_REJECTED = 2;
     public static final int SUMMARY_LENGTH = 50;
     
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @TableField(value = "created_at", fill = FieldFill.INSERT)
     private LocalDateTime createdAt;
     
-    @UpdateTimestamp
-    @Column(name = "updated_at", nullable = false)
+    @TableField(value = "updated_at", fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime updatedAt;
     
     // 格式化后的创建时间，格式为yyyy-MM-dd HH:mm:ss
-    @Column(name = "date", nullable = false)
+    @TableField("date")
     private String date;
     
-    @PrePersist
-    @PreUpdate
-    protected void updateDate() {
+    // MyBatis-Plus 不支持 @PrePersist 和 @PreUpdate，需要在Service层处理
+    public void updateDate() {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
@@ -47,35 +40,38 @@ public class Post {
         this.date = createdAt.format(formatter);
     }
     
-    @Column(nullable = false)
+    @TableField
     private String title;
     
-    @Column(nullable = false)
+    @TableField
     private String summary;
     
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @TableField
     private String content;
     
-    @ElementCollection
+    // MyBatis-Plus 不直接支持 @ElementCollection，需要使用 TypeHandler 或其他方式处理
+    @TableField(exist = false)
     private List<String> images;
     
-    @Column(nullable = false)
+    @TableField("author_id")
     private Integer authorId;
     
+    @TableField("category_id")
     private Integer categoryId;
     
-    @Column(nullable = false)
+    @TableField("like_count")
     private Integer likeCount = 0;
     
-    @Column(nullable = false)
+    @TableField("share_count")
     private Integer shareCount = 0;
     
-    @Column(nullable = false)
+    @TableField("comment_count")
     private Integer commentCount = 0;
     
-    @Column(nullable = false)
+    @TableField
     private Integer status = 0;
     
+    @TableField("reject_reason")
     private String rejectReason;
 }
 

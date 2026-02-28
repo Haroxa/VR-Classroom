@@ -9,7 +9,7 @@ import uuid
 base_url = "http://localhost:8080/api"
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcxODk3MDQxLCJleHAiOjE3NzE5ODM0NDF9.zjERA3C-ybSj4eegA7-jeszhV9KIQCZ_ZLrHzf17MAiLtS1UhUZPRM1qFia9I8El"
+token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyMjUyMTU5LCJleHAiOjE3NzIzMzg1NTl9.L7gpZL-1rRHIHhgxw1wR8O8CSw_7eXLprDAuW71bQ38"
 
 # 测试结果存储
 test_results = []

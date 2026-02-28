@@ -3,8 +3,8 @@ package com.university.vrclassroombackend.service;
 import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.CommentUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Comment;
-import com.university.vrclassroombackend.module.forum.repository.CommentRepository;
-import com.university.vrclassroombackend.module.forum.repository.PostRepository;
+import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
+import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
 import com.university.vrclassroombackend.module.forum.service.impl.CommentServiceImpl;
 import com.university.vrclassroombackend.module.forum.vo.CommentVO;
 import com.university.vrclassroombackend.module.forum.model.Post;
@@ -20,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -31,10 +30,10 @@ import static org.mockito.Mockito.*;
 class CommentServiceTest {
 
     @Mock
-    private CommentRepository commentRepository;
+    private CommentMapper commentMapper;
 
     @Mock
-    private PostRepository postRepository;
+    private PostMapper postMapper;
 
     @Mock
     private UserService userService;
@@ -50,7 +49,7 @@ class CommentServiceTest {
         testPost = new Post();
         testPost.setId(1);
         testPost.setTitle("测试帖子");
-        testPost.setCommentCount(1); // 设置评论数为1，这样删除评论时会调用postRepository.save
+        testPost.setCommentCount(1); // 设置评论数为1，这样删除评论时会调用postMapper.updateById
 
         testComment = new Comment();
         testComment.setId(1);
@@ -64,13 +63,13 @@ class CommentServiceTest {
 
     @Test
     void testGetPostComments() {
-        when(commentRepository.findByPostId(1)).thenReturn(Arrays.asList(testComment));
+        when(commentMapper.selectByPostId(1)).thenReturn(Arrays.asList(testComment));
 
         List<CommentVO> result = commentService.getPostComments(1, 0);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(commentRepository, times(1)).findByPostId(1);
+        verify(commentMapper, times(1)).selectByPostId(1);
     }
 
     @Test
@@ -79,16 +78,16 @@ class CommentServiceTest {
         dto.setContent("新评论");
         dto.setPostId(1);
 
-        when(commentRepository.save(any(Comment.class))).thenReturn(testComment);
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(commentMapper.insert(any(Comment.class))).thenReturn(1);
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        when(postMapper.updateById(any(Post.class))).thenReturn(1);
 
         Integer result = commentService.createComment(dto, 1);
 
         assertNotNull(result);
-        assertEquals(1, result);
-        verify(commentRepository, times(1)).save(any(Comment.class));
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(commentMapper, times(1)).insert(any(Comment.class));
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, times(1)).updateById(any(Post.class));
     }
 
     @Test
@@ -96,14 +95,14 @@ class CommentServiceTest {
         CommentUpdateDTO dto = new CommentUpdateDTO();
         dto.setContent("更新后的评论");
 
-        when(commentRepository.findById(1)).thenReturn(Optional.of(testComment));
-        when(commentRepository.save(any(Comment.class))).thenReturn(testComment);
+        when(commentMapper.selectById(1)).thenReturn(testComment);
+        when(commentMapper.updateById(any(Comment.class))).thenReturn(1);
 
         boolean result = commentService.updateComment(1, dto, 1);
 
         assertTrue(result);
-        verify(commentRepository, times(1)).findById(1);
-        verify(commentRepository, times(1)).save(any(Comment.class));
+        verify(commentMapper, times(1)).selectById(1);
+        verify(commentMapper, times(1)).updateById(any(Comment.class));
     }
 
     @Test
@@ -112,55 +111,57 @@ class CommentServiceTest {
         dto.setContent("更新后的评论");
 
         testComment.setCommenterId(2);
-        when(commentRepository.findById(1)).thenReturn(Optional.of(testComment));
+        when(commentMapper.selectById(1)).thenReturn(testComment);
 
         boolean result = commentService.updateComment(1, dto, 1);
 
         assertFalse(result);
-        verify(commentRepository, times(1)).findById(1);
-        verify(commentRepository, never()).save(any(Comment.class));
+        verify(commentMapper, times(1)).selectById(1);
+        verify(commentMapper, never()).updateById(any(Comment.class));
     }
 
     @Test
     void testDeleteComment() {
-        when(commentRepository.findById(1)).thenReturn(Optional.of(testComment));
-        when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(commentMapper.selectById(1)).thenReturn(testComment);
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        when(commentMapper.updateById(any(Comment.class))).thenReturn(1);
+        when(postMapper.updateById(any(Post.class))).thenReturn(1);
 
         boolean result = commentService.deleteComment(1, 1);
 
         assertTrue(result);
-        verify(commentRepository, times(1)).findById(1);
-        verify(commentRepository, times(1)).save(any(Comment.class));
-        // postRepository.save会被调用，因为commentCount大于0
-        verify(postRepository, times(1)).findById(1);
-        verify(postRepository, times(1)).save(any(Post.class));
+        verify(commentMapper, times(1)).selectById(1);
+        verify(commentMapper, times(1)).updateById(any(Comment.class));
+        // postMapper.updateById会被调用，因为commentCount大于0
+        verify(postMapper, times(1)).selectById(1);
+        verify(postMapper, times(1)).updateById(any(Post.class));
     }
 
     @Test
     void testDeleteCommentUnauthorized() {
         testComment.setCommenterId(2);
-        when(commentRepository.findById(1)).thenReturn(Optional.of(testComment));
-        // 不需要mock postRepository.findById，因为commentCount为0时不会调用save
-        // when(postRepository.findById(1)).thenReturn(Optional.of(testPost));
+        when(commentMapper.selectById(1)).thenReturn(testComment);
+        // 不需要mock postMapper.selectById，因为commentCount为0时不会调用updateById
+        // when(postMapper.selectById(1)).thenReturn(testPost);
 
         boolean result = commentService.deleteComment(1, 1);
 
         assertFalse(result);
-        verify(commentRepository, times(1)).findById(1);
-        verify(commentRepository, never()).save(any(Comment.class));
-        verify(postRepository, never()).findById(1);
-        verify(postRepository, never()).save(any(Post.class));
+        verify(commentMapper, times(1)).selectById(1);
+        verify(commentMapper, never()).updateById(any(Comment.class));
+        verify(postMapper, never()).selectById(1);
+        verify(postMapper, never()).updateById(any(Post.class));
     }
 
     @Test
     void testGetUserComments() {
-        when(commentRepository.findByCommenterId(1)).thenReturn(Arrays.asList(testComment));
+        when(commentMapper.selectByCommenterId(1)).thenReturn(Arrays.asList(testComment));
 
         List<UserCommentVO> result = commentService.getUserComments(1, 0);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());
-        verify(commentRepository, times(1)).findByCommenterId(1);
+        verify(commentMapper, times(1)).selectByCommenterId(1);
     }
 }
 

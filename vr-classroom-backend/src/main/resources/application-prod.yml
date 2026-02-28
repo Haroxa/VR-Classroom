@@ -3,36 +3,27 @@ spring:
   # 允许循环依赖
   main:
     allow-circular-references: true
-  
+
   # 数据源配置
   datasource:
-    url: ${SPRING_DATASOURCE_URL}
-    username: ${SPRING_DATASOURCE_USERNAME}
-    password: ${SPRING_DATASOURCE_PASSWORD}
-  
-  # JPA配置
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    show-sql: false
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-        format_sql: false
-  
+    url: jdbc:mysql://mysql:3306/vr_classroom?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
   # 热部署配置
   devtools:
     restart:
       enabled: false
     livereload:
       enabled: false
-  
+
   # Redis 配置
   redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    password: ${REDIS_PASSWORD:123456}
-    database: ${REDIS_DATABASE:0}
+    host: redis
+    port: 6379
+    password:
+    database: 0
     timeout: 10000
     lettuce:
       pool:
@@ -48,7 +39,7 @@ logging:
     com.university.vrclassroombackend: info
     org.hibernate.SQL: error
     org.hibernate.type.descriptor.sql.BasicBinder: error
-  
+
 # 服务器配置
 server:
   port: ${SERVER_PORT:8080}
@@ -85,17 +76,3 @@ management:
   endpoint:
     health:
       show-details: never
-
-# RocketMQ 配置
-rocketmq:
-  name-server: ${ROCKETMQ_NAME_SERVER:localhost:9876}
-  producer:
-    group: ${ROCKETMQ_PRODUCER_GROUP:payment-producer-group}
-    send-message-timeout: 3000
-    retry-times-when-send-failed: 2
-    retry-times-when-send-async-failed: 2
-  consumer:
-    group: ${ROCKETMQ_CONSUMER_GROUP:payment-consumer-group}
-    consume-thread-min: 20
-    consume-thread-max: 64
-    consume-message-batch-max-size: 1
