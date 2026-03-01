@@ -33,6 +33,11 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             return body;
         }
         
+        // 如果返回类型是 String，需要特殊处理以避免类型转换错误
+        if (body instanceof String) {
+            return body;
+        }
+        
         // 否则包装成成功响应
         return ApiResponse.success(body);
     }

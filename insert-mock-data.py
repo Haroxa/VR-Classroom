@@ -8,7 +8,7 @@
 import pymysql
 from pymysql import Error
 
-is_server = False
+is_server = True
 host = '10.86.136.242' if is_server else 'localhost'
 port = 3307 if is_server else 3306
 password = 'password' if is_server else '123456'

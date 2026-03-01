@@ -22,6 +22,12 @@ public class CommonController {
     @Autowired
     private OssUtil ossUtil;
 
+    /**
+     * 获取OSS签名
+     * 
+     * @deprecated OSS功能暂时弃用
+     */
+    @Deprecated
     @GetMapping("/oss/sign")
     public ResponseEntity<?> getOssSign() {
         try {

@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.space.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.university.vrclassroombackend.module.space.model.Campus;
 import com.university.vrclassroombackend.module.space.model.Building;
 import com.university.vrclassroombackend.module.space.model.ClassRoom;
@@ -33,19 +34,29 @@ public class SpaceServiceImpl implements SpaceService {
     @Override
     @Deprecated
     public List<Campus> getCampuses() {
-        return campusMapper.selectByActiveTrueOrderBySortOrderAsc();
+        LambdaQueryWrapper<Campus> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Campus::getActive, true)
+                   .orderByAsc(Campus::getSortOrder);
+        return campusMapper.selectList(queryWrapper);
     }
 
     @Override
     @Deprecated
     public List<Building> getBuildings(Integer campusId) {
-        return buildingMapper.selectByCampusIdAndActiveTrueOrderBySortOrderAsc(campusId);
+        LambdaQueryWrapper<Building> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Building::getCampusId, campusId)
+                   .eq(Building::getActive, true)
+                   .orderByAsc(Building::getSortOrder);
+        return buildingMapper.selectList(queryWrapper);
     }
 
     @Override
     @Deprecated
     public List<ClassRoom> getClassrooms(Integer buildingId) {
-        return classRoomMapper.selectByBuildingIdAndActiveTrue(buildingId);
+        LambdaQueryWrapper<ClassRoom> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ClassRoom::getBuildingId, buildingId)
+                   .eq(ClassRoom::getActive, true);
+        return classRoomMapper.selectList(queryWrapper);
     }
 
     @Override

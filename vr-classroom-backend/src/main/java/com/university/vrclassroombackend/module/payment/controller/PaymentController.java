@@ -14,7 +14,10 @@ import java.util.stream.Collectors;
 /**
  * 支付控制器
  * 用于处理支付相关的 HTTP 请求
+ * 
+ * @deprecated 支付功能已整合到订单模块，请使用订单模块相关接口
  */
+@Deprecated
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {
