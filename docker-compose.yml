@@ -5,7 +5,7 @@ services:
     image: eclipse-temurin:17-jre-alpine
     container_name: vr-classroom-backend
     ports:
-      - "8080:8080"
+      - "8082:8080"  # 修改端口，避免与 zhilian-gateway(8080) 冲突
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro  # 添加 :ro 只读
     environment:
@@ -81,7 +81,7 @@ services:
     image: redis:7.0-alpine  # 使用 alpine 版本更轻量
     container_name: vr-classroom-redis
     ports:
-      - "6379:6379"
+      - "6380:6379"  # 修改端口，避免与其他可能的 Redis 实例冲突
     volumes:
       - redis-data:/data
     # 健康检查

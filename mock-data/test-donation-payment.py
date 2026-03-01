@@ -7,9 +7,12 @@ import uuid
 
 # 基础URL
 base_url = "http://localhost:8080/api"
+server_url = "http://10.86.136.242:8082/api"
+is_server = True
+url = server_url if is_server else base_url
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyMjUyMTU5LCJleHAiOjE3NzIzMzg1NTl9.L7gpZL-1rRHIHhgxw1wR8O8CSw_7eXLprDAuW71bQ38"
+token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyMzI0MDc5LCJleHAiOjE3NzI0MTA0Nzl9.7A2mFN59kXE_aB6ySxMGMkLqsBjBu1InO9lkTGbTnh0"
 
 # 测试结果存储
 test_results = []
@@ -24,22 +27,22 @@ def test_api(method, endpoint, body=None, require_auth=False, use_params=False):
         if method == "GET":
             if body:
                 params = body
-                response = requests.get(f"{base_url}{endpoint}", params=params, headers=headers)
+                response = requests.get(f"{url}{endpoint}", params=params, headers=headers)
             else:
-                response = requests.get(f"{base_url}{endpoint}", headers=headers)
+                response = requests.get(f"{url}{endpoint}", headers=headers)
         elif method == "POST":
             if use_params and body:
                 # 使用查询参数
-                print(f"发送 POST 请求到 {base_url}{endpoint}，参数: {body}")
-                response = requests.post(f"{base_url}{endpoint}", params=body, headers=headers)
+                print(f"发送 POST 请求到 {url}{endpoint}，参数: {body}")
+                response = requests.post(f"{url}{endpoint}", params=body, headers=headers)
             else:
                 # 使用 JSON 请求体
-                print(f"发送 POST 请求到 {base_url}{endpoint}，请求体: {body}")
-                response = requests.post(f"{base_url}{endpoint}", json=body, headers=headers)
+                print(f"发送 POST 请求到 {url}{endpoint}，请求体: {body}")
+                response = requests.post(f"{url}{endpoint}", json=body, headers=headers)
         elif method == "PUT":
-            response = requests.put(f"{base_url}{endpoint}", json=body, headers=headers)
+            response = requests.put(f"{url}{endpoint}", json=body, headers=headers)
         elif method == "DELETE":
-            response = requests.delete(f"{base_url}{endpoint}", headers=headers)
+            response = requests.delete(f"{url}{endpoint}", headers=headers)
         else:
             print(f"❌ 不支持的方法: {method}")
             return

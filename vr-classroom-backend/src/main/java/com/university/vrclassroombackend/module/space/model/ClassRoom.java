@@ -12,6 +12,9 @@ public class ClassRoom {
     @TableField("building_id")
     private Integer buildingId;
     
+    @TableField("room_number")
+    private String roomNumber;
+    
     @TableField
     private String name;
     
@@ -21,6 +24,12 @@ public class ClassRoom {
     
     @TableField("vr_model_url")
     private String vrModelUrl;
+    
+    @TableField("total_rows")
+    private Integer totalRows = 0;
+    
+    @TableField("total_cols")
+    private Integer totalCols = 0;
     
     @TableField("seat_count")
     private Integer seatCount;

@@ -8,11 +8,14 @@ import json
 
 # API基础URL
 BASE_URL = "http://localhost:8080/api"
+SERVER_URL = "http://10.86.136.242:8082/api"
+IS_SERVER = True
+URL = SERVER_URL if IS_SERVER else BASE_URL
 
 # 测试获取帖子列表
 print("=== 测试获取帖子列表 ===")
 def test_get_posts():
-    url = f"{BASE_URL}/admin/posts"
+    url = f"{URL}/admin/posts"      
     params = {
         "page": 0,
         "status": 1,  # 已发布
@@ -34,7 +37,7 @@ def test_get_posts():
 # 测试获取评论列表
 print("\n=== 测试获取评论列表 ===")
 def test_get_comments():
-    url = f"{BASE_URL}/admin/comments"
+    url = f"{URL}/admin/comments"      
     params = {
         "page": 0,
         "status": 1  # 已发布
@@ -54,7 +57,7 @@ def test_get_comments():
 # 测试审核帖子
 print("\n=== 测试审核帖子 ===")
 def test_audit_post(post_id, status, reject_reason=None):
-    url = f"{BASE_URL}/admin/posts/{post_id}"
+    url = f"{URL}/admin/posts/{post_id}"      
     data = {
         "status": status,
         "rejectReason": reject_reason
@@ -74,7 +77,7 @@ def test_audit_post(post_id, status, reject_reason=None):
 # 测试审核评论
 print("\n=== 测试审核评论 ===")
 def test_audit_comment(comment_id, status, reject_reason=None):
-    url = f"{BASE_URL}/admin/comments/{comment_id}"
+    url = f"{URL}/admin/comments/{comment_id}"      
     data = {
         "status": status,
         "rejectReason": reject_reason

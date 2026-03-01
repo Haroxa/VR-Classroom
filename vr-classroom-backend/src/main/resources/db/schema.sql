@@ -3,6 +3,9 @@
 -- 只包含表结构创建，不包含数据插入
 -- 数据插入操作请使用 mock-data/data.sql 文件
 
+-- 选择数据库
+USE vr_classroom;
+
 -- 设置外键检查
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -107,10 +110,13 @@ CREATE TABLE IF NOT EXISTS building (
 CREATE TABLE IF NOT EXISTS classroom (
     id INT PRIMARY KEY AUTO_INCREMENT,
     building_id INT NOT NULL,
-    name VARCHAR(50) NOT NULL,
+    room_number VARCHAR(50) NOT NULL,
+    name VARCHAR(50),
     floor INT,
     description TEXT,
     vr_model_url VARCHAR(255),
+    total_rows INT NOT NULL DEFAULT 0,
+    total_cols INT NOT NULL DEFAULT 0,
     seat_count INT NOT NULL,
     claimed_count INT NOT NULL DEFAULT 0,
     active BOOLEAN NOT NULL DEFAULT TRUE,
@@ -122,17 +128,44 @@ CREATE TABLE IF NOT EXISTS classroom (
 -- 创建座位表
 CREATE TABLE IF NOT EXISTS seat (
     id INT PRIMARY KEY AUTO_INCREMENT,
-    classroom_id INT NOT NULL,
-    seat_row VARCHAR(20) NOT NULL,
-    seat_column VARCHAR(20) NOT NULL,
+    room_id INT NOT NULL,
+    `row` INT NOT NULL,
+    `col` INT NOT NULL,
     status INT NOT NULL DEFAULT 0,
+    version INT NOT NULL DEFAULT 0,
     donor_id INT,
     claimed_at DATETIME,
     reserved_at DATETIME,
     reserve_expire_at DATETIME,
-    FOREIGN KEY (classroom_id) REFERENCES classroom(id),
-    INDEX idx_seat_classroom_id (classroom_id),
+    FOREIGN KEY (room_id) REFERENCES classroom(id),
+    INDEX idx_seat_room_id (room_id),
     INDEX idx_seat_status (status)
+);
+
+-- 创建订单表
+CREATE TABLE IF NOT EXISTS `order` (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    amount INT NOT NULL COMMENT '订单总金额(单位：分)',
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING(待支付), PAID(已支付), CANCELLED(已取消), REFUNDED(已退款)',
+    expires_at DATETIME NOT NULL COMMENT '订单超时时间（创建时间+10分钟）',
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES user(id),
+    INDEX idx_order_user_id (user_id),
+    INDEX idx_order_status (status),
+    INDEX idx_order_created_at (created_at)
+);
+
+-- 创建订单座位关联表
+CREATE TABLE IF NOT EXISTS order_seat (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    order_id BIGINT NOT NULL,
+    seat_id INT NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES `order`(id),
+    FOREIGN KEY (seat_id) REFERENCES seat(id),
+    INDEX idx_order_seat_order_id (order_id),
+    INDEX idx_order_seat_seat_id (seat_id)
 );
 
 -- 创建捐赠订单表

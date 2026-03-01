@@ -5,6 +5,9 @@ import json
 
 # 基础URL
 base_url = "http://localhost:8080/api"
+server_url = "http://10.86.136.242:8082/api"
+is_server = True
+url = server_url if is_server else base_url
 
 # 测试用户数据
 test_users = [
@@ -36,7 +39,7 @@ test_users = [
 
 # 用户登录
 def login_user(phone):
-    response = requests.post(f"{base_url}/users/login", json={"phone": phone})
+    response = requests.post(f"{url}/users/login", json={"phone": phone})
     if response.status_code == 200:
         data = response.json().get("data")
         return data
@@ -46,7 +49,7 @@ def login_user(phone):
 
 # 用户创建
 def create_user(user_data):
-    response = requests.post(f"{base_url}/users", json=user_data)
+    response = requests.post(f"{url}/users", json=user_data)
     if response.status_code == 200:
         print(f"用户 {user_data['name']} 创建成功")
     else:

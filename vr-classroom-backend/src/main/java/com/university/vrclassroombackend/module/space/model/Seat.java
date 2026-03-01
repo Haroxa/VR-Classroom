@@ -10,17 +10,21 @@ public class Seat {
     @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @TableField("classroom_id")
-    private Integer classroomId;
+    @TableField("room_id")
+    private Integer roomId;
     
-    @TableField("seat_row")
-    private String seatRow;
+    @TableField("`row`")
+    private Integer row;
     
-    @TableField("seat_column")
-    private String seatColumn;
+    @TableField("`col`")
+    private Integer col;
     
     @TableField
     private Integer status = 0;
+    
+    @Version
+    @TableField
+    private Integer version = 0;
     
     @TableField("donor_id")
     private Integer donorId;
