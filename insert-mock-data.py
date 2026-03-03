@@ -197,37 +197,41 @@ def insert_mock_data():
         print(f"插入教室数据: {cursor.rowcount} 条")
 
         print("\n--- 插入座位数据 ---")
-        
+        # status: 0-过道/不可用, 1-可选, 2-锁定, 3-已购买
+
         seats = []
+        # 101教室第1排: 4个已购买(status=3), 1个过道(status=0)
         seat_data = [
-            (1, 1, 1, 1, 0, 1, '2026-02-24 09:00:00'),
-            (1, 1, 2, 1, 0, 2, '2026-02-24 10:00:00'),
-            (1, 1, 3, 0, 0, None, None),
-            (1, 1, 4, 1, 0, 3, '2026-02-24 11:00:00'),
-            (1, 1, 5, 1, 0, 1, '2026-02-24 12:00:00'),
+            (1, 1, 1, 3, 1, 1, '2026-02-24 09:00:00'),  # 已购买
+            (1, 1, 2, 3, 1, 2, '2026-02-24 10:00:00'),  # 已购买
+            (1, 1, 3, 0, 0, None, None),                # 过道
+            (1, 1, 4, 3, 1, 3, '2026-02-24 11:00:00'),  # 已购买
+            (1, 1, 5, 3, 1, 1, '2026-02-24 12:00:00'),  # 已购买
         ]
         seats.extend(seat_data)
-        
+
+        # 101教室第2-10排: 全部可选(status=1)
         for row in range(2, 11):
             for col in range(1, 6):
-                seats.append((1, row, col, 0, 0, None, None))
-        
+                seats.append((1, row, col, 1, 0, None, None))
+
         cursor.executemany(
             "INSERT INTO seat (room_id, `row`, `col`, status, version, donor_id, claimed_at) VALUES (%s, %s, %s, %s, %s, %s, %s)",
             seats
         )
         print(f"插入101教室座位数据: {cursor.rowcount} 条")
 
+        # 102教室: 3个已购买(status=3), 其余可选(status=1)
         seats_102 = [
-            (2, 1, 1, 1, 0, 1, '2026-02-25 09:00:00'),
-            (2, 1, 2, 1, 0, 2, '2026-02-25 10:00:00'),
-            (2, 1, 3, 1, 0, 3, '2026-02-25 11:00:00'),
-            (2, 2, 1, 0, 0, None, None),
-            (2, 2, 2, 0, 0, None, None),
-            (2, 2, 3, 0, 0, None, None),
-            (2, 3, 1, 0, 0, None, None),
-            (2, 3, 2, 0, 0, None, None),
-            (2, 3, 3, 0, 0, None, None),
+            (2, 1, 1, 3, 1, 1, '2026-02-25 09:00:00'),  # 已购买
+            (2, 1, 2, 3, 1, 2, '2026-02-25 10:00:00'),  # 已购买
+            (2, 1, 3, 3, 1, 3, '2026-02-25 11:00:00'),  # 已购买
+            (2, 2, 1, 1, 0, None, None),                # 可选
+            (2, 2, 2, 1, 0, None, None),                # 可选
+            (2, 2, 3, 1, 0, None, None),                # 可选
+            (2, 3, 1, 1, 0, None, None),                # 可选
+            (2, 3, 2, 1, 0, None, None),                # 可选
+            (2, 3, 3, 1, 0, None, None),                # 可选
         ]
         cursor.executemany(
             "INSERT INTO seat (room_id, `row`, `col`, status, version, donor_id, claimed_at) VALUES (%s, %s, %s, %s, %s, %s, %s)",

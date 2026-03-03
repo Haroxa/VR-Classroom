@@ -7,7 +7,11 @@ import java.time.LocalDateTime;
 @TableName("`order`")
 @Data
 public class Order {
-    @TableId(type = IdType.AUTO)
+    /**
+     * 订单ID
+     * 使用雪花算法生成，确保全局唯一
+     */
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
     @TableField("user_id")

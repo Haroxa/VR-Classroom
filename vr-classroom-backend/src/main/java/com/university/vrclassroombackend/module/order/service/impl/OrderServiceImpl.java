@@ -137,9 +137,13 @@ public class OrderServiceImpl implements OrderService {
             for (SeatLockDTO seatLockDTO : seatList) {
                 Integer seatId = Integer.parseInt(seatLockDTO.getId());
                 Seat seat = seatMapper.selectById(seatId);
-                
+
                 if (seat == null) {
                     throw new BusinessException(404, "座位不存在: " + seatLockDTO.getId());
+                }
+                // 座位状态: 0-过道/不可用, 1-可选, 2-锁定, 3-已购买
+                if (seat.getStatus() == 0) {
+                    throw new BusinessException(400, "该座位为过道，不可选择");
                 }
                 if (seat.getStatus() != 1) {
                     throw new BusinessException(409, "座位已被占用");

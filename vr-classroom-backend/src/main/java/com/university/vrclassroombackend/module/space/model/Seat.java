@@ -21,9 +21,16 @@ public class Seat {
     
     @TableField
     private Integer price = 10000;
-    
+
+    /**
+     * 座位状态
+     * 0 - 过道/不可用
+     * 1 - 可选
+     * 2 - 锁定
+     * 3 - 已购买
+     */
     @TableField
-    private Integer status = 0;
+    private Integer status = 1;
     
     @Version
     @TableField
