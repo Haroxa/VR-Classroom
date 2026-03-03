@@ -20,6 +20,9 @@ public class Seat {
     private Integer col;
     
     @TableField
+    private Integer price = 10000;
+    
+    @TableField
     private Integer status = 0;
     
     @Version
@@ -38,7 +41,3 @@ public class Seat {
     @TableField("reserve_expire_at")
     private LocalDateTime reserveExpireAt;
 }
-
-
-
-

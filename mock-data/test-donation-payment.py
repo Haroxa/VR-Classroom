@@ -8,11 +8,11 @@ import uuid
 # 基础URL
 base_url = "http://localhost:8080/api"
 server_url = "http://10.86.136.242:8082/api"
-is_server = True
+is_server = False
 url = server_url if is_server else base_url
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyMzI0MDc5LCJleHAiOjE3NzI0MTA0Nzl9.7A2mFN59kXE_aB6ySxMGMkLqsBjBu1InO9lkTGbTnh0"
+token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyNTAyNzczLCJleHAiOjE3NzI1ODkxNzN9.6XyemPm957Zl4UVQq_Z4HgDA95fQQTrNUey3yn76bkc90r11nJDgO2f2KzetQ_ga"
 
 # 测试结果存储
 test_results = []

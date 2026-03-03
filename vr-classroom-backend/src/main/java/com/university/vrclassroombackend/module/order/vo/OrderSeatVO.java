@@ -3,11 +3,9 @@ package com.university.vrclassroombackend.module.order.vo;
 import lombok.Data;
 
 @Data
-public class SeatVO {
-    private String id;
+public class OrderSeatVO {
+    private Integer id;
     private Integer row;
     private Integer col;
-    private Integer price;
-    private Integer status;
-    private Integer version;
+    private String lookPrice;
 }

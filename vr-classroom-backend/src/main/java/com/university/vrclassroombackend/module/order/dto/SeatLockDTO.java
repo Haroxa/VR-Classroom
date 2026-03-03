@@ -5,5 +5,6 @@ import lombok.Data;
 @Data
 public class SeatLockDTO {
     private String id;
+    private Integer price;
     private Integer version;
 }

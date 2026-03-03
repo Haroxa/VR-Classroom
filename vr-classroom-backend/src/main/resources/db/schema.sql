@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS user (
     name VARCHAR(50) NOT NULL,
     avatar VARCHAR(200) NOT NULL,
     college_id VARCHAR(10) NOT NULL,
-    verify_status INT NOT NULL DEFAULT 0
+    verify_status INT NOT NULL DEFAULT 0 COMMENT '认证状态：0-未认证，1-审核中，2-已认证'
 );
 
 -- 创建帖子表
@@ -131,6 +131,7 @@ CREATE TABLE IF NOT EXISTS seat (
     room_id INT NOT NULL,
     `row` INT NOT NULL,
     `col` INT NOT NULL,
+    price INT NOT NULL DEFAULT 10000 COMMENT '座位价格(单位：分)',
     status INT NOT NULL DEFAULT 0,
     version INT NOT NULL DEFAULT 0,
     donor_id INT,
@@ -146,6 +147,9 @@ CREATE TABLE IF NOT EXISTS seat (
 CREATE TABLE IF NOT EXISTS `order` (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     user_id INT NOT NULL,
+    campus_id INT COMMENT '校区ID',
+    building_id INT COMMENT '教学楼ID',
+    room_id INT COMMENT '教室ID',
     amount INT NOT NULL COMMENT '订单总金额(单位：分)',
     status VARCHAR(20) NOT NULL DEFAULT 'PENDING' COMMENT 'PENDING(待支付), PAID(已支付), CANCELLED(已取消), REFUNDED(已退款)',
     expires_at DATETIME NOT NULL COMMENT '订单超时时间（创建时间+10分钟）',
@@ -153,6 +157,9 @@ CREATE TABLE IF NOT EXISTS `order` (
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES user(id),
     INDEX idx_order_user_id (user_id),
+    INDEX idx_order_campus_id (campus_id),
+    INDEX idx_order_building_id (building_id),
+    INDEX idx_order_room_id (room_id),
     INDEX idx_order_status (status),
     INDEX idx_order_created_at (created_at)
 );

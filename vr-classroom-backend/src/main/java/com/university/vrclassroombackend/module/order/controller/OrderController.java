@@ -5,6 +5,7 @@ import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.order.dto.CreateOrderDTO;
 import com.university.vrclassroombackend.module.order.dto.UpdateOrderDTO;
 import com.university.vrclassroombackend.module.order.service.OrderService;
+import com.university.vrclassroombackend.module.order.vo.OrderListVO;
 import com.university.vrclassroombackend.module.order.vo.OrderVO;
 import com.university.vrclassroombackend.module.order.vo.RoomSeatVO;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -49,7 +51,7 @@ public class OrderController {
             }
 
             OrderVO orderVO = orderService.createOrder(userId, createOrderDTO);
-            logger.info("订单创建成功: orderId={}, userId={}", orderVO.getId(), userId);
+            logger.info("订单创建成功: orderId={}, userId={}", orderVO.getOrderId(), userId);
             return ResponseEntity.ok().body(ApiResponse.success(orderVO));
         } catch (Exception e) {
             logger.error("创建订单失败", e);
@@ -95,6 +97,28 @@ public class OrderController {
             return ResponseEntity.ok().body(ApiResponse.success(new HashMap<>()));
         } catch (Exception e) {
             logger.error("模拟支付回调失败", e);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/orders")
+    public ResponseEntity<?> getOrderList(jakarta.servlet.http.HttpServletRequest request,
+                                          @RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer size) {
+        try {
+            Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+            if (userId == null) {
+                logger.warn("查询订单列表失败: 未认证");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                        .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+            }
+
+            List<OrderListVO> orderList = orderService.getOrderList(userId, page, size);
+            logger.info("查询订单列表成功: userId={}, page={}, size={}, count={}", userId, page, size, orderList.size());
+            return ResponseEntity.ok().body(ApiResponse.success(orderList));
+        } catch (Exception e) {
+            logger.error("查询订单列表失败", e);
             return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR)
                     .body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, e.getMessage()));
         }

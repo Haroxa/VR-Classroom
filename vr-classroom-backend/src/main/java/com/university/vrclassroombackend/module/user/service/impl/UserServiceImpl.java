@@ -70,6 +70,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
+    public User updateUser(User user) {
+        userMapper.updateById(user);
+        return user;
+    }
+
+    @Override
     public UserProfileVO getUserProfile(Integer userId) {
         User user = userMapper.selectById(userId);
         if (user == null) {

@@ -63,8 +63,8 @@ wechat:
   appId: ${WECHAT_APP_ID}
   appSecret: ${WECHAT_APP_SECRET}
   code2SessionUrl: https://api.weixin.qq.com/sns/jscode2session
-
-
+  accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token
+  phoneNumberUrl: https://api.weixin.qq.com/wxa/business/getuserphonenumber
 
 # Actuator 配置
 management:

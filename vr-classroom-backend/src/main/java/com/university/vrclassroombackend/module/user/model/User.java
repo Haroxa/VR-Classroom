@@ -25,7 +25,7 @@ public class User {
     private String collegeId;
     
     @TableField("verify_status")
-    private Integer verifyStatus = 0;
+    private Integer verifyStatus = 0; // 认证状态：0-未认证，1-审核中，2-已认证
 }
 
 

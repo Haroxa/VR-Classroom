@@ -1,6 +1,7 @@
 package com.university.vrclassroombackend.module.order.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.exception.BusinessException;
 import com.university.vrclassroombackend.module.order.dto.CreateOrderDTO;
 import com.university.vrclassroombackend.module.order.dto.SeatLockDTO;
@@ -10,6 +11,8 @@ import com.university.vrclassroombackend.module.order.mapper.OrderSeatMapper;
 import com.university.vrclassroombackend.module.order.model.Order;
 import com.university.vrclassroombackend.module.order.model.OrderSeat;
 import com.university.vrclassroombackend.module.order.service.OrderService;
+import com.university.vrclassroombackend.module.order.vo.OrderListVO;
+import com.university.vrclassroombackend.module.order.vo.OrderSeatVO;
 import com.university.vrclassroombackend.module.order.vo.OrderVO;
 import com.university.vrclassroombackend.module.order.vo.RoomSeatVO;
 import com.university.vrclassroombackend.module.order.vo.SeatVO;
@@ -38,7 +41,6 @@ public class OrderServiceImpl implements OrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-    private static final int SEAT_PRICE = 100;
     private static final int ORDER_EXPIRE_MINUTES = 10;
     private static final String ORDER_CACHE_PREFIX = "order:";
     private static final String SEAT_LOCK_PREFIX = "seat:lock:";
@@ -95,6 +97,7 @@ public class OrderServiceImpl implements OrderService {
             seatVO.setId(seat.getId().toString());
             seatVO.setRow(seat.getRow());
             seatVO.setCol(seat.getCol());
+            seatVO.setPrice(seat.getPrice());
             seatVO.setStatus(seat.getStatus());
             seatVO.setVersion(seat.getVersion());
             seatVOList.add(seatVO);
@@ -144,9 +147,12 @@ public class OrderServiceImpl implements OrderService {
                 if (!seat.getVersion().equals(seatLockDTO.getVersion())) {
                     throw new BusinessException(409, "座位状态已更新，请刷新页面重新选择");
                 }
+                if (seatLockDTO.getPrice() == null || !seatLockDTO.getPrice().equals(seat.getPrice())) {
+                    throw new BusinessException(400, "座位价格异常，请刷新页面重新选择");
+                }
 
                 seatsToLock.add(seat);
-                totalAmount += SEAT_PRICE;
+                totalAmount += seat.getPrice();
             }
 
             for (Seat seat : seatsToLock) {
@@ -158,6 +164,9 @@ public class OrderServiceImpl implements OrderService {
 
             Order order = new Order();
             order.setUserId(userId);
+            order.setCampusId(createOrderDTO.getCampusId());
+            order.setBuildingId(createOrderDTO.getBuildingId());
+            order.setRoomId(createOrderDTO.getRoomId());
             order.setAmount(totalAmount);
             order.setStatus("PENDING");
             order.setExpiresAt(LocalDateTime.now().plusMinutes(ORDER_EXPIRE_MINUTES));
@@ -355,10 +364,73 @@ public class OrderServiceImpl implements OrderService {
 
     private OrderVO convertToOrderVO(Order order) {
         OrderVO orderVO = new OrderVO();
-        orderVO.setId(order.getId().toString());
-        orderVO.setAmount(order.getAmount());
-        orderVO.setStatus(order.getStatus());
-        orderVO.setExpiresAt(order.getExpiresAt().format(DATE_TIME_FORMATTER));
+        orderVO.setOrderId(order.getId().toString());
         return orderVO;
+    }
+
+    @Override
+    public List<OrderListVO> getOrderList(Integer userId, Integer page, Integer size) {
+        // 设置默认分页参数
+        if (page == null || page < 1) {
+            page = 1;
+        }
+        if (size == null || size < 1) {
+            size = 10;
+        }
+        if (size > 100) {
+            size = 100; // 限制最大分页大小
+        }
+
+        Page<Order> pageParam = new Page<>(page, size);
+        LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Order::getUserId, userId)
+                   .orderByDesc(Order::getCreatedAt);
+        
+        Page<Order> orderPage = orderMapper.selectPage(pageParam, queryWrapper);
+        List<Order> orders = orderPage.getRecords();
+        
+        List<OrderListVO> result = new ArrayList<>();
+        for (Order order : orders) {
+            OrderListVO vo = convertToOrderListVO(order);
+            result.add(vo);
+        }
+        
+        return result;
+    }
+
+    private OrderListVO convertToOrderListVO(Order order) {
+        OrderListVO vo = new OrderListVO();
+        vo.setId(order.getId());
+        vo.setCampusId(order.getCampusId());
+        vo.setBuildingId(order.getBuildingId());
+        vo.setRoomId(order.getRoomId());
+        vo.setAmount(order.getAmount());
+        vo.setStatus(order.getStatus());
+        vo.setExpiresAt(order.getExpiresAt() != null ? order.getExpiresAt().format(DATE_TIME_FORMATTER) : null);
+        vo.setCreatedAt(order.getCreatedAt() != null ? order.getCreatedAt().format(DATE_TIME_FORMATTER) : null);
+        vo.setUpdatedAt(order.getUpdatedAt() != null ? order.getUpdatedAt().format(DATE_TIME_FORMATTER) : null);
+        
+        // 查询订单关联的座位
+        LambdaQueryWrapper<OrderSeat> orderSeatQuery = new LambdaQueryWrapper<>();
+        orderSeatQuery.eq(OrderSeat::getOrderId, order.getId());
+        List<OrderSeat> orderSeats = orderSeatMapper.selectList(orderSeatQuery);
+        
+        List<OrderSeatVO> seatList = new ArrayList<>();
+        for (OrderSeat orderSeat : orderSeats) {
+            Seat seat = seatMapper.selectById(orderSeat.getSeatId());
+            if (seat != null) {
+                OrderSeatVO seatVO = new OrderSeatVO();
+                seatVO.setId(seat.getId());
+                seatVO.setRow(seat.getRow());
+                seatVO.setCol(seat.getCol());
+                // 将价格转换为元并格式化为字符串
+                double priceYuan = seat.getPrice() / 100.0;
+                seatVO.setLookPrice(String.format("%.2f", priceYuan));
+                seatList.add(seatVO);
+            }
+        }
+        vo.setSeatList(seatList);
+        
+        return vo;
     }
 }

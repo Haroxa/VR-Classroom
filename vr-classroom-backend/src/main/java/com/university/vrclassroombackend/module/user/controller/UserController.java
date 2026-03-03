@@ -52,71 +52,118 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginDTO dto) {
         try {
-            User user = userService.getUserByPhone(dto.getPhone());
-            if (user == null) {
-                logger.warn("登录失败: 用户不存在 phone={}", dto.getPhone());
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.USER_NOT_FOUND));
+            String loginCode = dto.getLoginCode();
+            String phoneCode = dto.getPhoneCode();
+            
+            if (loginCode == null || loginCode.isEmpty()) {
+                logger.warn("登录失败: 缺少 loginCode 参数");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 loginCode 参数"));
             }
             
-            String token = jwtUtil.generateToken(user.getId());
-            
-            Map<String, Object> data = new HashMap<>();
-            data.put("token", token);
-            data.put("user", userService.getUserProfile(user.getId()));
-            
-            logger.info("用户登录成功: userId={}, phone={}", user.getId(), dto.getPhone());
-            return ResponseEntity.ok().body(ApiResponse.success(data));
-        } catch (Exception e) {
-            logger.error("登录失败: phone={}", dto.getPhone(), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.LOGIN_FAILED));
-        }
-    }
-    
-    @PostMapping("/wechat/login")
-    public ResponseEntity<?> wechatLogin(@RequestBody Map<String, String> request) {
-        try {
-            String code = request.get("code");
-            if (code == null || code.isEmpty()) {
-                logger.warn("微信登录失败: 缺少 code 参数");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 code 参数"));
+            if (phoneCode == null || phoneCode.isEmpty()) {
+                logger.warn("登录失败: 缺少 phoneCode 参数");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 phoneCode 参数"));
             }
             
-            // 调用微信接口，使用 code 换取 openId 和 sessionKey
-            Map<String, String> wechatResult = wechatUtil.getOpenIdAndSessionKey(code);
+            Map<String, String> wechatResult = wechatUtil.getOpenIdAndSessionKey(loginCode);
             String openId = wechatResult.get("openId");
             if (openId == null || openId.isEmpty()) {
-                logger.warn("微信登录失败: 获取 openId 失败");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "微信登录失败: 获取 openId 失败"));
+                logger.warn("登录失败: 获取 openId 失败");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "登录失败: 获取 openId 失败"));
             }
-            logger.info("微信登录成功获取 openId: {}", openId);
+            logger.info("登录成功获取 openId: {}", openId);
             
-            // 根据 openId 查找用户
+            String phone = wechatUtil.getPhoneNumber(phoneCode);
+            if (phone == null || phone.isEmpty()) {
+                logger.warn("登录失败: 获取手机号失败");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "登录失败: 获取手机号失败"));
+            }
+            logger.info("登录成功获取手机号: {}", phone);
+            
             User user = userService.getUserByOpenId(openId);
             if (user == null) {
-                // 如果用户不存在，创建新用户
                 user = new User();
                 user.setOpenId(openId);
-                user.setName("微信用户");
-                user.setAvatar("assets/default_avatar.png");
+                user.setPhone(phone);
+                if (dto.getNickName() != null && !dto.getNickName().isEmpty()) {
+                    user.setName(dto.getNickName());
+                } else {
+                    user.setName("微信用户" + phone.substring(7));
+                }
+                if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().isEmpty()) {
+                    user.setAvatar(dto.getAvatarUrl());
+                } else {
+                    user.setAvatar("assets/default_avatar.png");
+                }
                 user.setVerifyStatus(0);
                 user = userService.saveUser(user);
-                logger.info("微信登录成功: 新用户 userId={}, openId={}", user.getId(), openId);
+                logger.info("登录成功: 新用户 userId={}, openId={}, phone={}, name={}", user.getId(), openId, phone, user.getName());
             } else {
-                logger.info("微信登录成功: 老用户 userId={}, openId={}", user.getId(), openId);
+                if (!phone.equals(user.getPhone())) {
+                    user.setPhone(phone);
+                }
+                if (dto.getNickName() != null && !dto.getNickName().isEmpty() && !"微信用户".equals(user.getName())) {
+                    user.setName(dto.getNickName());
+                }
+                if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().isEmpty() && "assets/default_avatar.png".equals(user.getAvatar())) {
+                    user.setAvatar(dto.getAvatarUrl());
+                }
+                userService.updateUser(user);
+                logger.info("登录成功: 老用户 userId={}, openId={}, phone={}", user.getId(), openId, phone);
             }
             
-            // 生成 JWT token
             String token = jwtUtil.generateToken(user.getId());
             
-            // 构建返回数据
             Map<String, Object> data = new HashMap<>();
             data.put("token", token);
             data.put("user", userService.getUserProfile(user.getId()));
             
             return ResponseEntity.ok().body(ApiResponse.success(data));
         } catch (Exception e) {
-            logger.error("微信登录失败", e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, "微信登录失败"));
+            logger.error("登录失败: loginCode={}", dto.getLoginCode(), e);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, "登录失败: " + e.getMessage()));
+        }
+    }
+
+    @PostMapping("/login/phone")
+    public ResponseEntity<?> loginByPhone(@RequestBody Map<String, String> request) {
+        try {
+            String phone = request.get("phone");
+            
+            if (phone == null || phone.isEmpty()) {
+                logger.warn("手机号登录失败: 缺少 phone 参数");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 phone 参数"));
+            }
+            
+            if (!phone.matches("^1[3-9]\\d{9}$")) {
+                logger.warn("手机号登录失败: 手机号格式不正确 phone={}", phone);
+                return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST).body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "手机号格式不正确"));
+            }
+            
+            User user = userService.getUserByPhone(phone);
+            if (user == null) {
+                user = new User();
+                user.setPhone(phone);
+                user.setName("用户" + phone.substring(7));
+                user.setAvatar("assets/default_avatar.png");
+                user.setVerifyStatus(0);
+                user.setOpenId("phone_" + System.currentTimeMillis() + "_" + (int)(Math.random() * 10000));
+                user = userService.saveUser(user);
+                logger.info("手机号登录成功: 新用户 userId={}, phone={}", user.getId(), phone);
+            } else {
+                logger.info("手机号登录成功: 老用户 userId={}, phone={}", user.getId(), phone);
+            }
+            
+            String token = jwtUtil.generateToken(user.getId());
+            
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+            data.put("user", userService.getUserProfile(user.getId()));
+            
+            return ResponseEntity.ok().body(ApiResponse.success(data));
+        } catch (Exception e) {
+            logger.error("手机号登录失败: phone={}", request.get("phone"), e);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, "登录失败: " + e.getMessage()));
         }
     }
 
@@ -176,7 +223,3 @@ public class UserController {
         }
     }
 }
-
-
-
-

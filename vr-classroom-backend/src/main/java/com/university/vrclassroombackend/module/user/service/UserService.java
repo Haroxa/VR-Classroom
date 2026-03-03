@@ -13,6 +13,7 @@ public interface UserService {
     User getUserByPhone(String phone);
     User getUserByOpenId(String openId);
     User saveUser(User user);
+    User updateUser(User user);
     UserProfileVO getUserProfile(Integer userId);
     UserPublicVO getUserPublicInfo(Integer userId);
     List<UserPostVO> getUserPosts(Integer userId, Integer page);

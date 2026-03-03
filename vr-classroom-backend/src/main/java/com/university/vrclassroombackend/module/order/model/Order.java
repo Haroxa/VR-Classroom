@@ -13,6 +13,15 @@ public class Order {
     @TableField("user_id")
     private Integer userId;
 
+    @TableField("campus_id")
+    private Integer campusId;
+
+    @TableField("building_id")
+    private Integer buildingId;
+
+    @TableField("room_id")
+    private Integer roomId;
+
     @TableField
     private Integer amount;
 
