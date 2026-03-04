@@ -10,9 +10,9 @@ services:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro  # 添加 :ro 只读
     environment:
       # 数据库配置
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/vr_classroom?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: cj
+      SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
       # Redis配置
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
@@ -33,8 +33,6 @@ services:
       WECHAT_APP_ID: your-wechat-app-id
       WECHAT_APP_SECRET: your-wechat-app-secret
     depends_on:
-      mysql:
-        condition: service_healthy  # 等待 MySQL 健康检查通过
       redis:
         condition: service_started
     restart: unless-stopped
@@ -48,33 +46,7 @@ services:
         reservations:
           memory: 256M
 
-  # MySQL数据库
-  mysql:
-    image: mysql:8.0
-    container_name: vr-classroom-mysql
-    ports:
-      - "3307:3306"  # 修改端口映射，避免与本地MySQL冲突
-    environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: vr_classroom
-      MYSQL_CHARSET: utf8mb4
-      MYSQL_COLLATION: utf8mb4_unicode_ci
-      TZ: Asia/Shanghai  # 添加时区
-    volumes:
-      - mysql-data:/var/lib/mysql
-      - ./vr-classroom-backend/src/main/resources/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
-    # 健康检查，确保 MySQL 就绪后再启动后端
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-ppassword"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-      start_period: 30s
-    restart: unless-stopped
-    command: >
-      --character-set-server=utf8mb4
-      --collation-server=utf8mb4_unicode_ci
-      --default-time-zone=+08:00
+
 
   # Redis服务
   redis:
@@ -93,8 +65,6 @@ services:
     restart: unless-stopped
 
 volumes:
-  mysql-data:
-    driver: local
   redis-data:
     driver: local
 

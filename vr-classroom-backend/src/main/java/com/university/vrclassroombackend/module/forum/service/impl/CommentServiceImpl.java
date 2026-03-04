@@ -89,8 +89,9 @@ public class CommentServiceImpl implements CommentService {
         comment.setLikeCount(0);
         comment.setStatus(Post.STATUS_PUBLISHED);
         
-        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PrePersist
-        comment.updateDate();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        comment.setDate(now.format(formatter));
         
         commentMapper.insert(comment);
         
@@ -115,9 +116,6 @@ public class CommentServiceImpl implements CommentService {
         
         comment.setContent(dto.getContent());
         comment.setStatus(Post.STATUS_PENDING);
-        
-        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PreUpdate
-        comment.updateDate();
         
         commentMapper.updateById(comment);
         logger.info("更新评论成功: commentId={}, commenterId={}", commentId, commenterId);

@@ -12,20 +12,20 @@ public class User {
     @TableField
     private String phone;
     
-    @TableField(value = "open_id")
+    @TableField(value = "openId")
     private String openId;
     
     @TableField
-    private String name = "未认证";
+    private String name;
     
     @TableField
-    private String avatar = "assets/default_avatar.png";
+    private String avatar;
     
-    @TableField("college_id")
+    @TableField("collegeId")
     private String collegeId;
     
-    @TableField("verify_status")
-    private Integer verifyStatus = 0; // 认证状态：0-未认证，1-审核中，2-已认证
+    @TableField("verifyStatus")
+    private Integer verifyStatus;
 }
 
 

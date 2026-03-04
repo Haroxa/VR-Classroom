@@ -11,14 +11,6 @@ public class Campus {
     
     @TableField
     private String name;
-    
-    private String description;
-    
-    @TableField("sort_order")
-    private Integer sortOrder;
-    
-    @TableField
-    private Boolean active = true;
 }
 
 

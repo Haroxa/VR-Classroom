@@ -7,23 +7,19 @@ import java.time.LocalDateTime;
 @TableName("`order`")
 @Data
 public class Order {
-    /**
-     * 订单ID
-     * 使用雪花算法生成，确保全局唯一
-     */
     @TableId(type = IdType.ASSIGN_ID)
     private Long id;
 
-    @TableField("user_id")
+    @TableField("userId")
     private Integer userId;
 
-    @TableField("campus_id")
+    @TableField("campusId")
     private Integer campusId;
 
-    @TableField("building_id")
+    @TableField("buildingId")
     private Integer buildingId;
 
-    @TableField("room_id")
+    @TableField("roomId")
     private Integer roomId;
 
     @TableField
@@ -32,12 +28,12 @@ public class Order {
     @TableField
     private String status;
 
-    @TableField("expires_at")
+    @TableField("expiresAt")
     private LocalDateTime expiresAt;
 
-    @TableField("created_at")
+    @TableField("createdAt")
     private LocalDateTime createdAt;
 
-    @TableField("updated_at")
+    @TableField("updatedAt")
     private LocalDateTime updatedAt;
 }

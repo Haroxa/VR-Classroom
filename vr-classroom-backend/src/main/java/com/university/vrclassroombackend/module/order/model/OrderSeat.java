@@ -9,9 +9,12 @@ public class OrderSeat {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    @TableField("order_id")
+    @TableField("orderId")
     private Long orderId;
 
-    @TableField("seat_id")
+    @TableField("seatId")
     private Integer seatId;
+
+    @TableField("lookPrice")
+    private java.math.BigDecimal lookPrice;
 }

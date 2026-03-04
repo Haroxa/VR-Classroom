@@ -16,8 +16,14 @@ import java.util.stream.Collectors;
  * 用于处理支付相关的 HTTP 请求
  * 
  * @deprecated 支付功能已整合到订单模块，请使用订单模块相关接口
+ * @ConditionalOnProperty 仅在开发环境启用
  */
 @Deprecated
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "spring.profiles.active",
+    havingValue = "dev",
+    matchIfMissing = false
+)
 @RestController
 @RequestMapping("/api/payment")
 public class PaymentController {

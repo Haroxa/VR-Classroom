@@ -1,10 +1,10 @@
--- Active: 1771720784163@@127.0.0.1@3306@vr_classroom
+-- Active: 1771947726816@@192.168.247.150@3306@cj_vr
 -- 数据库初始化脚本
 -- 只包含表结构创建，不包含数据插入
 -- 数据插入操作请使用 mock-data/data.sql 文件
 
 -- 选择数据库
-USE vr_classroom;
+USE cj_vr;
 
 -- 设置外键检查
 SET FOREIGN_KEY_CHECKS = 0;

@@ -53,11 +53,11 @@ class PostServiceTest {
 
         testPost = new Post();
         testPost.setId(1);
-        testPost.setCreatedAt(LocalDateTime.of(2026, 2, 1, 10, 0, 0));
+        testPost.setDate("2026-02-01 10:00:00");
         testPost.setTitle("测试帖子");
         testPost.setContent("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");
         testPost.setSummary("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");
-        testPost.setImages(Arrays.asList("image1.jpg", "image2.jpg"));
+        testPost.setImages("[\"image1.jpg\", \"image2.jpg\"]");
         testPost.setAuthorId(1);
         testPost.setCategoryId(1);
         testPost.setLikeCount(0);

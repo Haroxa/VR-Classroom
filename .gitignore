@@ -62,7 +62,7 @@ Thumbs.db
 ### Backup files ###
 *.bak
 *.backup
+backup/
 
 ### Local Update log ###
 CHANGELOG.md
-*.pdf

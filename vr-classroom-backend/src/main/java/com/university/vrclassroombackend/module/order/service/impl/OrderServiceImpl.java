@@ -151,12 +151,9 @@ public class OrderServiceImpl implements OrderService {
                 if (!seat.getVersion().equals(seatLockDTO.getVersion())) {
                     throw new BusinessException(409, "座位状态已更新，请刷新页面重新选择");
                 }
-                if (seatLockDTO.getPrice() == null || !seatLockDTO.getPrice().equals(seat.getPrice())) {
-                    throw new BusinessException(400, "座位价格异常，请刷新页面重新选择");
-                }
 
                 seatsToLock.add(seat);
-                totalAmount += seat.getPrice();
+                totalAmount += 10000;
             }
 
             for (Seat seat : seatsToLock) {
@@ -182,6 +179,7 @@ public class OrderServiceImpl implements OrderService {
                 OrderSeat orderSeat = new OrderSeat();
                 orderSeat.setOrderId(order.getId());
                 orderSeat.setSeatId(Integer.parseInt(seatLockDTO.getId()));
+                orderSeat.setLookPrice(new java.math.BigDecimal("100.00"));
                 orderSeatMapper.insert(orderSeat);
             }
 
@@ -306,9 +304,6 @@ public class OrderServiceImpl implements OrderService {
                 if (seat != null && seat.getStatus() == 2) {
                     int updated = updateSeatStatusWithOptimisticLock(seat, 3);
                     if (updated > 0) {
-                        seat.setDonorId(order.getUserId());
-                        seat.setClaimedAt(LocalDateTime.now());
-                        seatMapper.updateById(seat);
                         invalidateRoomSeatsCache(seat.getRoomId());
                     }
                 }
@@ -414,7 +409,6 @@ public class OrderServiceImpl implements OrderService {
         vo.setCreatedAt(order.getCreatedAt() != null ? order.getCreatedAt().format(DATE_TIME_FORMATTER) : null);
         vo.setUpdatedAt(order.getUpdatedAt() != null ? order.getUpdatedAt().format(DATE_TIME_FORMATTER) : null);
         
-        // 查询订单关联的座位
         LambdaQueryWrapper<OrderSeat> orderSeatQuery = new LambdaQueryWrapper<>();
         orderSeatQuery.eq(OrderSeat::getOrderId, order.getId());
         List<OrderSeat> orderSeats = orderSeatMapper.selectList(orderSeatQuery);
@@ -427,9 +421,11 @@ public class OrderServiceImpl implements OrderService {
                 seatVO.setId(seat.getId());
                 seatVO.setRow(seat.getRow());
                 seatVO.setCol(seat.getCol());
-                // 将价格转换为元并格式化为字符串
-                double priceYuan = seat.getPrice() / 100.0;
-                seatVO.setLookPrice(String.format("%.2f", priceYuan));
+                if (orderSeat.getLookPrice() != null) {
+                    seatVO.setLookPrice(orderSeat.getLookPrice().toString());
+                } else {
+                    seatVO.setLookPrice("100.00");
+                }
                 seatList.add(seatVO);
             }
         }

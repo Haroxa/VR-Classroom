@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Deprecated
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "spring.profiles.active",
+    havingValue = "dev",
+    matchIfMissing = false
+)
 @RestController
 @RequestMapping("/api/certificate")
 public class CertificateController {

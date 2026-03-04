@@ -1,3 +1,5 @@
+-- Active: 1771720784163@@127.0.0.1@3306@vr_classroom
+-- Active: 1772420486203@@10.86.136.242@3307@vr_classroom
 DROP DATABASE vr_classroom;
 
 CREATE DATABASE  vr_classroom CHARACTER SET gbk COLLATE gbk_chinese_ci;

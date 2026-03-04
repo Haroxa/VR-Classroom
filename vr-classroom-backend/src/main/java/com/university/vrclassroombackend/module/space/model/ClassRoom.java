@@ -3,42 +3,23 @@ package com.university.vrclassroombackend.module.space.model;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
-@TableName("classroom")
+@TableName("room")
 @Data
 public class ClassRoom {
     @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @TableField("building_id")
+    @TableField("buildingId")
     private Integer buildingId;
     
-    @TableField("room_number")
+    @TableField("roomNumber")
     private String roomNumber;
     
-    @TableField
-    private String name;
+    @TableField("totalRows")
+    private Integer totalRows;
     
-    private Integer floor;
-    
-    private String description;
-    
-    @TableField("vr_model_url")
-    private String vrModelUrl;
-    
-    @TableField("total_rows")
-    private Integer totalRows = 0;
-    
-    @TableField("total_cols")
-    private Integer totalCols = 0;
-    
-    @TableField("seat_count")
-    private Integer seatCount;
-    
-    @TableField("claimed_count")
-    private Integer claimedCount = 0;
-    
-    @TableField
-    private Boolean active = true;
+    @TableField("totalCols")
+    private Integer totalCols;
 }
 
 

@@ -2,7 +2,6 @@ package com.university.vrclassroombackend.module.space.model;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @TableName("seat")
 @Data
@@ -10,7 +9,7 @@ public class Seat {
     @TableId(type = IdType.AUTO)
     private Integer id;
     
-    @TableField("room_id")
+    @TableField("roomId")
     private Integer roomId;
     
     @TableField("`row`")
@@ -19,15 +18,9 @@ public class Seat {
     @TableField("`col`")
     private Integer col;
     
-    @TableField
-    private Integer price = 10000;
-
     /**
      * 座位状态
-     * 0 - 过道/不可用
-     * 1 - 可选
-     * 2 - 锁定
-     * 3 - 已购买
+     * 0=过道, 1=空闲(可买), 2=已锁定(待支付), 3=已售出
      */
     @TableField
     private Integer status = 1;
@@ -36,15 +29,9 @@ public class Seat {
     @TableField
     private Integer version = 0;
     
-    @TableField("donor_id")
-    private Integer donorId;
-    
-    @TableField("claimed_at")
-    private LocalDateTime claimedAt;
-    
-    @TableField("reserved_at")
-    private LocalDateTime reservedAt;
-    
-    @TableField("reserve_expire_at")
-    private LocalDateTime reserveExpireAt;
+    /**
+     * 价格，单位分
+     */
+    @TableField
+    private Integer price = 100000;
 }

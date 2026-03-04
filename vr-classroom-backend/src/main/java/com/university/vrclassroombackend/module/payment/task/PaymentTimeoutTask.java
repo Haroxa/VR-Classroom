@@ -15,7 +15,13 @@ import java.util.List;
 /**
  * 支付超时处理任务
  * 用于处理超时的支付订单，将其标记为支付失败
+ * @ConditionalOnProperty 仅在开发环境启用
  */
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "spring.profiles.active",
+    havingValue = "dev",
+    matchIfMissing = false
+)
 @Component
 public class PaymentTimeoutTask {
     

@@ -60,7 +60,7 @@ public class AdminServiceImpl implements AdminService {
         
         // 构建查询条件
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Post::getCreatedAt);
+        queryWrapper.orderByDesc(Post::getDate);
         
         // 状态条件
         if (status != null) {
@@ -90,7 +90,7 @@ public class AdminServiceImpl implements AdminService {
         for (Post post : posts) {
             PostAuditVO vo = new PostAuditVO();
             vo.setId(post.getId().toString());
-            vo.setDate(post.getCreatedAt().format(formatter));
+            vo.setDate(post.getDate());
             vo.setTitle(post.getTitle());
             vo.setSummary(post.getSummary());
             vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
@@ -144,7 +144,7 @@ public class AdminServiceImpl implements AdminService {
         
         // 构建查询条件
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.orderByDesc(Comment::getCreatedAt);
+        queryWrapper.orderByDesc(Comment::getDate);
         
         // 状态条件
         if (status != null) {
@@ -160,7 +160,7 @@ public class AdminServiceImpl implements AdminService {
         for (Comment comment : comments) {
             CommentAuditVO vo = new CommentAuditVO();
             vo.setId(comment.getId().toString());
-            vo.setDate(comment.getCreatedAt().format(formatter));
+            vo.setDate(comment.getDate());
             vo.setContent(comment.getContent());
             vo.setStatus(comment.getStatus());
             vo.setRejectReason(comment.getRejectReason());
@@ -196,7 +196,7 @@ public class AdminServiceImpl implements AdminService {
             if (post != null) {
                 RelatedPostVO relatedPostVO = new RelatedPostVO();
                 relatedPostVO.setId(post.getId().toString());
-                relatedPostVO.setDate(post.getCreatedAt().format(formatter));
+                relatedPostVO.setDate(post.getDate());
                 relatedPostVO.setTitle(post.getTitle());
                 relatedPostVO.setStatus(post.getStatus());
                 

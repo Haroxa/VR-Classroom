@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -39,6 +41,8 @@ public class PostServiceImpl implements PostService {
     
     @Autowired
     private UserService userService;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public List<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
@@ -112,7 +116,12 @@ public class PostServiceImpl implements PostService {
         post.setContent(content);
         String summary = content.length() > Post.SUMMARY_LENGTH ? content.substring(0, Post.SUMMARY_LENGTH) : content;
         post.setSummary(summary);
-        post.setImages(dto.getImages());
+        try {
+            post.setImages(dto.getImages() != null ? objectMapper.writeValueAsString(dto.getImages()) : "[]");
+        } catch (JsonProcessingException e) {
+            logger.error("转换images为JSON失败", e);
+            post.setImages("[]");
+        }
         post.setCategoryId(dto.getCategoryId() != null ? dto.getCategoryId() : AppConstants.Post.DEFAULT_CATEGORY_ID);
         post.setAuthorId(authorId != null ? authorId : 0);
         post.setLikeCount(0);
@@ -120,8 +129,9 @@ public class PostServiceImpl implements PostService {
         post.setCommentCount(0);
         post.setStatus(Post.STATUS_PUBLISHED);
         
-        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PrePersist
-        post.updateDate();
+        java.time.LocalDateTime now = java.time.LocalDateTime.now();
+        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        post.setDate(now.format(formatter));
         
         postMapper.insert(post);
         return post.getId();
@@ -140,12 +150,14 @@ public class PostServiceImpl implements PostService {
         post.setTitle(dto.getTitle());
         post.setContent(dto.getContent());
         post.setSummary(dto.getContent().length() > Post.SUMMARY_LENGTH ? dto.getContent().substring(0, Post.SUMMARY_LENGTH) : dto.getContent());
-        post.setImages(dto.getImages());
+        try {
+            post.setImages(dto.getImages() != null ? objectMapper.writeValueAsString(dto.getImages()) : "[]");
+        } catch (JsonProcessingException e) {
+            logger.error("转换images为JSON失败", e);
+            post.setImages("[]");
+        }
         post.setCategoryId(dto.getCategoryId());
         post.setStatus(Post.STATUS_PENDING);
-        
-        // 手动调用updateDate方法，因为MyBatis-Plus不支持@PreUpdate
-        post.updateDate();
         
         postMapper.updateById(post);
         logger.info("更新帖子成功: postId={}, authorId={}", postId, authorId);
@@ -186,7 +198,12 @@ public class PostServiceImpl implements PostService {
         vo.setDate(post.getDate());
         vo.setTitle(post.getTitle());
         vo.setSummary(post.getSummary());
-        vo.setImages(post.getImages());
+        try {
+            vo.setImages(post.getImages() != null ? objectMapper.readValue(post.getImages(), List.class) : null);
+        } catch (JsonProcessingException e) {
+            logger.error("解析images JSON失败", e);
+            vo.setImages(null);
+        }
         vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
         vo.setLikeCount(post.getLikeCount());
         vo.setShareCount(post.getShareCount());
@@ -214,7 +231,12 @@ public class PostServiceImpl implements PostService {
         vo.setDate(post.getDate());
         vo.setTitle(post.getTitle());
         vo.setSummary(post.getSummary());
-        vo.setImages(post.getImages());
+        try {
+            vo.setImages(post.getImages() != null ? objectMapper.readValue(post.getImages(), List.class) : null);
+        } catch (JsonProcessingException e) {
+            logger.error("解析images JSON失败", e);
+            vo.setImages(null);
+        }
         vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
         vo.setLikeCount(post.getLikeCount());
         vo.setShareCount(post.getShareCount());
@@ -247,7 +269,12 @@ public class PostServiceImpl implements PostService {
         vo.setDate(post.getDate());
         vo.setTitle(post.getTitle());
         vo.setSummary(post.getSummary());
-        vo.setImages(post.getImages());
+        try {
+            vo.setImages(post.getImages() != null ? objectMapper.readValue(post.getImages(), List.class) : null);
+        } catch (JsonProcessingException e) {
+            logger.error("解析images JSON失败", e);
+            vo.setImages(null);
+        }
         vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
         vo.setLikeCount(post.getLikeCount());
         vo.setShareCount(post.getShareCount());

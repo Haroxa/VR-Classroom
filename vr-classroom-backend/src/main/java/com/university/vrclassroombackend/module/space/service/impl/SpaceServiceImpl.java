@@ -35,8 +35,7 @@ public class SpaceServiceImpl implements SpaceService {
     @Deprecated
     public List<Campus> getCampuses() {
         LambdaQueryWrapper<Campus> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(Campus::getActive, true)
-                   .orderByAsc(Campus::getSortOrder);
+        queryWrapper.orderByAsc(Campus::getId);
         return campusMapper.selectList(queryWrapper);
     }
 
@@ -45,8 +44,7 @@ public class SpaceServiceImpl implements SpaceService {
     public List<Building> getBuildings(Integer campusId) {
         LambdaQueryWrapper<Building> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Building::getCampusId, campusId)
-                   .eq(Building::getActive, true)
-                   .orderByAsc(Building::getSortOrder);
+                   .orderByAsc(Building::getId);
         return buildingMapper.selectList(queryWrapper);
     }
 
@@ -54,8 +52,7 @@ public class SpaceServiceImpl implements SpaceService {
     @Deprecated
     public List<ClassRoom> getClassrooms(Integer buildingId) {
         LambdaQueryWrapper<ClassRoom> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ClassRoom::getBuildingId, buildingId)
-                   .eq(ClassRoom::getActive, true);
+        queryWrapper.eq(ClassRoom::getBuildingId, buildingId);
         return classRoomMapper.selectList(queryWrapper);
     }
 

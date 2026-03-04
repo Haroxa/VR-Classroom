@@ -21,7 +21,13 @@ import java.util.UUID;
 /**
  * 支付服务实现类
  * 用于处理支付相关的业务逻辑
+ * @ConditionalOnProperty 仅在开发环境启用
  */
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "spring.profiles.active",
+    havingValue = "dev",
+    matchIfMissing = false
+)
 @Service
 public class PaymentServiceImpl implements PaymentService {
     

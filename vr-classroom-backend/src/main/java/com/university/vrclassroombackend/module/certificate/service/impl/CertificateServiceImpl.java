@@ -9,6 +9,11 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Deprecated
+@org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(
+    name = "spring.profiles.active",
+    havingValue = "dev",
+    matchIfMissing = false
+)
 @Service
 public class CertificateServiceImpl implements CertificateService {
     
