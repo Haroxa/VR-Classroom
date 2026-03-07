@@ -1,8 +1,13 @@
 package com.university.vrclassroombackend.module.user.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDateTime;
+
 public class UserCommentVO {
     private Integer id;
-    private String date;
+    private LocalDateTime date;
     private String content;
     private Integer likeCount;
     private Integer status;
@@ -10,19 +15,20 @@ public class UserCommentVO {
     private boolean isLiked;
     private com.university.vrclassroombackend.module.forum.vo.RelatedPostVO relatedPost;
 
-    public Integer getId() {
-        return id;
+    public String getId() {
+        return id != null ? id.toString() : null;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getDate() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -58,6 +64,7 @@ public class UserCommentVO {
         this.rejectReason = rejectReason;
     }
 
+    @JsonProperty("isLiked")
     public boolean isLiked() {
         return isLiked;
     }

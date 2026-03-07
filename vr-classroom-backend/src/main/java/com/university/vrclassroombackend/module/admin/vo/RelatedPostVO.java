@@ -1,6 +1,9 @@
 package com.university.vrclassroombackend.module.admin.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 关联帖子VO
@@ -15,7 +18,8 @@ public class RelatedPostVO {
     /**
      * 发布时间
      */
-    private String date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime date;
     
     /**
      * 帖子标题

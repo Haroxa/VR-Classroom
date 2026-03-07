@@ -15,6 +15,8 @@ import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
 import com.university.vrclassroombackend.module.user.vo.UserPostVO;
 import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
 import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
+import com.university.vrclassroombackend.module.space.model.Category;
+import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import com.university.vrclassroombackend.module.space.model.College;
 import com.university.vrclassroombackend.module.space.mapper.CollegeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class UserServiceImpl implements UserService {
     
     @Autowired
     private CollegeMapper collegeMapper;
+    
+    @Autowired
+    private CategoryMapper categoryMapper;
     
     @Autowired
     private PostMapper postMapper;
@@ -134,12 +139,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserPostVO> getUserPosts(Integer userId, Integer page) {
+    public IPage<UserPostVO> getUserPosts(Integer userId, Integer page) {
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Post::getAuthorId, userId);
         queryWrapper.orderByDesc(Post::getDate);
         
-        List<Post> posts = postMapper.selectList(queryWrapper);
+        Page<Post> pageParam = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);
+        List<Post> posts = postPage.getRecords();
         List<UserPostVO> result = new ArrayList<>();
         
         for (Post post : posts) {
@@ -155,21 +162,33 @@ public class UserServiceImpl implements UserService {
             vo.setCommentCount(post.getCommentCount());
             vo.setStatus(post.getStatus());
             vo.setRejectReason(post.getRejectReason());
-            vo.setCategoryName(null);
+            vo.setCategoryName(getCategoryName(post.getCategoryId()));
             vo.setLiked(false);
             result.add(vo);
         }
         
-        return result;
+        Page<UserPostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
+        resultPage.setRecords(result);
+        return resultPage;
+    }
+    
+    private String getCategoryName(Integer categoryId) {
+        if (categoryId == null || categoryId == 0) {
+            return "未分类";
+        }
+        Category category = categoryMapper.selectById(categoryId);
+        return category != null ? category.getName() : "未分类";
     }
 
     @Override
-    public List<UserCommentVO> getUserComments(Integer userId, Integer page) {
+    public IPage<UserCommentVO> getUserComments(Integer userId, Integer page) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getCommenterId, userId);
         queryWrapper.orderByDesc(Comment::getDate);
         
-        List<Comment> comments = commentMapper.selectList(queryWrapper);
+        Page<Comment> pageParam = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
+        List<Comment> comments = commentPage.getRecords();
         List<UserCommentVO> result = new ArrayList<>();
         
         for (Comment comment : comments) {
@@ -185,7 +204,9 @@ public class UserServiceImpl implements UserService {
             result.add(vo);
         }
         
-        return result;
+        Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(result);
+        return resultPage;
     }
 }
 

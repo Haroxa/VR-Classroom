@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.forum.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,34 +31,30 @@ public class CommentController {
     @GetMapping
     public ResponseEntity<?> getPostComments(
             @RequestParam Integer postId,
-            @RequestParam(defaultValue = "0") Integer page) {
-        List<CommentVO> comments = commentService.getPostComments(postId, page);
+            @RequestParam(defaultValue = "1") Integer page) {
+        IPage<CommentVO> commentPage = commentService.getPostComments(postId, page);
         Map<String, Object> data = new HashMap<>();
-        data.put("current", page);
-        data.put("total", comments.size() / AppConstants.Pagination.DEFAULT_PAGE_SIZE + 1);
-        data.put("records", comments);
+        data.put("current", (int) commentPage.getCurrent());
+        data.put("total", (int) commentPage.getPages());
+        data.put("records", commentPage.getRecords());
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
 
     @PostMapping
     public ResponseEntity<?> createComment(
             jakarta.servlet.http.HttpServletRequest request,
-            @RequestBody CommentCreateDTO dto) {
-        try {
-            Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (commenterId == null) {
-                logger.warn("创建评论失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            Integer commentId = commentService.createComment(dto, commenterId);
-            Map<String, Object> data = new HashMap<>();
-            data.put("id", commentId);
-            logger.info("创建评论成功: commentId={}, postId={}, commenterId={}", commentId, dto.getPostId(), commenterId);
-            return ResponseEntity.ok().body(ApiResponse.success(data));
-        } catch (Exception e) {
-            logger.error("创建评论失败: postId={}, commenterId={}", dto.getPostId(), request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.CREATE_COMMENT_FAILED));
+            @Valid @RequestBody CommentCreateDTO dto) {
+        Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (commenterId == null) {
+            logger.warn("创建评论失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        Integer commentId = commentService.createComment(dto, commenterId);
+        Map<String, Object> data = new HashMap<>();
+        data.put("id", commentId);
+        logger.info("创建评论成功: commentId={}, postId={}, commenterId={}", commentId, dto.getPostId(), commenterId);
+        return ResponseEntity.ok().body(ApiResponse.success(data));
     }
 
     @PutMapping("/{id}")
@@ -66,38 +62,40 @@ public class CommentController {
             @PathVariable Integer id,
             jakarta.servlet.http.HttpServletRequest request,
             @Valid @RequestBody CommentUpdateDTO dto) {
-        try {
-            Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (commenterId == null) {
-                logger.warn("更新评论失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            commentService.updateComment(id, dto, commenterId);
-            logger.info("更新评论成功: commentId={}, commenterId={}", id, commenterId);
-            return ResponseEntity.ok().body(ApiResponse.success());
-        } catch (Exception e) {
-            logger.error("更新评论失败: commentId={}, commenterId={}", id, request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.UPDATE_COMMENT_FAILED));
+        Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (commenterId == null) {
+            logger.warn("更新评论失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        boolean result = commentService.updateComment(id, dto, commenterId);
+        if (!result) {
+            logger.warn("更新评论失败: 评论不存在或无权限 commentId={}, commenterId={}", id, commenterId);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.FORBIDDEN)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.FORBIDDEN, "评论不存在或无权限"));
+        }
+        logger.info("更新评论成功: commentId={}, commenterId={}", id, commenterId);
+        return ResponseEntity.ok().body(ApiResponse.success());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteComment(
             @PathVariable Integer id,
             jakarta.servlet.http.HttpServletRequest request) {
-        try {
-            Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (commenterId == null) {
-                logger.warn("删除评论失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            commentService.deleteComment(id, commenterId);
-            logger.info("删除评论成功: commentId={}, commenterId={}", id, commenterId);
-            return ResponseEntity.ok().body(ApiResponse.success());
-        } catch (Exception e) {
-            logger.error("删除评论失败: commentId={}, commenterId={}", id, request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.DELETE_COMMENT_FAILED));
+        Integer commenterId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (commenterId == null) {
+            logger.warn("删除评论失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        boolean result = commentService.deleteComment(id, commenterId);
+        if (!result) {
+            logger.warn("删除评论失败: 评论不存在或无权限 commentId={}, commenterId={}", id, commenterId);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.FORBIDDEN)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.FORBIDDEN, "评论不存在或无权限"));
+        }
+        logger.info("删除评论成功: commentId={}, commenterId={}", id, commenterId);
+        return ResponseEntity.ok().body(ApiResponse.success());
     }
 }
 

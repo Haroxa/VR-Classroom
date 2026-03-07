@@ -1,27 +1,33 @@
 package com.university.vrclassroombackend.module.forum.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDateTime;
+
 public class CommentVO {
     private Integer id;
-    private String date;
+    private LocalDateTime date;
     private String content;
     private Integer commenterId;
     private Integer likeCount;
     private boolean isLiked;
     private com.university.vrclassroombackend.module.user.vo.UserPublicVO commenter;
 
-    public Integer getId() {
-        return id;
+    public String getId() {
+        return id != null ? id.toString() : null;
     }
 
     public void setId(Integer id) {
         this.id = id;
     }
 
-    public String getDate() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -49,6 +55,7 @@ public class CommentVO {
         this.likeCount = likeCount;
     }
 
+    @JsonProperty("isLiked")
     public boolean isLiked() {
         return isLiked;
     }

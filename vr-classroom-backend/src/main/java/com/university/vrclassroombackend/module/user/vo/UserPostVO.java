@@ -1,10 +1,14 @@
 package com.university.vrclassroombackend.module.user.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class UserPostVO {
     private String id;
-    private String date;
+    private LocalDateTime date;
     private String title;
     private String summary;
     private List<String> images;
@@ -25,11 +29,12 @@ public class UserPostVO {
         this.id = id;
     }
 
-    public String getDate() {
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -113,6 +118,7 @@ public class UserPostVO {
         this.categoryName = categoryName;
     }
 
+    @JsonProperty("isLiked")
     public boolean isLiked() {
         return isLiked;
     }

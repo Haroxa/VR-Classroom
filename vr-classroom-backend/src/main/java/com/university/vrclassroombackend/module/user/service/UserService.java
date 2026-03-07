@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.user.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.university.vrclassroombackend.module.user.model.User;
 import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
 import com.university.vrclassroombackend.module.user.vo.UserPostVO;
@@ -16,8 +17,8 @@ public interface UserService {
     User updateUser(User user);
     UserProfileVO getUserProfile(Integer userId);
     UserPublicVO getUserPublicInfo(Integer userId);
-    List<UserPostVO> getUserPosts(Integer userId, Integer page);
-    List<UserCommentVO> getUserComments(Integer userId, Integer page);
+    IPage<UserPostVO> getUserPosts(Integer userId, Integer page);
+    IPage<UserCommentVO> getUserComments(Integer userId, Integer page);
 }
 
 

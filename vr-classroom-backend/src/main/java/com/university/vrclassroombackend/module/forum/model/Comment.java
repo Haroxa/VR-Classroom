@@ -3,6 +3,8 @@ package com.university.vrclassroombackend.module.forum.model;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @TableName("comment")
 @Data
 public class Comment {
@@ -10,7 +12,7 @@ public class Comment {
     private Integer id;
     
     @TableField("date")
-    private String date;
+    private LocalDateTime date;
     
     @TableField
     private String content;

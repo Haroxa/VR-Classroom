@@ -15,6 +15,9 @@ public class OrderSeat {
     @TableField("seatId")
     private Integer seatId;
 
+    /**
+     * 座位价格（单位：分）
+     */
     @TableField("lookPrice")
-    private java.math.BigDecimal lookPrice;
+    private Integer lookPrice;
 }

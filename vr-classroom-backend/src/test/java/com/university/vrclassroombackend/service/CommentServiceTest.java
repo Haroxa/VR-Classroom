@@ -1,5 +1,8 @@
 package com.university.vrclassroombackend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.CommentUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Comment;
@@ -10,9 +13,11 @@ import com.university.vrclassroombackend.module.forum.vo.CommentVO;
 import com.university.vrclassroombackend.module.forum.model.Post;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
+import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -24,6 +29,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,33 +49,44 @@ class CommentServiceTest {
 
     private Comment testComment;
     private Post testPost;
+    private UserPublicVO testUserPublicVO;
 
     @BeforeEach
     void setUp() {
         testPost = new Post();
         testPost.setId(1);
         testPost.setTitle("测试帖子");
-        testPost.setCommentCount(1); // 设置评论数为1，这样删除评论时会调用postMapper.updateById
+        testPost.setAuthorId(1);
+        testPost.setCommentCount(1);
 
         testComment = new Comment();
         testComment.setId(1);
-        testComment.setDate("2026-02-01 10:00:00");
+        testComment.setDate(java.time.LocalDateTime.of(2026, 2, 1, 10, 0, 0));
         testComment.setContent("这是一个测试评论");
         testComment.setCommenterId(1);
         testComment.setPostId(1);
         testComment.setLikeCount(0);
         testComment.setStatus(1);
+        
+        testUserPublicVO = new UserPublicVO();
+        testUserPublicVO.setId("1");
+        testUserPublicVO.setName("测试用户");
     }
 
     @Test
     void testGetPostComments() {
-        when(commentMapper.selectByPostId(1)).thenReturn(Arrays.asList(testComment));
+        Page<Comment> commentPage = new Page<>(1, 10);
+        commentPage.setRecords(Arrays.asList(testComment));
+        commentPage.setTotal(1);
+        
+        when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(commentPage);
+        when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
 
-        List<CommentVO> result = commentService.getPostComments(1, 0);
+        IPage<CommentVO> result = commentService.getPostComments(1, 1);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        verify(commentMapper, times(1)).selectByPostId(1);
+        assertNotNull(result.getRecords());
+        verify(commentMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
     }
 
     @Test
@@ -78,16 +95,21 @@ class CommentServiceTest {
         dto.setContent("新评论");
         dto.setPostId(1);
 
-        when(commentMapper.insert(any(Comment.class))).thenReturn(1);
-        when(postMapper.selectById(1)).thenReturn(testPost);
-        when(postMapper.updateById(any(Post.class))).thenReturn(1);
+        // 使用ArgumentCaptor捕获insert的Comment对象，并设置id
+        ArgumentCaptor<Comment> commentCaptor = ArgumentCaptor.forClass(Comment.class);
+        when(commentMapper.insert(commentCaptor.capture())).thenAnswer(invocation -> {
+            Comment capturedComment = commentCaptor.getValue();
+            capturedComment.setId(100); // 模拟数据库生成的id
+            return 1;
+        });
+        when(postMapper.incrementCommentCount(1, 1)).thenReturn(1);
 
         Integer result = commentService.createComment(dto, 1);
 
         assertNotNull(result);
+        assertEquals(100, result);
         verify(commentMapper, times(1)).insert(any(Comment.class));
-        verify(postMapper, times(1)).selectById(1);
-        verify(postMapper, times(1)).updateById(any(Post.class));
+        verify(postMapper, times(1)).incrementCommentCount(1, 1);
     }
 
     @Test
@@ -123,45 +145,46 @@ class CommentServiceTest {
     @Test
     void testDeleteComment() {
         when(commentMapper.selectById(1)).thenReturn(testComment);
-        when(postMapper.selectById(1)).thenReturn(testPost);
         when(commentMapper.updateById(any(Comment.class))).thenReturn(1);
-        when(postMapper.updateById(any(Post.class))).thenReturn(1);
+        when(postMapper.incrementCommentCount(1, -1)).thenReturn(1);
 
         boolean result = commentService.deleteComment(1, 1);
 
         assertTrue(result);
         verify(commentMapper, times(1)).selectById(1);
         verify(commentMapper, times(1)).updateById(any(Comment.class));
-        // postMapper.updateById会被调用，因为commentCount大于0
-        verify(postMapper, times(1)).selectById(1);
-        verify(postMapper, times(1)).updateById(any(Post.class));
+        // deleteComment使用incrementCommentCount而不是updateById
+        verify(postMapper, times(1)).incrementCommentCount(1, -1);
     }
 
     @Test
     void testDeleteCommentUnauthorized() {
         testComment.setCommenterId(2);
         when(commentMapper.selectById(1)).thenReturn(testComment);
-        // 不需要mock postMapper.selectById，因为commentCount为0时不会调用updateById
-        // when(postMapper.selectById(1)).thenReturn(testPost);
 
         boolean result = commentService.deleteComment(1, 1);
 
         assertFalse(result);
         verify(commentMapper, times(1)).selectById(1);
         verify(commentMapper, never()).updateById(any(Comment.class));
-        verify(postMapper, never()).selectById(1);
-        verify(postMapper, never()).updateById(any(Post.class));
+        verify(postMapper, never()).incrementCommentCount(anyInt(), anyInt());
     }
 
     @Test
     void testGetUserComments() {
-        when(commentMapper.selectByCommenterId(1)).thenReturn(Arrays.asList(testComment));
+        Page<Comment> commentPage = new Page<>(1, 10);
+        commentPage.setRecords(Arrays.asList(testComment));
+        commentPage.setTotal(1);
+        
+        when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(commentPage);
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
 
-        List<UserCommentVO> result = commentService.getUserComments(1, 0);
+        IPage<UserCommentVO> result = commentService.getUserComments(1, 1);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        verify(commentMapper, times(1)).selectByCommenterId(1);
+        assertNotNull(result.getRecords());
+        verify(commentMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
+        verify(postMapper, times(1)).selectById(1);
     }
 }
-

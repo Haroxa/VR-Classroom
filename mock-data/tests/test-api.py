@@ -18,13 +18,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 基础URL
-base_url = "http://localhost:8082/api"
+base_url = "http://localhost:8080/api"
 server_url = "http://10.86.136.242:8082/api"
 is_server = False
 url = server_url if is_server else base_url
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyNTk3ODY5LCJleHAiOjE3NzI2ODQyNjl9.LeSO7N6w9I_jOu_dsrg2ex9Y2IWIIpJ8k7BOG5bB5xI"
+token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyODQ0MTEzLCJleHAiOjE3NzI5MzA1MTN9.NUyBiVoyxqVJ0r0OVzEdvgU_zr0Vk16codQjGKwgBYpsilM24TGnYmTpDeEYDaBY"
 
 # 测试结果收集
 test_details = []
@@ -271,8 +271,8 @@ def test_create_post(auth_headers):
     post_body = {
         "title": f"测试帖子_{datetime.now().strftime('%H%M%S')}",
         "content": "这是一个测试帖子的内容",
-        "images": ["images/test.png"],
-        "likeCount": 0
+        "categoryId": 1,
+        "images": ["images/test.png"]
     }
     
     try:
@@ -515,5 +515,4 @@ def test_long_data(auth_headers):
         raise
 
 if __name__ == "__main__":
-    # 运行所有测试
-    pytest.main([__file__, "-v", "-s", "--tb=short", "--html=test-report.html", "--self-contained-html"])
+    pytest.main([__file__, "-v", "-s", "--tb=short"])

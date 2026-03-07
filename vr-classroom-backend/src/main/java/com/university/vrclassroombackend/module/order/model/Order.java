@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @TableName("`order`")
 @Data
 public class Order {
-    @TableId(type = IdType.ASSIGN_ID)
+    @TableId
     private Long id;
 
     @TableField("userId")

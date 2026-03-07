@@ -179,8 +179,9 @@ java -jar target/vr-classroom-backend-0.0.1-SNAPSHOT.jar --spring.profiles.activ
 | 路径 | 方法 | 描述 |
 |------|------|------|
 | `/api/rooms/{roomId}/seats` | GET | 获取教室座位信息 |
-| `/api/orders` | POST | 创建订单（v4.1，需要campusId、buildingId、roomId和price） |
+| `/api/orders` | POST | 创建订单（v4.1，需要campusId、buildingId、roomId和seatList） |
 | `/api/orders` | GET | 获取订单列表（v4.1，支持分页） |
+| `/api/orders/{orderId}` | GET | 获取订单详情（v4.1） |
 | `/api/orders/{orderId}` | PATCH | 更新订单状态（用于取消订单） |
 | `/api/mock/pay/notify` | POST | 模拟支付回调 |
 
@@ -426,6 +427,9 @@ jupyter notebook mock-data/VR教室API测试.ipynb
 
 - **Q: 如何处理订单超时？**
   A: 系统会自动处理超时订单，将其状态更新为取消。
+
+- **Q: 价格单位是什么？**
+  A: 所有价格相关字段统一使用"分"作为单位（1元 = 100分），包括订单金额、座位价格等。
 
 ---
 

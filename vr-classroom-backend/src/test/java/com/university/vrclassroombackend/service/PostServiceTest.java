@@ -1,5 +1,8 @@
 package com.university.vrclassroombackend.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.PostUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Post;
@@ -9,18 +12,19 @@ import com.university.vrclassroombackend.module.forum.vo.PostDetailVO;
 import com.university.vrclassroombackend.module.forum.vo.PostVO;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserPostVO;
+import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
 import com.university.vrclassroombackend.module.space.model.Category;
 import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,6 +48,7 @@ class PostServiceTest {
 
     private Post testPost;
     private Category testCategory;
+    private UserPublicVO testUserPublicVO;
 
     @BeforeEach
     void setUp() {
@@ -53,7 +58,7 @@ class PostServiceTest {
 
         testPost = new Post();
         testPost.setId(1);
-        testPost.setDate("2026-02-01 10:00:00");
+        testPost.setDate(java.time.LocalDateTime.of(2026, 2, 1, 10, 0, 0));
         testPost.setTitle("测试帖子");
         testPost.setContent("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");
         testPost.setSummary("这是一个测试帖子的内容，用于测试帖子服务的功能是否正常");
@@ -64,22 +69,34 @@ class PostServiceTest {
         testPost.setShareCount(0);
         testPost.setCommentCount(0);
         testPost.setStatus(1);
+        
+        testUserPublicVO = new UserPublicVO();
+        testUserPublicVO.setId("1");
+        testUserPublicVO.setName("测试用户");
     }
 
     @Test
     void testGetPublicPosts() {
-        when(postMapper.selectByStatus(1)).thenReturn(Arrays.asList(testPost));
+        Page<Post> postPage = new Page<>(1, 10);
+        postPage.setRecords(Arrays.asList(testPost));
+        postPage.setTotal(1);
+        
+        when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(postPage);
+        when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
+        when(categoryMapper.selectById(1)).thenReturn(testCategory);
 
-        List<PostVO> result = postService.getPublicPosts(0, null, null);
+        IPage<PostVO> result = postService.getPublicPosts(1, null, null);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        verify(postMapper, times(1)).selectByStatus(1);
+        assertNotNull(result.getRecords());
+        verify(postMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
     }
 
     @Test
     void testGetPostDetail() {
         when(postMapper.selectById(1)).thenReturn(testPost);
+        when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
+        when(categoryMapper.selectById(1)).thenReturn(testCategory);
 
         PostDetailVO result = postService.getPostDetail(1, 1);
 
@@ -97,11 +114,18 @@ class PostServiceTest {
         dto.setImages(Arrays.asList("new-image.jpg"));
         dto.setLikeCount(0);
 
-        when(postMapper.insert(any(Post.class))).thenReturn(1);
+        // 使用ArgumentCaptor捕获insert的Post对象，并设置id
+        ArgumentCaptor<Post> postCaptor = ArgumentCaptor.forClass(Post.class);
+        when(postMapper.insert(postCaptor.capture())).thenAnswer(invocation -> {
+            Post capturedPost = postCaptor.getValue();
+            capturedPost.setId(100); // 模拟数据库生成的id
+            return 1;
+        });
 
         Integer result = postService.createPost(dto, 1);
 
         assertNotNull(result);
+        assertEquals(100, result);
         verify(postMapper, times(1)).insert(any(Post.class));
     }
 
@@ -164,13 +188,17 @@ class PostServiceTest {
 
     @Test
     void testGetUserPosts() {
-        when(postMapper.selectByAuthorId(1)).thenReturn(Arrays.asList(testPost));
+        Page<Post> postPage = new Page<>(1, 10);
+        postPage.setRecords(Arrays.asList(testPost));
+        postPage.setTotal(1);
+        
+        when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(postPage);
+        when(categoryMapper.selectById(1)).thenReturn(testCategory);
 
-        List<UserPostVO> result = postService.getUserPosts(1, 0);
+        IPage<UserPostVO> result = postService.getUserPosts(1, 1);
 
         assertNotNull(result);
-        assertFalse(result.isEmpty());
-        verify(postMapper, times(1)).selectByAuthorId(1);
+        assertNotNull(result.getRecords());
+        verify(postMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
     }
 }
-

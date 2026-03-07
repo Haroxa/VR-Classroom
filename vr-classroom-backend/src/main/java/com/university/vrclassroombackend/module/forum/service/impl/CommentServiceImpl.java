@@ -43,22 +43,22 @@ public class CommentServiceImpl implements CommentService {
     private UserService userService;
 
     @Override
-    public List<CommentVO> getPostComments(Integer postId, Integer page) {
+    public IPage<CommentVO> getPostComments(Integer postId, Integer page) {
+        int currentPage = page != null && page > 0 ? page : 1;
+        Page<Comment> pageParam = new Page<>(currentPage, Pagination.DEFAULT_PAGE_SIZE);
+        
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getPostId, postId)
-                   .eq(Comment::getStatus, Post.STATUS_PUBLISHED);
-        List<Comment> comments = commentMapper.selectList(queryWrapper);
+                   .eq(Comment::getStatus, Post.STATUS_PUBLISHED)
+                   .orderByDesc(Comment::getDate);
         
-        int pageSize = Pagination.DEFAULT_PAGE_SIZE;
-        int start = page * pageSize;
-        int end = Math.min(start + pageSize, comments.size());
-        if (start >= comments.size()) {
-            return List.of();
-        }
-        comments = comments.subList(start, end);
+        IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
+        List<Comment> comments = commentPage.getRecords();
         
         if (comments.isEmpty()) {
-            return List.of();
+            Page<CommentVO> emptyPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+            emptyPage.setRecords(List.of());
+            return emptyPage;
         }
         
         List<Integer> commenterIds = comments.stream()
@@ -74,9 +74,13 @@ public class CommentServiceImpl implements CommentService {
                         (existing, replacement) -> existing
                 ));
         
-        return comments.stream()
+        List<CommentVO> voList = comments.stream()
                 .map(comment -> convertToCommentVO(comment, userMap))
                 .collect(Collectors.toList());
+        
+        Page<CommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(voList);
+        return resultPage;
     }
 
     @Override
@@ -88,18 +92,12 @@ public class CommentServiceImpl implements CommentService {
         comment.setPostId(dto.getPostId());
         comment.setLikeCount(0);
         comment.setStatus(Post.STATUS_PUBLISHED);
-        
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        comment.setDate(now.format(formatter));
+        comment.setDate(java.time.LocalDateTime.now());
         
         commentMapper.insert(comment);
         
-        Post post = postMapper.selectById(dto.getPostId());
-        if (post != null) {
-            post.setCommentCount(post.getCommentCount() + 1);
-            postMapper.updateById(post);
-        }
+        // 使用原子操作增加评论数
+        postMapper.incrementCommentCount(dto.getPostId(), 1);
         
         return comment.getId();
     }
@@ -133,33 +131,28 @@ public class CommentServiceImpl implements CommentService {
         comment.setStatus(Post.STATUS_DELETED);
         commentMapper.updateById(comment);
         
-        Post post = postMapper.selectById(comment.getPostId());
-        if (post != null && post.getCommentCount() > 0) {
-            post.setCommentCount(post.getCommentCount() - 1);
-            postMapper.updateById(post);
-        }
+        // 使用原子操作减少评论数
+        postMapper.incrementCommentCount(comment.getPostId(), -1);
         
         return true;
     }
 
     @Override
-    public List<UserCommentVO> getUserComments(Integer userId, Integer page) {
+    public IPage<UserCommentVO> getUserComments(Integer userId, Integer page) {
+        int currentPage = page != null && page > 0 ? page : 1;
+        Page<Comment> pageParam = new Page<>(currentPage, Pagination.DEFAULT_PAGE_SIZE);
+        
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getCommenterId, userId);
         queryWrapper.orderByDesc(Comment::getDate);
         
-        List<Comment> comments = commentMapper.selectList(queryWrapper);
-        
-        int pageSize = Pagination.DEFAULT_PAGE_SIZE;
-        int start = page * pageSize;
-        int end = Math.min(start + pageSize, comments.size());
-        if (start >= comments.size()) {
-            return List.of();
-        }
-        comments = comments.subList(start, end);
+        IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
+        List<Comment> comments = commentPage.getRecords();
         
         if (comments.isEmpty()) {
-            return List.of();
+            Page<UserCommentVO> emptyPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+            emptyPage.setRecords(List.of());
+            return emptyPage;
         }
         
         List<Integer> postIds = comments.stream()
@@ -189,9 +182,13 @@ public class CommentServiceImpl implements CommentService {
                         (existing, replacement) -> existing
                 ));
         
-        return comments.stream()
+        List<UserCommentVO> voList = comments.stream()
                 .map(comment -> convertToUserCommentVO(comment, postMap, userMap))
                 .collect(Collectors.toList());
+        
+        Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(voList);
+        return resultPage;
     }
     
     private CommentVO convertToCommentVO(Comment comment, Map<Integer, UserPublicVO> userMap) {

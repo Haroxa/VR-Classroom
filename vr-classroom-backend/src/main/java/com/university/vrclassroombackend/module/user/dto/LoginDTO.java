@@ -1,47 +1,37 @@
 package com.university.vrclassroombackend.module.user.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.Data;
 
+/**
+ * 微信登录DTO
+ */
+@Data
 public class LoginDTO {
-    @NotBlank(message = "loginCode不能为空")
+    /**
+     * 微信登录码
+     */
+    @NotBlank(message = "微信登录码不能为空")
+    @Size(max = 100, message = "微信登录码长度不能超过100个字符")
     private String loginCode;
 
-    @NotBlank(message = "phoneCode不能为空")
+    /**
+     * 手机号授权码
+     */
+    @NotBlank(message = "手机号授权码不能为空")
+    @Size(max = 100, message = "手机号授权码长度不能超过100个字符")
     private String phoneCode;
 
+    /**
+     * 微信昵称
+     */
+    @Size(max = 50, message = "昵称长度不能超过50个字符")
     private String nickName;
 
+    /**
+     * 微信头像URL
+     */
+    @Size(max = 500, message = "头像URL长度不能超过500个字符")
     private String avatarUrl;
-
-    public String getLoginCode() {
-        return loginCode;
-    }
-
-    public void setLoginCode(String loginCode) {
-        this.loginCode = loginCode;
-    }
-
-    public String getPhoneCode() {
-        return phoneCode;
-    }
-
-    public void setPhoneCode(String phoneCode) {
-        this.phoneCode = phoneCode;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public String getAvatarUrl() {
-        return avatarUrl;
-    }
-
-    public void setAvatarUrl(String avatarUrl) {
-        this.avatarUrl = avatarUrl;
-    }
 }

@@ -134,7 +134,7 @@ def generate_reports():
 atexit.register(generate_reports)
 
 # 基础URL
-base_url = "http://localhost:8082/api"
+base_url = "http://localhost:8080/api"
 server_url = "http://10.86.136.242:8082/api"
 is_server = False
 url = server_url if is_server else base_url
@@ -557,6 +557,5 @@ def test_concurrent_order():
     logger.info("\n✅ 并发场景测试通过 - 系统正确处理了并发订单\n")
 
 if __name__ == "__main__":
-    # 运行所有测试
-    pytest.main([__file__, "-v", "-s", "--tb=short", "--html=order-test-report.html", "--self-contained-html"])
+    pytest.main([__file__, "-v", "-s", "--tb=short"])
 

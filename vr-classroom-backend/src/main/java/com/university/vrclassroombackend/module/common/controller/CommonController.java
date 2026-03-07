@@ -1,6 +1,5 @@
 package com.university.vrclassroombackend.module.common.controller;
 
-import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.util.OssUtil;
 import org.slf4j.Logger;
@@ -16,31 +15,22 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class CommonController {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(CommonController.class);
-    
+
     @Autowired
     private OssUtil ossUtil;
 
     /**
      * 获取OSS签名
-     * 
+     *
      * @deprecated OSS功能暂时弃用
      */
     @Deprecated
     @GetMapping("/oss/sign")
     public ResponseEntity<?> getOssSign() {
-        try {
-            Map<String, String> sign = ossUtil.generatePostSignature();
-            logger.info("获取OSS签名成功");
-            return ResponseEntity.ok().body(ApiResponse.success(sign));
-        } catch (Exception e) {
-            logger.error("获取OSS签名失败", e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.GET_OSS_SIGN_FAILED));
-        }
+        Map<String, String> sign = ossUtil.generatePostSignature();
+        logger.info("获取OSS签名成功");
+        return ResponseEntity.ok().body(ApiResponse.success(sign));
     }
 }
-
-
-
-

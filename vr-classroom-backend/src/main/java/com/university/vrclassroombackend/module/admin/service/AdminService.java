@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.admin.service;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.university.vrclassroombackend.module.admin.dto.PostAuditDTO;
 import com.university.vrclassroombackend.module.admin.dto.CommentAuditDTO;
 import com.university.vrclassroombackend.module.admin.vo.PostAuditVO;
@@ -17,17 +18,17 @@ public interface AdminService {
      * @param status 状态，没传则查全部
      * @param categoryId 分类id，没传则查全部
      * @param keyword 搜索关键词
-     * @return 帖子列表
+     * @return 分页帖子列表
      */
-    List<PostAuditVO> getPosts(Integer page, Integer status, Integer categoryId, String keyword);
+    IPage<PostAuditVO> getPosts(Integer page, Integer status, Integer categoryId, String keyword);
 
     /**
      * 获取评论列表（后台审核用）
      * @param page 页码，每页固定20条数据
      * @param status 状态，没传则查全部
-     * @return 评论列表
+     * @return 分页评论列表
      */
-    List<CommentAuditVO> getComments(Integer page, Integer status);
+    IPage<CommentAuditVO> getComments(Integer page, Integer status);
 
     /**
      * 审核帖子

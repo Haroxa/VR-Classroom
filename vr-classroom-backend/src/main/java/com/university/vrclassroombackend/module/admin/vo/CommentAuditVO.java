@@ -1,6 +1,9 @@
 package com.university.vrclassroombackend.module.admin.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+
+import java.time.LocalDateTime;
 
 /**
  * 评论审核VO
@@ -15,7 +18,8 @@ public class CommentAuditVO {
     /**
      * 发布时间
      */
-    private String date;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime date;
     
     /**
      * 评论内容

@@ -66,3 +66,4 @@ backup/
 
 ### Local Update log ###
 CHANGELOG.md
+*.ini

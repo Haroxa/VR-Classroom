@@ -1,5 +1,7 @@
 package com.university.vrclassroombackend.module.user.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserPublicVO {
     private String id;
     private String name = "未认证";
@@ -48,6 +50,7 @@ public class UserPublicVO {
         this.collegeName = collegeName;
     }
 
+    @JsonProperty("isVerified")
     public boolean isVerified() {
         return isVerified;
     }

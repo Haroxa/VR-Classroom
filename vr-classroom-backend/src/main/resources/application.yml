@@ -2,11 +2,16 @@
 spring:
   application:
     name: vr-classroom-backend
-  
+
   # 默认环境
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
-  
+
   # 允许循环依赖
   main:
     allow-circular-references: true
+
+# 订单配置
+order:
+  seat:
+    price: 100000  # 座位单价（分），与数据库默认价格保持一致

@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.forum.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,52 +29,43 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPublicPosts(
-            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "1") Integer page,
             @RequestParam(required = false) Integer categoryId,
             @RequestParam(required = false) String keyword) {
-        List<PostVO> posts = postService.getPublicPosts(page, categoryId, keyword);
+        IPage<PostVO> postPage = postService.getPublicPosts(page, categoryId, keyword);
         Map<String, Object> data = new HashMap<>();
-        data.put("current", page);
-        data.put("total", posts.size() / AppConstants.Pagination.DEFAULT_PAGE_SIZE + 1);
-        data.put("records", posts);
+        data.put("current", (int) postPage.getCurrent());
+        data.put("total", (int) postPage.getPages());
+        data.put("records", postPage.getRecords());
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
 
     @PostMapping
     public ResponseEntity<?> createPost(
             jakarta.servlet.http.HttpServletRequest request,
-            @RequestBody PostCreateDTO dto) {
-        try {
-            Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (authorId == null) {
-                logger.warn("创建帖子失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            Integer postId = postService.createPost(dto, authorId);
-            logger.info("创建帖子成功: postId={}, authorId={}", postId, authorId);
-            return ResponseEntity.ok().body(ApiResponse.success(postId.toString()));
-        } catch (Exception e) {
-            logger.error("创建帖子失败: authorId={}, title={}", request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), dto != null ? dto.getTitle() : null, e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.CREATE_POST_FAILED));
+            @Valid @RequestBody PostCreateDTO dto) {
+        Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (authorId == null) {
+            logger.warn("创建帖子失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        Integer postId = postService.createPost(dto, authorId);
+        logger.info("创建帖子成功: postId={}, authorId={}", postId, authorId);
+        return ResponseEntity.ok().body(ApiResponse.success(postId.toString()));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPostDetail(
             @PathVariable Integer id,
             jakarta.servlet.http.HttpServletRequest request) {
-        try {
-            Integer currentUserId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            PostDetailVO post = postService.getPostDetail(id, currentUserId);
-            if (post == null) {
-                logger.warn("获取帖子详情失败: 帖子不存在 postId={}", id);
-                return ResponseEntity.ok().body(ApiResponse.error(AppConstants.HttpStatusCode.NOT_FOUND, AppConstants.ErrorMessage.POST_NOT_FOUND));
-            }
-            return ResponseEntity.ok().body(ApiResponse.success(post));
-        } catch (Exception e) {
-            logger.error("获取帖子详情失败: postId={}", id, e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.GET_POST_DETAIL_FAILED));
+        Integer currentUserId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        PostDetailVO post = postService.getPostDetail(id, currentUserId);
+        if (post == null) {
+            logger.warn("获取帖子详情失败: 帖子不存在 postId={}", id);
+            return ResponseEntity.ok().body(ApiResponse.error(AppConstants.HttpStatusCode.NOT_FOUND, AppConstants.ErrorMessage.POST_NOT_FOUND));
         }
+        return ResponseEntity.ok().body(ApiResponse.success(post));
     }
 
     @PutMapping("/{id}")
@@ -82,38 +73,40 @@ public class PostController {
             @PathVariable Integer id,
             jakarta.servlet.http.HttpServletRequest request,
             @Valid @RequestBody PostUpdateDTO dto) {
-        try {
-            Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (authorId == null) {
-                logger.warn("更新帖子失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            postService.updatePost(id, dto, authorId);
-            logger.info("更新帖子成功: postId={}, authorId={}", id, authorId);
-            return ResponseEntity.ok().body(ApiResponse.success());
-        } catch (Exception e) {
-            logger.error("更新帖子失败: postId={}, authorId={}", id, request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.UPDATE_POST_FAILED));
+        Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (authorId == null) {
+            logger.warn("更新帖子失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        boolean result = postService.updatePost(id, dto, authorId);
+        if (!result) {
+            logger.warn("更新帖子失败: 帖子不存在或无权限 postId={}, authorId={}", id, authorId);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.FORBIDDEN)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.FORBIDDEN, "帖子不存在或无权限"));
+        }
+        logger.info("更新帖子成功: postId={}, authorId={}", id, authorId);
+        return ResponseEntity.ok().body(ApiResponse.success());
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deletePost(
             @PathVariable Integer id,
             jakarta.servlet.http.HttpServletRequest request) {
-        try {
-            Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
-            if (authorId == null) {
-                logger.warn("删除帖子失败: 未认证");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED).body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
-            }
-            postService.deletePost(id, authorId);
-            logger.info("删除帖子成功: postId={}, authorId={}", id, authorId);
-            return ResponseEntity.ok().body(ApiResponse.success());
-        } catch (Exception e) {
-            logger.error("删除帖子失败: postId={}, authorId={}", id, request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE), e);
-            return ResponseEntity.status(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR).body(ApiResponse.error(AppConstants.HttpStatusCode.INTERNAL_SERVER_ERROR, AppConstants.ErrorMessage.DELETE_POST_FAILED));
+        Integer authorId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (authorId == null) {
+            logger.warn("删除帖子失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
+        boolean result = postService.deletePost(id, authorId);
+        if (!result) {
+            logger.warn("删除帖子失败: 帖子不存在或无权限 postId={}, authorId={}", id, authorId);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.FORBIDDEN)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.FORBIDDEN, "帖子不存在或无权限"));
+        }
+        logger.info("删除帖子成功: postId={}, authorId={}", id, authorId);
+        return ResponseEntity.ok().body(ApiResponse.success());
     }
 }
 

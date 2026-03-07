@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -45,7 +46,10 @@ public class PostServiceImpl implements PostService {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
-    public List<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
+    public IPage<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
+        int currentPage = page != null && page > 0 ? page : 1;
+        Page<Post> pageParam = new Page<>(currentPage, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Post::getStatus, Post.STATUS_PUBLISHED);
         
@@ -54,15 +58,18 @@ public class PostServiceImpl implements PostService {
         }
         
         if (keyword != null && !keyword.isEmpty()) {
-            queryWrapper.like(Post::getTitle, keyword).or().like(Post::getContent, keyword);
+            queryWrapper.and(qw -> qw.like(Post::getTitle, keyword).or().like(Post::getContent, keyword));
         }
         
         queryWrapper.orderByDesc(Post::getDate);
         
-        List<Post> posts = postMapper.selectList(queryWrapper);
+        IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);
+        List<Post> posts = postPage.getRecords();
         
         if (posts.isEmpty()) {
-            return List.of();
+            Page<PostVO> emptyPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
+            emptyPage.setRecords(List.of());
+            return emptyPage;
         }
         
         List<Integer> authorIds = posts.stream()
@@ -91,9 +98,13 @@ public class PostServiceImpl implements PostService {
                         (existing, replacement) -> existing
                 ));
         
-        return posts.stream()
+        List<PostVO> voList = posts.stream()
                 .map(post -> convertToPostVO(post, userMap, categoryMap))
                 .collect(Collectors.toList());
+        
+        Page<PostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
+        resultPage.setRecords(voList);
+        return resultPage;
     }
 
     @Override
@@ -128,10 +139,7 @@ public class PostServiceImpl implements PostService {
         post.setShareCount(0);
         post.setCommentCount(0);
         post.setStatus(Post.STATUS_PUBLISHED);
-        
-        java.time.LocalDateTime now = java.time.LocalDateTime.now();
-        java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        post.setDate(now.format(formatter));
+        post.setDate(LocalDateTime.now());
         
         postMapper.insert(post);
         return post.getId();
@@ -178,18 +186,21 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<UserPostVO> getUserPosts(Integer userId, Integer page) {
-        List<Post> posts = postMapper.selectByAuthorId(userId);
+    public IPage<UserPostVO> getUserPosts(Integer userId, Integer page) {
+        int currentPage = page != null && page > 0 ? page : 1;
+        Page<Post> pageParam = new Page<>(currentPage, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
         
-        int pageSize = AppConstants.Pagination.DEFAULT_PAGE_SIZE;
-        int start = page * pageSize;
-        int end = Math.min(start + pageSize, posts.size());
-        if (start >= posts.size()) {
-            return List.of();
-        }
-        posts = posts.subList(start, end);
+        LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Post::getAuthorId, userId);
+        queryWrapper.orderByDesc(Post::getDate);
         
-        return posts.stream().map(this::convertToUserPostVO).collect(Collectors.toList());
+        IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);
+        List<Post> posts = postPage.getRecords();
+        
+        List<UserPostVO> voList = posts.stream().map(this::convertToUserPostVO).collect(Collectors.toList());
+        Page<UserPostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
+        resultPage.setRecords(voList);
+        return resultPage;
     }
     
     private PostVO convertToPostVO(Post post, Map<Integer, UserPublicVO> userMap, Map<Integer, Category> categoryMap) {
@@ -210,11 +221,15 @@ public class PostServiceImpl implements PostService {
         vo.setCommentCount(post.getCommentCount());
         vo.setLiked(false);
         
-        if (post.getCategoryId() != null) {
+        if (post.getCategoryId() != null && post.getCategoryId() != 0) {
             Category category = categoryMap.get(post.getCategoryId());
             if (category != null) {
                 vo.setCategoryName(category.getName());
+            } else {
+                vo.setCategoryName("未分类");
             }
+        } else {
+            vo.setCategoryName("未分类");
         }
         
         UserPublicVO author = userMap.get(post.getAuthorId());
@@ -250,11 +265,15 @@ public class PostServiceImpl implements PostService {
             vo.setRejectReason(null);
         }
         
-        if (post.getCategoryId() != null) {
+        if (post.getCategoryId() != null && post.getCategoryId() != 0) {
             Category category = categoryMapper.selectById(post.getCategoryId());
             if (category != null) {
                 vo.setCategoryName(category.getName());
+            } else {
+                vo.setCategoryName("未分类");
             }
+        } else {
+            vo.setCategoryName("未分类");
         }
         
         UserPublicVO author = userService.getUserPublicInfo(post.getAuthorId());
@@ -283,14 +302,48 @@ public class PostServiceImpl implements PostService {
         vo.setRejectReason(post.getRejectReason());
         vo.setLiked(false);
         
-        if (post.getCategoryId() != null) {
+        if (post.getCategoryId() != null && post.getCategoryId() != 0) {
             Category category = categoryMapper.selectById(post.getCategoryId());
             if (category != null) {
                 vo.setCategoryName(category.getName());
+            } else {
+                vo.setCategoryName("未分类");
             }
+        } else {
+            vo.setCategoryName("未分类");
         }
         
         return vo;
+    }
+    
+    @Override
+    @Transactional
+    public boolean incrementLikeCount(Integer postId, int delta) {
+        if (postId == null) {
+            return false;
+        }
+        int rows = postMapper.incrementLikeCount(postId, delta);
+        return rows > 0;
+    }
+    
+    @Override
+    @Transactional
+    public boolean incrementCommentCount(Integer postId, int delta) {
+        if (postId == null) {
+            return false;
+        }
+        int rows = postMapper.incrementCommentCount(postId, delta);
+        return rows > 0;
+    }
+    
+    @Override
+    @Transactional
+    public boolean incrementShareCount(Integer postId, int delta) {
+        if (postId == null) {
+            return false;
+        }
+        int rows = postMapper.incrementShareCount(postId, delta);
+        return rows > 0;
     }
 }
 

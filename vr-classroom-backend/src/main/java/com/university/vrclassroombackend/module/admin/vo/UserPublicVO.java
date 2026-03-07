@@ -1,5 +1,6 @@
 package com.university.vrclassroombackend.module.admin.vo;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -36,4 +37,9 @@ public class UserPublicVO {
      * 是否认证
      */
     private boolean isVerified;
+    
+    @JsonProperty("isVerified")
+    public boolean isVerified() {
+        return isVerified;
+    }
 }
