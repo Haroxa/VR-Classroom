@@ -42,6 +42,9 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private UserService userService;
 
+    /**
+     * 获取帖子评论列表
+     */
     @Override
     public IPage<CommentVO> getPostComments(Integer postId, Integer page) {
         int currentPage = page != null && page > 0 ? page : 1;
@@ -83,6 +86,9 @@ public class CommentServiceImpl implements CommentService {
         return resultPage;
     }
 
+    /**
+     * 创建评论
+     */
     @Override
     @Transactional
     public Integer createComment(CommentCreateDTO dto, Integer commenterId) {
@@ -120,6 +126,9 @@ public class CommentServiceImpl implements CommentService {
         return true;
     }
 
+    /**
+     * 删除评论
+     */
     @Override
     @Transactional
     public boolean deleteComment(Integer commentId, Integer commenterId) {

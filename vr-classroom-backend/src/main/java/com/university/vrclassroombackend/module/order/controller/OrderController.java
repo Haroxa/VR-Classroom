@@ -1,6 +1,7 @@
 package com.university.vrclassroombackend.module.order.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.university.vrclassroombackend.annotation.RateLimiter;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.order.dto.CreateOrderDTO;
@@ -37,6 +38,7 @@ public class OrderController {
     }
 
     @PostMapping("/orders")
+    @RateLimiter(limit = 10, timeout = 1)
     public ResponseEntity<?> createOrder(HttpServletRequest request,
                                          @Valid @RequestBody CreateOrderDTO createOrderDTO) {
         Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);

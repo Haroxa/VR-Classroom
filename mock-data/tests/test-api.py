@@ -18,13 +18,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # 基础URL
-base_url = "http://localhost:8080/api"
+base_url = "http://localhost:8081/api"
 server_url = "http://10.86.136.242:8082/api"
 is_server = False
 url = server_url if is_server else base_url
 
 # 测试token (实际测试时需要替换为真实token)
-token = "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyODQ0MTEzLCJleHAiOjE3NzI5MzA1MTN9.NUyBiVoyxqVJ0r0OVzEdvgU_zr0Vk16codQjGKwgBYpsilM24TGnYmTpDeEYDaBY"
+token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzcyODc1NjYyLCJleHAiOjE3NzI5NjIwNjJ9.ny-ffdmEsRYzf3bsNmTCZ1ChD8SRIWPSd_Ya61hCFKk"
 
 # 测试结果收集
 test_details = []

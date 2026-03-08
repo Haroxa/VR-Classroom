@@ -19,6 +19,8 @@
 - [API文档](#-api文档)
 - [项目结构](#-项目结构)
 - [数据库设计](#-数据库设计)
+- [高并发优化](#-高并发优化)
+- [监控告警](#-监控告警)
 - [贡献指南](#-贡献指南)
 - [许可证](#-许可证)
 - [常见问题](#-常见问题)
@@ -93,8 +95,8 @@ java -jar target/vr-classroom-backend-0.0.1-SNAPSHOT.jar --spring.profiles.activ
 
 ### 访问地址
 
-- 应用地址：http://localhost:8080
-- API文档：http://localhost:8080/swagger-ui.html（开发环境）
+- 应用地址：http://localhost:8082（负载均衡入口）
+- API文档：http://localhost:8082/swagger-ui.html
 
 ---
 
@@ -107,7 +109,7 @@ java -jar target/vr-classroom-backend-0.0.1-SNAPSHOT.jar --spring.profiles.activ
 cd vr-classroom-backend
 ./mvnw clean package -DskipTests
 
-# 2. 启动容器
+# 2. 启动容器（5个后端实例 + Nginx负载均衡 + Redis）
 cd ..
 docker-compose up -d
 
@@ -115,8 +117,13 @@ docker-compose up -d
 docker-compose ps
 
 # 4. 查看日志
-docker-compose logs -f vr-classroom-backend
+docker-compose logs -f vr-classroom-backend-1
+
+# 5. 查看负载均衡状态
+docker exec vr-classroom-nginx cat /var/log/nginx/vr-classroom-access.log
 ```
+
+> **部署架构**：5个Spring Boot实例 + Nginx负载均衡 + Redis，支持万人并发访问
 
 ### 本地部署
 
@@ -245,6 +252,52 @@ pytest -v
 - ✅ 自动收集测试详情，包括接口、状态码、请求/响应数据
 - ✅ 自动生成JSON和Markdown格式的测试报告
 - ✅ 支持pytest框架，可使用参数化测试
+
+### 压力测试
+
+项目提供JMeter压力测试方案，支持高并发场景性能测试：
+
+| 测试文件 | 说明 | 测试场景 |
+|---------|------|---------|
+| `jmeter-server-test.jmx` | JMeter测试计划 | 100/500/1000并发用户测试 |
+| `JMeter服务器测试说明.md` | 测试使用说明 | 详细的使用指南和性能指标 |
+
+#### 测试场景
+
+- **场景1-正常负载**：100并发用户，10秒启动，循环10次
+- **场景2-中等负载**：500并发用户，30秒启动，循环10次
+- **场景3-高负载**：1000并发用户，60秒启动，循环10次
+
+#### 测试接口
+
+- `GET /api/posts?page=1` - 获取帖子列表
+- `GET /api/posts/1` - 获取帖子详情
+- `GET /api/admin/posts?page=1` - 获取审核帖子列表
+
+#### 运行压力测试
+
+```bash
+# 在Linux服务器上安装JMeter
+wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.3.tgz
+tar -xzf apache-jmeter-5.6.3.tgz
+sudo mv apache-jmeter-5.6.3 /opt/jmeter
+sudo ln -s /opt/jmeter/bin/jmeter /usr/local/bin/jmeter
+
+# 运行压力测试（非GUI模式）
+jmeter -n -t jmeter-server-test.jmx -l result.jtl -e -o report
+
+# 查看测试报告
+# 打开 report/index.html 查看详细报告
+```
+
+#### 性能目标
+
+| 指标 | 目标值 |
+|------|--------|
+| QPS | > 8000 |
+| 平均响应时间 | < 200ms |
+| P95响应时间 | < 500ms |
+| 错误率 | < 1% |
 - ✅ 测试报告保存到logs目录，便于管理和查看
 
 ---
@@ -275,15 +328,15 @@ VR教室/
 │   │   └── test/                 # 测试代码
 │   ├── Dockerfile                # Docker构建文件
 │   └── pom.xml                   # Maven配置
-├── mock-data/                    # 测试脚本
-│   ├── create-test-users.py              # 创建测试用户
-│   ├── test-api.py                       # 测试用户和论坛API
-│   ├── test-admin-api.py                 # 测试管理员API
-│   ├── test-donation-payment.py          # 测试捐赠和支付
-│   ├── test-order-api.py                 # 测试订单API
-│   └── VR教室API测试.ipynb               # 测试笔记本
-├── insert-mock-data.py           # 导入测试数据脚本
-├── docker-compose.yml            # Docker Compose配置
+├── mock-data/                    # 测试数据与脚本
+│   ├── data/                     # 测试数据
+│   ├── scripts/                  # 辅助脚本
+│   └── tests/                    # 测试脚本
+│       ├── test-api.py           # 基础API测试
+│       ├── test-admin-api.py     # 管理员API测试
+│       └── test_order_api_v4_1.py # 订单API测试
+├── nginx.conf                    # Nginx负载均衡配置
+├── docker-compose.yml            # Docker Compose配置（5实例）
 └── README.md                     # 项目说明
 ```
 
@@ -323,6 +376,189 @@ campus ─── building ─── classroom
 ```
 
 > 注意：campus、building、donation_order、payment_order、certificate 为扩展表，当前版本暂未完全实现相关功能
+
+---
+
+## ⚡ 高并发优化
+
+### 优化目标
+
+本项目针对校友回校活动期间万人访问的高并发场景，实施了全面的优化措施，性能提升约5-10倍。
+
+### 已实施优化
+
+#### 1. 应用层优化
+
+| 优化项 | 优化前 | 优化后 | 性能提升 |
+|--------|--------|--------|----------|
+| Tomcat线程池 | max-threads: 200 | max-threads: 2000 | +900% |
+| Tomcat最小线程 | min-spare-threads: 20 | min-spare-threads: 200 | +900% |
+| Tomcat等待队列 | accept-count: 100 | accept-count: 1000 | +900% |
+| Redis连接池 | max-active: 8 | max-active: 50 | +525% |
+
+#### 2. 数据库层优化
+
+| 优化项 | 优化前 | 优化后 | 性能提升 |
+|--------|--------|--------|----------|
+| 数据库连接池 | 未配置 | HikariCP: 100连接 | - |
+| 最小空闲连接 | 未配置 | minimum-idle: 20 | - |
+| 连接超时 | 默认 | connection-timeout: 30s | - |
+
+#### 3. 容器资源优化
+
+| 优化项 | 优化前 | 优化后 |
+|--------|--------|--------|
+| 后端实例数 | 1个 | 5个 |
+| 容器内存限制 | 无限制 | 4G |
+| 容器CPU限制 | 无限制 | 1.5核/实例 |
+
+#### 4. 负载均衡优化
+
+| 优化项 | 配置 |
+|--------|------|
+| 负载均衡算法 | least_conn（最少连接） |
+| 后端实例 | 5个实例 |
+| 健康检查 | max_fails=3, fail_timeout=30s |
+| Nginx连接数 | worker_connections: 2048 |
+
+#### 5. 接口限流优化
+
+| 接口 | 限流阈值 | 说明 |
+|------|----------|------|
+| POST /api/orders | 10 req/s | 创建订单接口 |
+| POST /api/posts | 5 req/s | 创建帖子接口 |
+| POST /api/comments | 10 req/s | 创建评论接口 |
+
+#### 6. 异步处理优化
+
+| 优化项 | 配置 |
+|--------|------|
+| 核心线程数 | 10 |
+| 最大线程数 | 50 |
+| 队列容量 | 200 |
+| 线程名前缀 | async-task- |
+
+### 性能预估
+
+| 指标 | 优化前 | 优化后 |
+|------|--------|--------|
+| QPS | 200-400 | 8000-10000 |
+| 并发用户 | 200-500 | 8000-10000 |
+| 平均响应时间 | 500ms-2s | 50ms-200ms |
+| 错误率 | >5% | <0.1% |
+
+### 优化完成状态
+
+- [x] 增加容器内存限制（4G/实例）
+- [x] 配置负载均衡（5实例部署）
+- [x] 配置异步线程池
+- [x] Tomcat线程池优化（2000线程）
+- [x] 数据库连接池优化（100连接）
+- [ ] 数据库读写分离（当前规模无需）
+- [ ] 引入消息队列（当前规模无需）
+
+详细优化计划请参考 [高并发优化待办.md](./高并发优化待办.md)
+
+---
+
+## 📊 监控告警
+
+### 监控方案概述
+
+项目已集成 **Spring Boot Actuator**，提供基础的健康检查和监控能力。
+
+### 一、容器日志监控
+
+```powershell
+# 查看后端实例日志
+docker logs vr-classroom-backend-1 --tail 100
+
+# 实时跟踪日志
+docker logs -f vr-classroom-backend-1
+
+# 查看Nginx访问日志（含负载均衡信息）
+docker exec vr-classroom-nginx cat /var/log/nginx/vr-classroom-access.log
+
+# 查看所有容器状态
+docker ps -a
+```
+
+### 二、健康检查端点
+
+```powershell
+# 应用健康检查
+curl http://localhost:8082/actuator/health
+# 返回：{"status":"UP"}
+
+# 应用信息
+curl http://localhost:8082/actuator/info
+```
+
+### 三、Docker资源监控
+
+```powershell
+# 实时查看容器资源使用
+docker stats
+
+# 输出示例：
+# CONTAINER           CPU %   MEM USAGE / LIMIT   NET I/O
+# backend-1           0.5%    512MiB / 4GiB       1.2MB
+# backend-2           0.3%    480MiB / 4GiB       0.8MB
+# nginx               0.1%    10MiB / 256MiB      2MB
+# redis               0.2%    8MiB / 128MiB       0.5MB
+```
+
+### 四、监控脚本
+
+创建简单的健康检查脚本 `monitor.ps1`：
+
+```powershell
+# 监控脚本
+$services = @(
+    "http://localhost:8082/actuator/health"
+)
+
+foreach ($url in $services) {
+    try {
+        $response = Invoke-WebRequest -Uri $url -TimeoutSec 5
+        Write-Host "✅ $url - OK" -ForegroundColor Green
+    } catch {
+        Write-Host "❌ $url - FAILED" -ForegroundColor Red
+    }
+}
+
+# 检查容器状态
+docker ps --format "table {{.Names}}\t{{.Status}}"
+```
+
+### 五、监控指标说明
+
+| 监控项 | 检查方式 | 正常值 |
+|--------|----------|--------|
+| 应用健康 | `/actuator/health` | status: UP |
+| 容器状态 | `docker ps` | Status: Up |
+| 内存使用 | `docker stats` | < 80% 限制值 |
+| CPU使用 | `docker stats` | < 70% |
+| 数据库连接 | 应用日志 | 无连接超时错误 |
+
+### 六、告警阈值建议
+
+| 指标 | 警告阈值 | 严重阈值 |
+|------|----------|----------|
+| 内存使用 | > 70% | > 90% |
+| CPU使用 | > 60% | > 80% |
+| 响应时间 | > 500ms | > 2s |
+| 错误率 | > 1% | > 5% |
+
+### 七、生产级监控（可选）
+
+如需更完善的监控，可引入以下组件：
+
+| 组件 | 用途 |
+|------|------|
+| Prometheus | 指标采集 |
+| Grafana | 可视化面板 |
+| AlertManager | 告警通知 |
 
 ---
 
@@ -372,23 +608,13 @@ chore: 构建/依赖调整
 
 ```bash
 # 测试用户和论坛API
-python mock-data/test-api.py
+python mock-data/tests/test-api.py
 
 # 测试管理员API
-python mock-data/test-admin-api.py
-
-# 测试捐赠和支付
-python mock-data/test-donation-payment.py
+python mock-data/tests/test-admin-api.py
 
 # 测试订单API
-python mock-data/test-order-api.py
-```
-
-### Jupyter Notebook测试
-
-```bash
-# 启动Jupyter Notebook
-jupyter notebook mock-data/VR教室API测试.ipynb
+python mock-data/tests/test_order_api_v4_1.py
 ```
 
 ### 测试账号

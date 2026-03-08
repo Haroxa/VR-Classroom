@@ -45,6 +45,9 @@ public class PostServiceImpl implements PostService {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    /**
+     * 获取公开帖子列表
+     */
     @Override
     public IPage<PostVO> getPublicPosts(Integer page, Integer categoryId, String keyword) {
         int currentPage = page != null && page > 0 ? page : 1;
@@ -107,6 +110,9 @@ public class PostServiceImpl implements PostService {
         return resultPage;
     }
 
+    /**
+     * 获取帖子详情
+     */
     @Override
     public PostDetailVO getPostDetail(Integer postId, Integer currentUserId) {
         Post post = postMapper.selectById(postId);
@@ -235,6 +241,12 @@ public class PostServiceImpl implements PostService {
         UserPublicVO author = userMap.get(post.getAuthorId());
         if (author != null) {
             vo.setAuthor(author);
+        } else {
+            // 创建默认的用户信息，避免NPE
+            UserPublicVO defaultAuthor = new UserPublicVO();
+            defaultAuthor.setId("0");
+            defaultAuthor.setName("未知用户");
+            vo.setAuthor(defaultAuthor);
         }
         
         return vo;
@@ -277,7 +289,15 @@ public class PostServiceImpl implements PostService {
         }
         
         UserPublicVO author = userService.getUserPublicInfo(post.getAuthorId());
-        vo.setAuthor(author);
+        if (author != null) {
+            vo.setAuthor(author);
+        } else {
+            // 创建默认的用户信息，避免NPE
+            UserPublicVO defaultAuthor = new UserPublicVO();
+            defaultAuthor.setId("0");
+            defaultAuthor.setName("未知用户");
+            vo.setAuthor(defaultAuthor);
+        }
         
         return vo;
     }

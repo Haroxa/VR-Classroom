@@ -7,7 +7,7 @@ import requests
 import json
 
 # API基础URL
-BASE_URL = "http://localhost:8080/api"
+BASE_URL = "http://localhost:8081/api"
 SERVER_URL = "http://10.86.136.242:8082/api"
 IS_SERVER = False
 URL = SERVER_URL if IS_SERVER else BASE_URL

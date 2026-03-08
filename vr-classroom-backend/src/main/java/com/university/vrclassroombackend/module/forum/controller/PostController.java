@@ -1,6 +1,7 @@
 package com.university.vrclassroombackend.module.forum.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.university.vrclassroombackend.annotation.RateLimiter;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.module.forum.dto.PostCreateDTO;
@@ -41,6 +42,7 @@ public class PostController {
     }
 
     @PostMapping
+    @RateLimiter(limit = 5, timeout = 1)
     public ResponseEntity<?> createPost(
             jakarta.servlet.http.HttpServletRequest request,
             @Valid @RequestBody PostCreateDTO dto) {

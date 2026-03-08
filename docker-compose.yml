@@ -1,52 +1,206 @@
 services:
-  # Spring Boot应用
-  vr-classroom-backend:
-    # 使用 Eclipse Temurin 替代弃用的 openjdk
+  # Spring Boot应用 - 实例1
+  vr-classroom-backend-1:
     image: eclipse-temurin:17-jre-alpine
-    container_name: vr-classroom-backend
-    ports:
-      - "8082:8080"  # 修改端口，避免与 zhilian-gateway(8080) 冲突
+    container_name: vr-classroom-backend-1
     volumes:
-      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro  # 添加 :ro 只读
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
     environment:
-      # 数据库配置
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
       SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
-      # Redis配置
       SPRING_REDIS_HOST: redis
       SPRING_REDIS_PORT: 6379
       SPRING_REDIS_PASSWORD: ""
       SPRING_REDIS_DATABASE: 0
-      # 服务器配置
       SERVER_PORT: 8080
-      # 环境配置
       SPRING_PROFILES_ACTIVE: prod
-      # JWT配置（建议从文件挂载或 secrets 读取）
       JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
-      # OSS配置
       OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      # 微信登录配置
       WECHAT_APP_ID: your-wechat-app-id
       WECHAT_APP_SECRET: your-wechat-app-secret
     depends_on:
       redis:
         condition: service_started
+      nginx:
+        condition: service_started
     restart: unless-stopped
-    # 使用 entrypoint 确保更好的信号处理
     entrypoint: ["java", "-jar", "/app/app.jar"]
-    # 资源限制（可选）
     deploy:
       resources:
         limits:
-          memory: 512M
+          memory: 2G
+          cpus: '2'
         reservations:
-          memory: 256M
+          memory: 1G
 
+  # Spring Boot应用 - 实例2
+  vr-classroom-backend-2:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: vr-classroom-backend-2
+    volumes:
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: cj
+      SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ""
+      SPRING_REDIS_DATABASE: 0
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
+      OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
+      OSS_ACCESS_KEY_ID: your_oss_access_key_id
+      OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
+      OSS_BUCKET_NAME: vr-classroom-bucket
+      WECHAT_APP_ID: your-wechat-app-id
+      WECHAT_APP_SECRET: your-wechat-app-secret
+    depends_on:
+      redis:
+        condition: service_started
+      nginx:
+        condition: service_started
+    restart: unless-stopped
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '2'
+        reservations:
+          memory: 1G
 
+  # Spring Boot应用 - 实例3
+  vr-classroom-backend-3:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: vr-classroom-backend-3
+    volumes:
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: cj
+      SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ""
+      SPRING_REDIS_DATABASE: 0
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
+      OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
+      OSS_ACCESS_KEY_ID: your_oss_access_key_id
+      OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
+      OSS_BUCKET_NAME: vr-classroom-bucket
+      WECHAT_APP_ID: your-wechat-app-id
+      WECHAT_APP_SECRET: your-wechat-app-secret
+    depends_on:
+      redis:
+        condition: service_started
+      nginx:
+        condition: service_started
+    restart: unless-stopped
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '1.5'
+        reservations:
+          memory: 2G
+
+  # Spring Boot应用 - 实例4
+  vr-classroom-backend-4:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: vr-classroom-backend-4
+    volumes:
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: cj
+      SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ""
+      SPRING_REDIS_DATABASE: 0
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
+      OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
+      OSS_ACCESS_KEY_ID: your_oss_access_key_id
+      OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
+      OSS_BUCKET_NAME: vr-classroom-bucket
+      WECHAT_APP_ID: your-wechat-app-id
+      WECHAT_APP_SECRET: your-wechat-app-secret
+    depends_on:
+      redis:
+        condition: service_started
+      nginx:
+        condition: service_started
+    restart: unless-stopped
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '1.5'
+        reservations:
+          memory: 2G
+
+  # Spring Boot应用 - 实例5
+  vr-classroom-backend-5:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: vr-classroom-backend-5
+    volumes:
+      - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      SPRING_DATASOURCE_USERNAME: cj
+      SPRING_DATASOURCE_PASSWORD: WEOrMSs@rtDeMw@ItoN#_YkLhUyXj167Oq5nLPBvTSQKv06v
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      SPRING_REDIS_PASSWORD: ""
+      SPRING_REDIS_DATABASE: 0
+      SERVER_PORT: 8080
+      SPRING_PROFILES_ACTIVE: prod
+      JWT_SECRET: your_jwt_secret_key_at_least_32_characters_long
+      OSS_ENDPOINT: oss-cn-wuhan-lr.aliyuncs.com
+      OSS_ACCESS_KEY_ID: your_oss_access_key_id
+      OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
+      OSS_BUCKET_NAME: vr-classroom-bucket
+      WECHAT_APP_ID: your-wechat-app-id
+      WECHAT_APP_SECRET: your-wechat-app-secret
+    depends_on:
+      redis:
+        condition: service_started
+      nginx:
+        condition: service_started
+    restart: unless-stopped
+    entrypoint: ["java", "-jar", "/app/app.jar"]
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: '1.5'
+        reservations:
+          memory: 2G
+
+  # Nginx负载均衡
+  nginx:
+    image: nginx:alpine
+    container_name: vr-classroom-nginx
+    ports:
+      - "8082:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      redis:
+        condition: service_started
+    restart: unless-stopped
 
   # Redis服务
   redis:

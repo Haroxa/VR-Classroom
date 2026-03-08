@@ -21,7 +21,7 @@ import jakarta.annotation.PostConstruct;
 
 /**
  * Redis 配置类
- * 用于配置 RedisTemplate，方便在代码中使用 Redis 缓存
+ * 用于配置 RedisTemplate，方便在代码中使用 Redis
  */
 @Configuration
 public class RedisConfig {

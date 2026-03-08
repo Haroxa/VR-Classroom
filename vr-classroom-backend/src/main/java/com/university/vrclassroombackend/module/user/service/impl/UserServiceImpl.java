@@ -74,6 +74,9 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * 更新用户信息
+     */
     @Override
     @Transactional
     public User updateUser(User user) {
@@ -81,6 +84,9 @@ public class UserServiceImpl implements UserService {
         return user;
     }
 
+    /**
+     * 获取用户资料
+     */
     @Override
     public UserProfileVO getUserProfile(Integer userId) {
         User user = userMapper.selectById(userId);
@@ -110,6 +116,9 @@ public class UserServiceImpl implements UserService {
         return vo;
     }
 
+    /**
+     * 获取用户公开信息
+     */
     @Override
     public UserPublicVO getUserPublicInfo(Integer userId) {
         User user = userMapper.selectById(userId);

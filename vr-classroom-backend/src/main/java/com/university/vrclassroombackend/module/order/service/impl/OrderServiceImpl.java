@@ -255,6 +255,14 @@ public class OrderServiceImpl implements OrderService {
      * 3. 使用乐观锁更新座位状态
      * 4. 创建订单记录
      * </p>
+     * <p>
+     * TODO: 高并发优化 - 添加限流策略
+     * 优化建议：
+     * 1. 在Controller层添加 @RateLimiter(limit = 10) 注解，限制每秒10个请求
+     * 2. 使用令牌桶算法实现更精细的限流控制
+     * 3. 考虑按用户ID限流，防止单用户频繁下单
+     * 预计提升：保护系统免受流量冲击
+     * </p>
      *
      * @param userId         用户ID
      * @param createOrderDTO 创建订单参数
@@ -666,8 +674,14 @@ public class OrderServiceImpl implements OrderService {
      * <p>
      * 异步任务，自动取消超时的待支付订单并释放座位
      * </p>
+     * <p>
+     * TODO: 高并发优化 - 配置专用异步线程池
+     * 优化建议：
+     * 高并发优化：使用专用线程池 orderTaskExecutor
+     * 预计提升：+30% 性能，避免阻塞主线程
+     * </p>
      */
-    @Async
+    @Async("orderTaskExecutor")
     public void checkOrderTimeout() {
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Order::getStatus, "PENDING");

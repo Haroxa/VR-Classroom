@@ -8399,3 +8399,808 @@ com.university.vrclassroombackend.exception.BusinessException: 订单已支付�
 2026-03-07 11:23:42.136 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
 2026-03-07 11:23:42.264 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-03-07 11:23:42.278 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-07 16:36:39.397 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-07 16:36:39.464 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:36:39.466 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:36:39.466 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:36:39.528 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-07 16:36:39.529 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-07 16:36:41.606 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:36:41.618 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:36:41.728 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 67 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:36:43.176 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:36:43.192 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:36:43.197 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:36:43.197 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:36:43.264 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:36:43.266 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 3735 ms
+2026-03-07 16:36:43.621 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:36:43.621 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:36:43.937 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:36:43.937 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:36:43.937 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:36:43.937 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:36:43.939 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:36:43.939 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:36:43.939 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:36:43.939 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:36:43.939 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:36:44.929 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:36:44.931 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:36:48.572 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:36:48.582 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:36:48.686 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:36:48.702 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:36:48.726 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 10.17 seconds (process running for 10.885)
+2026-03-07 16:36:48.892 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-07 16:36:49.248 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@18c5082d
+2026-03-07 16:36:49.260 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-07 16:37:21.792 [http-nio-8080-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-07 16:37:21.793 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-07 16:37:21.796 [http-nio-8080-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-03-07 16:37:22.735 [http-nio-8080-exec-7] INFO  c.u.v.m.f.controller.PostController - 创建帖子成功: postId=44, authorId=1
+2026-03-07 16:37:22.795 [http-nio-8080-exec-9] INFO  c.u.v.m.f.c.CommentController - 创建评论成功: commentId=39, postId=1, commenterId=1
+2026-03-07 16:37:22.856 [http-nio-8080-exec-1] INFO  c.u.v.m.u.controller.UserController - 获取用户帖子成功: userId=1, page=0
+2026-03-07 16:37:22.899 [http-nio-8080-exec-3] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=0
+2026-03-07 16:37:23.317 [http-nio-8080-exec-10] INFO  c.u.v.m.c.c.CommonController - 获取OSS签名成功
+2026-03-07 16:37:23.366 [http-nio-8080-exec-9] ERROR c.u.v.e.GlobalExceptionHandler - 服务器内部错误 No static resource api/nonexistent.
+org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/nonexistent.
+	at org.springframework.web.servlet.resource.ResourceHttpRequestHandler.handleRequest(ResourceHttpRequestHandler.java:585)
+	at org.springframework.web.servlet.mvc.HttpRequestHandlerAdapter.handle(HttpRequestHandlerAdapter.java:52)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:903)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:564)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2026-03-07 16:37:23.374 [http-nio-8080-exec-9] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.servlet.resource.NoResourceFoundException: No static resource api/nonexistent.]
+2026-03-07 16:37:23.409 [http-nio-8080-exec-5] WARN  c.u.v.e.GlobalExceptionHandler - 参数验证失败: {title=标题不能为空, content=内容长度必须在1-10000个字符之间}
+2026-03-07 16:37:23.413 [http-nio-8080-exec-5] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<?> com.university.vrclassroombackend.module.forum.controller.PostController.createPost(jakarta.servlet.http.HttpServletRequest,com.university.vrclassroombackend.module.forum.dto.PostCreateDTO) with 4 errors: [Field error in object 'postCreateDTO' on field 'content': rejected value []; codes [NotBlank.postCreateDTO.content,NotBlank.content,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [postCreateDTO.content,content]; arguments []; default message [content]]; default message [内容不能为空]] [Field error in object 'postCreateDTO' on field 'title': rejected value []; codes [Size.postCreateDTO.title,Size.title,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [postCreateDTO.title,title]; arguments []; default message [title],200,1]; default message [标题长度必须在1-200个字符之间]] [Field error in object 'postCreateDTO' on field 'content': rejected value []; codes [Size.postCreateDTO.content,Size.content,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [postCreateDTO.content,content]; arguments []; default message [content],10000,1]; default message [内容长度必须在1-10000个字符之间]] [Field error in object 'postCreateDTO' on field 'title': rejected value []; codes [NotBlank.postCreateDTO.title,NotBlank.title,NotBlank.java.lang.String,NotBlank]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [postCreateDTO.title,title]; arguments []; default message [title]]; default message [标题不能为空]] ]
+2026-03-07 16:37:23.434 [http-nio-8080-exec-1] WARN  c.u.v.e.GlobalExceptionHandler - 参数验证失败: {title=标题长度必须在1-200个字符之间}
+2026-03-07 16:37:23.436 [http-nio-8080-exec-1] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [org.springframework.web.bind.MethodArgumentNotValidException: Validation failed for argument [1] in public org.springframework.http.ResponseEntity<?> com.university.vrclassroombackend.module.forum.controller.PostController.createPost(jakarta.servlet.http.HttpServletRequest,com.university.vrclassroombackend.module.forum.dto.PostCreateDTO): [Field error in object 'postCreateDTO' on field 'title': rejected value [aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa]; codes [Size.postCreateDTO.title,Size.title,Size.java.lang.String,Size]; arguments [org.springframework.context.support.DefaultMessageSourceResolvable: codes [postCreateDTO.title,title]; arguments []; default message [title],200,1]; default message [标题长度必须在1-200个字符之间]] ]
+2026-03-07 16:37:32.050 [http-nio-8080-exec-2] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=1, phone=13800138001
+2026-03-07 16:37:32.227 [http-nio-8080-exec-6] INFO  c.u.v.aspect.AuditLogAspect - 审计日志开始 - 操作: 创建订单, 模块: 订单模块, 用户ID: 1, IP: 127.0.0.1, URI: /api/orders, 方法: POST
+2026-03-07 16:37:32.235 [http-nio-8080-exec-6] INFO  c.u.v.aspect.AuditLogAspect - 审计日志参数 - 操作: 创建订单, 参数: [1,{"campusId":1,"buildingId":1,"roomId":1,"seatList":[{"id":"1","price":100000,"version":0},{"id":"2","price":100000,"version":0}]}]
+2026-03-07 16:37:32.265 [http-nio-8080-exec-6] INFO  c.u.v.m.o.s.impl.OrderServiceImpl - 订单创建成功: orderId=288590983609802752, userId=1, amount=200000分
+2026-03-07 16:37:32.268 [http-nio-8080-exec-6] INFO  c.u.v.aspect.AuditLogAspect - 审计日志返回值 - 操作: 创建订单, 返回值: {"orderId":"288590983609802752"}
+2026-03-07 16:37:32.270 [http-nio-8080-exec-6] INFO  c.u.v.aspect.AuditLogAspect - 审计日志结束 - 操作: 创建订单, 模块: 订单模块, 用户ID: 1, IP: 127.0.0.1, 耗时: 43ms
+2026-03-07 16:37:32.277 [http-nio-8080-exec-6] INFO  c.u.v.m.o.controller.OrderController - 订单创建成功: orderId=288590983609802752, userId=1
+2026-03-07 16:37:33.380 [http-nio-8080-exec-5] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, size=10, total=3
+2026-03-07 16:37:33.706 [http-nio-8080-exec-1] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=2, phone=13800138002
+2026-03-07 16:37:33.768 [http-nio-8080-exec-4] INFO  c.u.v.aspect.AuditLogAspect - 审计日志开始 - 操作: 创建订单, 模块: 订单模块, 用户ID: 2, IP: 127.0.0.1, URI: /api/orders, 方法: POST
+2026-03-07 16:37:33.768 [http-nio-8080-exec-4] INFO  c.u.v.aspect.AuditLogAspect - 审计日志参数 - 操作: 创建订单, 参数: [2,{"campusId":1,"buildingId":1,"roomId":1,"seatList":[{"id":"3","price":100000,"version":0},{"id":"4","price":100000,"version":0}]}]
+2026-03-07 16:37:33.789 [http-nio-8080-exec-4] INFO  c.u.v.m.o.s.impl.OrderServiceImpl - 订单创建成功: orderId=288590990010310656, userId=2, amount=200000分
+2026-03-07 16:37:33.791 [http-nio-8080-exec-4] INFO  c.u.v.aspect.AuditLogAspect - 审计日志返回值 - 操作: 创建订单, 返回值: {"orderId":"288590990010310656"}
+2026-03-07 16:37:33.792 [http-nio-8080-exec-4] INFO  c.u.v.aspect.AuditLogAspect - 审计日志结束 - 操作: 创建订单, 模块: 订单模块, 用户ID: 2, IP: 127.0.0.1, 耗时: 26ms
+2026-03-07 16:37:33.812 [http-nio-8080-exec-4] INFO  c.u.v.m.o.controller.OrderController - 订单创建成功: orderId=288590990010310656, userId=2
+2026-03-07 16:37:33.851 [http-nio-8080-exec-6] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=2, page=1, size=10, total=2
+2026-03-07 16:37:33.886 [http-nio-8080-exec-7] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=3, phone=13800138003
+2026-03-07 16:37:33.974 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志开始 - 操作: 创建订单, 模块: 订单模块, 用户ID: 3, IP: 127.0.0.1, URI: /api/orders, 方法: POST
+2026-03-07 16:37:33.975 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志参数 - 操作: 创建订单, 参数: [3,{"campusId":1,"buildingId":1,"roomId":1,"seatList":[{"id":"6","price":99999,"version":0}]}]
+2026-03-07 16:37:33.994 [http-nio-8080-exec-5] INFO  c.u.v.m.o.s.impl.OrderServiceImpl - 订单创建成功: orderId=288590990865948672, userId=3, amount=100000分
+2026-03-07 16:37:33.995 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志返回值 - 操作: 创建订单, 返回值: {"orderId":"288590990865948672"}
+2026-03-07 16:37:33.996 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志结束 - 操作: 创建订单, 模块: 订单模块, 用户ID: 3, IP: 127.0.0.1, 耗时: 22ms
+2026-03-07 16:37:34.018 [http-nio-8080-exec-5] INFO  c.u.v.m.o.controller.OrderController - 订单创建成功: orderId=288590990865948672, userId=3
+2026-03-07 16:37:34.061 [http-nio-8080-exec-4] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=1, phone=13800138001
+2026-03-07 16:37:34.086 [http-nio-8080-exec-10] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=2, phone=13800138002
+2026-03-07 16:37:34.183 [http-nio-8080-exec-8] INFO  c.u.v.aspect.AuditLogAspect - 审计日志开始 - 操作: 创建订单, 模块: 订单模块, 用户ID: 1, IP: 127.0.0.1, URI: /api/orders, 方法: POST
+2026-03-07 16:37:34.184 [http-nio-8080-exec-8] INFO  c.u.v.aspect.AuditLogAspect - 审计日志参数 - 操作: 创建订单, 参数: [1,{"campusId":1,"buildingId":1,"roomId":1,"seatList":[{"id":"7","price":100000,"version":0}]}]
+2026-03-07 16:37:34.208 [http-nio-8080-exec-8] INFO  c.u.v.m.o.s.impl.OrderServiceImpl - 订单创建成功: orderId=288590991759335424, userId=1, amount=100000分
+2026-03-07 16:37:34.211 [http-nio-8080-exec-8] INFO  c.u.v.aspect.AuditLogAspect - 审计日志返回值 - 操作: 创建订单, 返回值: {"orderId":"288590991759335424"}
+2026-03-07 16:37:34.211 [http-nio-8080-exec-8] INFO  c.u.v.aspect.AuditLogAspect - 审计日志结束 - 操作: 创建订单, 模块: 订单模块, 用户ID: 1, IP: 127.0.0.1, 耗时: 28ms
+2026-03-07 16:37:34.226 [http-nio-8080-exec-8] INFO  c.u.v.m.o.controller.OrderController - 订单创建成功: orderId=288590991759335424, userId=1
+2026-03-07 16:37:34.746 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志开始 - 操作: 创建订单, 模块: 订单模块, 用户ID: 2, IP: 127.0.0.1, URI: /api/orders, 方法: POST
+2026-03-07 16:37:34.747 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志参数 - 操作: 创建订单, 参数: [2,{"campusId":1,"buildingId":1,"roomId":1,"seatList":[{"id":"7","price":100000,"version":0}]}]
+2026-03-07 16:37:34.752 [http-nio-8080-exec-5] ERROR c.u.v.aspect.AuditLogAspect - 审计日志异常 - 操作: 创建订单, 模块: 订单模块, 用户ID: 2, IP: 127.0.0.1, 耗时: 7ms, 异常: 座位已被占用
+com.university.vrclassroombackend.exception.BusinessException: 座位已被占用
+	at com.university.vrclassroombackend.module.order.service.impl.OrderServiceImpl.validateAndGetSeat(OrderServiceImpl.java:366)
+	at com.university.vrclassroombackend.module.order.service.impl.OrderServiceImpl.createOrder(OrderServiceImpl.java:291)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89)
+	at com.university.vrclassroombackend.aspect.AuditLogAspect.around(AuditLogAspect.java:87)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:649)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:631)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:380)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728)
+	at com.university.vrclassroombackend.module.order.service.impl.OrderServiceImpl$$SpringCGLIB$$0.createOrder(<generated>)
+	at com.university.vrclassroombackend.module.order.controller.OrderController.createOrder(OrderController.java:51)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.support.AopUtils.invokeJoinpointUsingReflection(AopUtils.java:360)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.invokeJoinpoint(ReflectiveMethodInvocation.java:196)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.aspectj.MethodInvocationProceedingJoinPoint.proceed(MethodInvocationProceedingJoinPoint.java:89)
+	at com.university.vrclassroombackend.aspect.RateLimiterAspect.around(RateLimiterAspect.java:71)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethodWithGivenArgs(AbstractAspectJAdvice.java:649)
+	at org.springframework.aop.aspectj.AbstractAspectJAdvice.invokeAdviceMethod(AbstractAspectJAdvice.java:631)
+	at org.springframework.aop.aspectj.AspectJAroundAdvice.invoke(AspectJAroundAdvice.java:71)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:173)
+	at org.springframework.aop.interceptor.ExposeInvocationInterceptor.invoke(ExposeInvocationInterceptor.java:97)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:184)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:728)
+	at com.university.vrclassroombackend.module.order.controller.OrderController$$SpringCGLIB$$0.createOrder(<generated>)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:568)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPost(FrameworkServlet.java:914)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:590)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:193)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:51)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:201)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.internalDoFilter(ApplicationFilterChain.java:162)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:138)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:88)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:482)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:342)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:399)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:903)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1774)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:973)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:491)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:63)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+2026-03-07 16:37:34.756 [http-nio-8080-exec-5] INFO  c.u.v.aspect.AuditLogAspect - 审计日志结束 - 操作: 创建订单, 模块: 订单模块, 用户ID: 2, IP: 127.0.0.1, 耗时: 11ms
+2026-03-07 16:37:34.760 [http-nio-8080-exec-5] WARN  c.u.v.e.GlobalExceptionHandler - 业务异常: 座位已被占用
+2026-03-07 16:37:34.761 [http-nio-8080-exec-5] WARN  o.s.w.s.m.m.a.ExceptionHandlerExceptionResolver - Resolved [com.university.vrclassroombackend.exception.BusinessException: 座位已被占用]
+2026-03-07 16:47:48.798 [scheduling-1] INFO  c.u.v.m.order.task.OrderTimeoutTask - 订单超时自动取消: orderId=288590983609802752
+2026-03-07 16:47:48.839 [scheduling-1] INFO  c.u.v.m.order.task.OrderTimeoutTask - 订单超时自动取消: orderId=288590990010310656
+2026-03-07 16:47:48.874 [scheduling-1] INFO  c.u.v.m.order.task.OrderTimeoutTask - 订单超时自动取消: orderId=288590990865948672
+2026-03-07 16:47:48.902 [scheduling-1] INFO  c.u.v.m.order.task.OrderTimeoutTask - 订单超时自动取消: orderId=288590991759335424
+2026-03-07 16:47:48.905 [scheduling-1] INFO  c.u.v.m.order.task.OrderTimeoutTask - 处理超时订单完成，共处理 4 个订单
+2026-03-07 16:47:49.996 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 9 class path changes (8 additions, 0 deletions, 1 modification)
+2026-03-07 16:47:50.003 [Thread-6] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:47:50.005 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:47:52.952 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:47:52.954 [Thread-6] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:47:53.077 [Thread-6] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-07 16:47:53.086 [Thread-6] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-07 16:47:53.191 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:47:53.191 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:47:53.193 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:47:53.737 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:47:53.737 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:47:53.754 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:47:53.974 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:47:53.975 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:47:53.975 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:47:53.975 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:47:54.001 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:47:54.001 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 806 ms
+2026-03-07 16:47:54.191 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:47:54.192 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:47:54.224 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:47:54.224 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:47:54.226 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:47:54.226 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:47:54.226 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:47:54.226 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:47:54.226 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:47:54.227 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:47:54.227 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:47:54.254 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:47:54.254 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:47:57.074 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:47:57.082 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:47:57.155 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:47:57.162 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:47:57.175 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 4.03 seconds (process running for 679.334)
+2026-03-07 16:47:57.179 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:47:57.180 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Starting...
+2026-03-07 16:47:57.191 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-2 - Added connection com.mysql.cj.jdbc.ConnectionImpl@6b0fbd66
+2026-03-07 16:47:57.193 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Start completed.
+2026-03-07 16:48:03.547 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:48:03.549 [Thread-14] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:48:03.549 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:06.556 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:48:06.556 [Thread-14] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:06.673 [Thread-14] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown initiated...
+2026-03-07 16:48:06.676 [Thread-14] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-2 - Shutdown completed.
+2026-03-07 16:48:06.776 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:48:06.776 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:48:06.778 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:48:07.145 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:48:07.147 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:48:07.160 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:48:07.323 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:48:07.324 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:07.324 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:48:07.324 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:48:07.349 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:48:07.349 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 570 ms
+2026-03-07 16:48:07.532 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:48:07.532 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:48:07.555 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:48:07.555 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:48:07.557 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:48:07.580 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:48:07.580 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:48:10.398 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:48:10.407 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:48:10.498 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:10.505 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:48:10.522 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.786 seconds (process running for 692.68)
+2026-03-07 16:48:10.525 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:48:10.526 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Starting...
+2026-03-07 16:48:10.535 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-3 - Added connection com.mysql.cj.jdbc.ConnectionImpl@170c1549
+2026-03-07 16:48:10.535 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Start completed.
+2026-03-07 16:48:18.885 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:48:18.888 [Thread-18] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:48:18.888 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:21.862 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:48:21.862 [Thread-18] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:21.971 [Thread-18] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown initiated...
+2026-03-07 16:48:21.974 [Thread-18] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-3 - Shutdown completed.
+2026-03-07 16:48:22.086 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:48:22.086 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:48:22.087 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:48:22.521 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:48:22.522 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:48:22.536 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 12 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:48:22.713 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:48:22.715 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:22.715 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:48:22.717 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:48:22.740 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:48:22.741 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 651 ms
+2026-03-07 16:48:22.899 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:48:22.900 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:48:22.924 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:48:22.925 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:48:22.925 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:48:22.926 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:48:22.947 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:48:22.947 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:48:25.850 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:48:25.857 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:48:25.934 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:25.940 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:48:25.970 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.939 seconds (process running for 708.128)
+2026-03-07 16:48:25.973 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:48:25.975 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Starting...
+2026-03-07 16:48:25.981 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-4 - Added connection com.mysql.cj.jdbc.ConnectionImpl@3a479aca
+2026-03-07 16:48:25.983 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Start completed.
+2026-03-07 16:48:35.364 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:48:35.366 [Thread-22] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:48:35.367 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:38.313 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:48:38.313 [Thread-22] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:38.420 [Thread-22] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown initiated...
+2026-03-07 16:48:38.423 [Thread-22] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-4 - Shutdown completed.
+2026-03-07 16:48:38.509 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:48:38.509 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:48:38.509 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:48:38.896 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:48:38.896 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:48:38.910 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 11 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:48:39.083 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:48:39.084 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:39.084 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:48:39.084 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:48:39.113 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:48:39.114 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 603 ms
+2026-03-07 16:48:39.298 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:48:39.299 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:48:39.324 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:48:39.326 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:48:39.326 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:48:39.351 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:48:39.351 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:48:42.178 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:48:42.188 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:48:42.270 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:42.275 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:48:42.289 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.817 seconds (process running for 724.448)
+2026-03-07 16:48:42.294 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Starting...
+2026-03-07 16:48:42.294 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:48:42.301 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-5 - Added connection com.mysql.cj.jdbc.ConnectionImpl@cafcc8c
+2026-03-07 16:48:42.302 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Start completed.
+2026-03-07 16:48:53.704 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:48:53.705 [Thread-26] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:48:53.707 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:56.633 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:48:56.633 [Thread-26] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:56.743 [Thread-26] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown initiated...
+2026-03-07 16:48:56.745 [Thread-26] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-5 - Shutdown completed.
+2026-03-07 16:48:56.847 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:48:56.847 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:48:56.847 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:48:57.295 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:48:57.295 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:48:57.313 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:48:57.497 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:48:57.498 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:48:57.498 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:48:57.498 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:48:57.525 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:48:57.525 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 676 ms
+2026-03-07 16:48:57.701 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:48:57.701 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:48:57.724 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:48:57.726 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:48:57.747 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:48:57.747 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:49:00.337 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:49:00.346 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:49:00.393 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:49:00.398 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:49:00.409 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.599 seconds (process running for 742.567)
+2026-03-07 16:49:00.410 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:49:00.412 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Starting...
+2026-03-07 16:49:00.417 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-6 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7fb51ea4
+2026-03-07 16:49:00.418 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Start completed.
+2026-03-07 16:49:08.819 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:49:08.821 [Thread-30] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:49:08.823 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:49:11.763 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:49:11.763 [Thread-30] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:49:11.873 [Thread-30] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown initiated...
+2026-03-07 16:49:11.877 [Thread-30] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-6 - Shutdown completed.
+2026-03-07 16:49:11.971 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:49:11.972 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:49:11.972 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:49:12.445 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:49:12.447 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:49:12.465 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 16 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:49:12.668 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:49:12.669 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:49:12.669 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:49:12.669 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:49:12.699 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:49:12.699 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 725 ms
+2026-03-07 16:49:12.862 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:49:12.862 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:49:12.886 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:49:12.887 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:49:12.887 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:49:12.888 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:49:12.888 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:49:12.888 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:49:12.889 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:49:12.889 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:49:12.889 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:49:12.912 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:49:12.912 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:49:15.696 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:49:15.702 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:49:15.757 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:49:15.761 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:49:15.773 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.841 seconds (process running for 757.932)
+2026-03-07 16:49:15.776 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:49:15.778 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Starting...
+2026-03-07 16:49:15.786 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-7 - Added connection com.mysql.cj.jdbc.ConnectionImpl@2c640602
+2026-03-07 16:49:15.786 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Start completed.
+2026-03-07 16:50:47.967 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (1 addition, 0 deletions, 0 modifications)
+2026-03-07 16:50:47.968 [Thread-34] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:50:47.970 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:50:50.869 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:50:50.870 [Thread-34] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:50:50.978 [Thread-34] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown initiated...
+2026-03-07 16:50:50.981 [Thread-34] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-7 - Shutdown completed.
+2026-03-07 16:50:51.074 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:50:51.075 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:50:51.075 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:50:51.599 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:50:51.599 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:50:51.614 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:50:51.793 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:50:51.794 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:50:51.794 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:50:51.794 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:50:51.820 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:50:51.820 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 743 ms
+2026-03-07 16:50:51.966 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:50:51.967 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:50:51.993 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:50:51.995 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:50:51.995 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:50:52.018 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:50:52.018 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:50:54.164 [restartedMain] INFO  c.u.v.config.AsyncConfig - 订单任务线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=100
+2026-03-07 16:50:54.185 [restartedMain] INFO  c.u.v.config.AsyncConfig - 通用任务线程池初始化完成: corePoolSize=5, maxPoolSize=20, queueCapacity=50
+2026-03-07 16:50:54.831 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:50:54.839 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:50:54.892 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:50:54.894 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:50:54.908 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 3.872 seconds (process running for 857.067)
+2026-03-07 16:50:54.912 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Starting...
+2026-03-07 16:50:54.913 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+    None
+
+
+Negative matches:
+-----------------
+
+   TaskExecutorConfigurations.TaskExecutorConfiguration:
+      Did not match:
+         - AnyNestedCondition 0 matched 2 did not; NestedCondition on TaskExecutorConfigurations.OnExecutorCondition.ModelCondition @ConditionalOnProperty (spring.task.execution.mode=force) did not find property 'spring.task.execution.mode'; NestedCondition on TaskExecutorConfigurations.OnExecutorCondition.ExecutorBeanCondition @ConditionalOnMissingBean (types: java.util.concurrent.Executor; SearchStrategy: all) found beans of type 'java.util.concurrent.Executor' orderTaskExecutor, commonTaskExecutor (TaskExecutorConfigurations.OnExecutorCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2026-03-07 16:50:54.919 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-8 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5629c91f
+2026-03-07 16:50:54.921 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Start completed.
+2026-03-07 16:51:02.330 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 1 class path change (0 additions, 0 deletions, 1 modification)
+2026-03-07 16:51:02.332 [Thread-38] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:51:02.333 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:05.371 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:51:05.371 [Thread-38] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:05.479 [Thread-38] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Shutdown initiated...
+2026-03-07 16:51:05.482 [Thread-38] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-8 - Shutdown completed.
+2026-03-07 16:51:05.593 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:51:05.593 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:51:05.594 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:51:06.036 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:51:06.036 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:51:06.052 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 13 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:51:06.218 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:51:06.220 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:06.220 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:51:06.220 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:51:06.247 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:51:06.247 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 650 ms
+2026-03-07 16:51:06.403 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:51:06.403 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:51:06.428 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:51:06.451 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:51:06.453 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:51:08.982 [restartedMain] INFO  c.u.v.config.AsyncConfig - 订单任务线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=100
+2026-03-07 16:51:08.992 [restartedMain] INFO  c.u.v.config.AsyncConfig - 通用任务线程池初始化完成: corePoolSize=5, maxPoolSize=20, queueCapacity=50
+2026-03-07 16:51:09.594 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:51:09.603 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:51:09.666 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:09.670 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:51:09.690 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 4.137 seconds (process running for 871.849)
+2026-03-07 16:51:09.693 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Starting...
+2026-03-07 16:51:09.695 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation unchanged
+2026-03-07 16:51:09.983 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-9 - Added connection com.mysql.cj.jdbc.ConnectionImpl@5b9b68c0
+2026-03-07 16:51:09.984 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Start completed.
+2026-03-07 16:51:21.013 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 92 class path changes (0 additions, 92 deletions, 0 modifications)
+2026-03-07 16:51:21.016 [Thread-42] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:51:21.018 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:25.602 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:51:25.603 [Thread-42] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:25.716 [Thread-42] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Shutdown initiated...
+2026-03-07 16:51:25.721 [Thread-42] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-9 - Shutdown completed.
+2026-03-07 16:51:25.855 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:51:25.855 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:51:25.856 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:51:26.588 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:51:26.589 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:51:26.677 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 85 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:51:26.799 [restartedMain] WARN  o.m.s.mapper.ClassPathMapperScanner - No MyBatis mapper was found in '[com.university.vrclassroombackend]' package. Please check your configuration.
+2026-03-07 16:51:26.945 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:51:26.946 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:26.947 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:51:26.947 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:51:26.986 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:51:26.986 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1128 ms
+2026-03-07 16:51:27.084 [restartedMain] INFO  c.u.v.config.AsyncConfig - 订单任务线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=100
+2026-03-07 16:51:27.090 [restartedMain] INFO  c.u.v.config.AsyncConfig - 通用任务线程池初始化完成: corePoolSize=5, maxPoolSize=20, queueCapacity=50
+2026-03-07 16:51:30.679 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:51:30.693 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:51:30.766 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:30.779 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:51:30.807 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 4.998 seconds (process running for 892.965)
+2026-03-07 16:51:30.811 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   LettuceConnectionConfiguration#redisConnectionFactory matched:
+      - @ConditionalOnMissingBean (types: org.springframework.data.redis.connection.RedisConnectionFactory; SearchStrategy: all) did not find any beans (OnBeanCondition)
+      - @ConditionalOnThreading found PLATFORM (OnThreadingCondition)
+
+   MybatisPlusAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration matched:
+      - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   RedisAutoConfiguration#redisTemplate matched:
+      - @ConditionalOnSingleCandidate (types: org.springframework.data.redis.connection.RedisConnectionFactory; SearchStrategy: all) found a single bean 'redisConnectionFactory'; @ConditionalOnMissingBean (names: redisTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   RedisReactiveAutoConfiguration#reactiveRedisTemplate matched:
+      - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) found bean 'redisConnectionFactory'; @ConditionalOnMissingBean (names: reactiveRedisTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   RedisReactiveAutoConfiguration#reactiveStringRedisTemplate matched:
+      - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) found bean 'redisConnectionFactory'; @ConditionalOnMissingBean (names: reactiveStringRedisTemplate; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+   RedisReactiveHealthContributorAutoConfiguration matched:
+      - @ConditionalOnClass found required classes 'org.springframework.data.redis.connection.ReactiveRedisConnectionFactory', 'reactor.core.publisher.Flux' (OnClassCondition)
+      - @ConditionalOnEnabledHealthIndicator management.health.defaults.enabled is considered true (OnEnabledHealthIndicatorCondition)
+      - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) found bean 'redisConnectionFactory' (OnBeanCondition)
+
+   RedisReactiveHealthContributorAutoConfiguration#redisHealthContributor matched:
+      - @ConditionalOnMissingBean (names: redisHealthIndicator,redisHealthContributor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   CacheMetricsAutoConfiguration:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.cache.CacheManager; SearchStrategy: all) did not find any beans of type org.springframework.cache.CacheManager (OnBeanCondition)
+
+   RedisHealthContributorAutoConfiguration#redisHealthContributor:
+      Did not match:
+         - @ConditionalOnMissingBean (names: redisHealthIndicator,redisHealthContributor; SearchStrategy: all) found beans named redisHealthContributor (OnBeanCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2026-03-07 16:51:32.099 [File Watcher] INFO  o.s.b.d.a.LocalDevToolsAutoConfiguration$RestartingClassPathChangeChangedEventListener - Restarting due to 93 class path changes (92 additions, 0 deletions, 1 modification)
+2026-03-07 16:51:32.101 [Thread-46] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:51:32.101 [tomcat-shutdown] INFO  o.a.coyote.http11.Http11NioProtocol - Pausing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:34.884 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:51:34.884 [Thread-46] INFO  o.a.coyote.http11.Http11NioProtocol - Stopping ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:34.990 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 32012 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-07 16:51:34.992 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-07 16:51:34.992 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-07 16:51:36.073 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-07 16:51:36.073 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-07 16:51:36.089 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 15 ms. Found 0 Redis repository interfaces.
+2026-03-07 16:51:36.280 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8080 (http)
+2026-03-07 16:51:36.280 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:36.281 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-07 16:51:36.282 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-07 16:51:36.311 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-07 16:51:36.311 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 1317 ms
+2026-03-07 16:51:36.494 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-07 16:51:36.494 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-07 16:51:36.520 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-07 16:51:36.522 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-07 16:51:36.522 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-07 16:51:36.541 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-07 16:51:36.541 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-07 16:51:38.498 [restartedMain] INFO  c.u.v.config.AsyncConfig - 订单任务线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=100
+2026-03-07 16:51:38.508 [restartedMain] INFO  c.u.v.config.AsyncConfig - 通用任务线程池初始化完成: corePoolSize=5, maxPoolSize=20, queueCapacity=50
+2026-03-07 16:51:38.992 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-07 16:51:38.998 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-07 16:51:39.045 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8080"]
+2026-03-07 16:51:39.049 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8080 (http) with context path '/'
+2026-03-07 16:51:39.061 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 4.101 seconds (process running for 901.219)
+2026-03-07 16:51:39.063 [restartedMain] INFO  o.s.b.d.a.ConditionEvaluationDeltaLoggingListener - Condition evaluation delta:
+
+
+==========================
+CONDITION EVALUATION DELTA
+==========================
+
+
+Positive matches:
+-----------------
+
+   CacheMetricsAutoConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.cache.CacheManager; SearchStrategy: all) found bean 'cacheManager' (OnBeanCondition)
+
+   CacheMetricsRegistrarConfiguration matched:
+      - @ConditionalOnBean (types: org.springframework.boot.actuate.metrics.cache.CacheMeterBinderProvider,io.micrometer.core.instrument.MeterRegistry; SearchStrategy: all) found beans 'prometheusMeterRegistry', 'redisCacheMeterBinderProvider' (OnBeanCondition)
+
+   RedisHealthContributorAutoConfiguration#redisHealthContributor matched:
+      - @ConditionalOnMissingBean (names: redisHealthIndicator,redisHealthContributor; SearchStrategy: all) did not find any beans (OnBeanCondition)
+
+
+Negative matches:
+-----------------
+
+   LettuceConnectionConfiguration#redisConnectionFactory:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.springframework.data.redis.connection.RedisConnectionFactory; SearchStrategy: all) found beans of type 'org.springframework.data.redis.connection.RedisConnectionFactory' redisConnectionFactory (OnBeanCondition)
+
+   MybatisPlusAutoConfiguration.MapperScannerRegistrarNotFoundConfiguration:
+      Did not match:
+         - @ConditionalOnMissingBean (types: org.mybatis.spring.mapper.MapperFactoryBean,org.mybatis.spring.mapper.MapperScannerConfigurer; SearchStrategy: all) found beans of type 'org.mybatis.spring.mapper.MapperScannerConfigurer' com.university.vrclassroombackend.config.MyBatisPlusConfig#MapperScannerRegistrar#0 (OnBeanCondition)
+
+   RedisAutoConfiguration#redisTemplate:
+      Did not match:
+         - @ConditionalOnMissingBean (names: redisTemplate; SearchStrategy: all) found beans named redisTemplate (OnBeanCondition)
+
+   RedisReactiveAutoConfiguration#reactiveRedisTemplate:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) did not find any beans of type org.springframework.data.redis.connection.ReactiveRedisConnectionFactory (OnBeanCondition)
+
+   RedisReactiveAutoConfiguration#reactiveStringRedisTemplate:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) did not find any beans of type org.springframework.data.redis.connection.ReactiveRedisConnectionFactory (OnBeanCondition)
+
+   RedisReactiveHealthContributorAutoConfiguration:
+      Did not match:
+         - @ConditionalOnBean (types: org.springframework.data.redis.connection.ReactiveRedisConnectionFactory; SearchStrategy: all) did not find any beans of type org.springframework.data.redis.connection.ReactiveRedisConnectionFactory (OnBeanCondition)
+      Matched:
+         - @ConditionalOnClass found required classes 'org.springframework.data.redis.connection.ReactiveRedisConnectionFactory', 'reactor.core.publisher.Flux' (OnClassCondition)
+         - @ConditionalOnEnabledHealthIndicator management.health.defaults.enabled is considered true (OnEnabledHealthIndicatorCondition)
+
+
+Exclusions:
+-----------
+
+    None
+
+
+Unconditional classes:
+----------------------
+
+    None
+
+
+
+2026-03-07 16:51:39.064 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Starting...
+2026-03-07 16:51:39.070 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-10 - Added connection com.mysql.cj.jdbc.ConnectionImpl@4ed43fc4
+2026-03-07 16:51:39.070 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Start completed.
+2026-03-07 16:55:45.991 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-07 16:55:48.960 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-07 16:55:49.075 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Shutdown initiated...
+2026-03-07 16:55:49.078 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-10 - Shutdown completed.
