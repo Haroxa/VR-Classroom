@@ -111,10 +111,11 @@ public class AdminServiceImpl implements AdminService {
      * @return 分页帖子列表
      */
     @Override
-    public IPage<PostAuditVO> getPosts(Integer page, Integer status, Integer categoryId, String keyword) {
+    public IPage<PostAuditVO> getPosts(Integer page, Integer pageSize, Integer status, Integer categoryId, String keyword) {
         // 构建分页，页码从1开始
         int currentPage = page != null && page > 0 ? page : 1;
-        Page<Post> pageQuery = new Page<>(currentPage, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        int size = pageSize != null && pageSize > 0 ? pageSize : AppConstants.Pagination.DEFAULT_PAGE_SIZE;
+        Page<Post> pageQuery = new Page<>(currentPage, size);
 
         // 构建查询条件
         LambdaQueryWrapper<Post> queryWrapper = buildPostQueryWrapper(status, categoryId, keyword);
@@ -359,10 +360,11 @@ public class AdminServiceImpl implements AdminService {
      * @return 分页评论列表
      */
     @Override
-    public IPage<CommentAuditVO> getComments(Integer page, Integer status) {
+    public IPage<CommentAuditVO> getComments(Integer page, Integer pageSize, Integer status) {
         // 构建分页，页码从1开始
         int currentPage = page != null && page > 0 ? page : 1;
-        Page<Comment> pageQuery = new Page<>(currentPage, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        int size = pageSize != null && pageSize > 0 ? pageSize : AppConstants.Pagination.DEFAULT_PAGE_SIZE;
+        Page<Comment> pageQuery = new Page<>(currentPage, size);
 
         // 构建查询条件
         LambdaQueryWrapper<Comment> queryWrapper = buildCommentQueryWrapper(status);

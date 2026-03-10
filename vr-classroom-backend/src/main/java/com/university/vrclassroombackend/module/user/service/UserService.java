@@ -17,8 +17,26 @@ public interface UserService {
     User updateUser(User user);
     UserProfileVO getUserProfile(Integer userId);
     UserPublicVO getUserPublicInfo(Integer userId);
-    IPage<UserPostVO> getUserPosts(Integer userId, Integer page);
-    IPage<UserCommentVO> getUserComments(Integer userId, Integer page);
+    IPage<UserPostVO> getUserPosts(Integer userId, Integer page, Integer pageSize);
+    IPage<UserCommentVO> getUserComments(Integer userId, Integer page, Integer pageSize);
+    
+    /**
+     * 获取用户点赞的帖子列表
+     * @param userId 用户ID
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @return 帖子列表
+     */
+    IPage<UserPostVO> getLikedPosts(Integer userId, Integer page, Integer pageSize);
+    
+    /**
+     * 获取用户点赞的评论列表
+     * @param userId 用户ID
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @return 评论列表
+     */
+    IPage<UserCommentVO> getLikedComments(Integer userId, Integer page, Integer pageSize);
 }
 
 

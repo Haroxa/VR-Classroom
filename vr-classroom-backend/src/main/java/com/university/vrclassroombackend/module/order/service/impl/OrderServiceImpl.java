@@ -578,8 +578,8 @@ public class OrderServiceImpl implements OrderService {
      * @return 分页订单列表
      */
     @Override
-    public IPage<OrderListVO> getOrderList(Integer userId, Integer page, Integer size) {
-        Page<Order> pageParam = new Page<>(page, size);
+    public IPage<OrderListVO> getOrderList(Integer userId, Integer page, Integer pageSize) {
+        Page<Order> pageParam = new Page<>(page, pageSize);
         LambdaQueryWrapper<Order> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Order::getUserId, userId);
         queryWrapper.orderByDesc(Order::getCreatedAt);

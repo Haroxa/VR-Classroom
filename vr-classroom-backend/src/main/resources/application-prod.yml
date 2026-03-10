@@ -84,7 +84,7 @@ logging:
 # 服务器配置
 # 高并发优化 - Tomcat线程池配置（万人并发场景）
 server:
-  port: ${SERVER_PORT:8080}
+  port: ${SERVER_PORT:8082}
   servlet:
     context-path: /
   tomcat:
@@ -112,6 +112,21 @@ wechat:
   code2SessionUrl: https://api.weixin.qq.com/sns/jscode2session
   accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token
   phoneNumberUrl: https://api.weixin.qq.com/wxa/business/getuserphonenumber
+
+# 文件上传配置（生产环境使用服务器路径）
+file:
+  upload:
+    # 本地临时路径
+    path: ./uploads
+    # 服务器实际存储路径（通过环境变量配置）
+    server-path: ${FILE_UPLOAD_SERVER_PATH:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index}
+    # 文件访问URL前缀（与Nginx配置保持一致）
+    url: ${FILE_ACCESS_URL:/assets}
+  static:
+    # 静态资源映射路径
+    path: ${FILE_STATIC_PATH:/assets/**}
+    # 静态资源实际位置（file:前缀表示文件系统路径）
+    location: ${FILE_STATIC_LOCATION:file:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index/}
 
 # 安全配置
 management:

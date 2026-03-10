@@ -85,7 +85,7 @@ class PostServiceTest {
         when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
         when(categoryMapper.selectById(1)).thenReturn(testCategory);
 
-        IPage<PostVO> result = postService.getPublicPosts(1, null, null);
+        IPage<PostVO> result = postService.getPublicPosts(1, 20, null, null);
 
         assertNotNull(result);
         assertNotNull(result.getRecords());

@@ -102,7 +102,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, null, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, null, null, null);
 
             assertNotNull(result);
             assertEquals(1, result.getCurrent());
@@ -119,7 +119,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(2, null, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(2, 20, null, null, null);
 
             assertNotNull(result);
             assertEquals(2, result.getCurrent());
@@ -137,7 +137,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, 0, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, 0, null, null);
 
             assertNotNull(result);
             assertEquals(1, result.getTotal());
@@ -151,7 +151,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, null, 1, null);
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, null, 1, null);
 
             assertNotNull(result);
             verify(postMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
@@ -165,7 +165,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, null, null, "测试");
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, null, null, "测试");
 
             assertNotNull(result);
             verify(postMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
@@ -179,7 +179,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, 0, 1, "测试");
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, 0, 1, "测试");
 
             assertNotNull(result);
             verify(postMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
@@ -193,7 +193,7 @@ class AdminServiceTest {
 
             when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<CommentAuditVO> result = adminService.getComments(1, null);
+            IPage<CommentAuditVO> result = adminService.getComments(1, 20, null);
 
             assertNotNull(result);
             assertEquals(1, result.getCurrent());
@@ -211,7 +211,7 @@ class AdminServiceTest {
 
             when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<CommentAuditVO> result = adminService.getComments(1, 0);
+            IPage<CommentAuditVO> result = adminService.getComments(1, 20, 0);
 
             assertNotNull(result);
         }
@@ -225,7 +225,7 @@ class AdminServiceTest {
 
             when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<CommentAuditVO> result = adminService.getComments(1, null);
+            IPage<CommentAuditVO> result = adminService.getComments(1, 20, null);
 
             assertNotNull(result);
             assertEquals(0, result.getTotal());
@@ -356,7 +356,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(0, null, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(0, 20, null, null, null);
 
             assertNotNull(result);
         }
@@ -369,7 +369,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(-1, null, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(-1, 20, null, null, null);
 
             assertNotNull(result);
         }
@@ -383,7 +383,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(9999, null, null, null);
+            IPage<PostAuditVO> result = adminService.getPosts(9999, 20, null, null, null);
 
             assertNotNull(result);
             assertTrue(result.getRecords().isEmpty());
@@ -397,7 +397,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, null, null, "");
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, null, null, "");
 
             assertNotNull(result);
         }
@@ -410,7 +410,7 @@ class AdminServiceTest {
 
             when(postMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(mockPage);
 
-            IPage<PostAuditVO> result = adminService.getPosts(1, null, null, "测试%_特殊字符");
+            IPage<PostAuditVO> result = adminService.getPosts(1, 20, null, null, "测试%_特殊字符");
 
             assertNotNull(result);
         }

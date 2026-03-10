@@ -183,7 +183,7 @@ class AdminServiceIntegrationTest extends IntegrationTestBase {
             postMapper.insert(post);
         }
 
-        IPage<PostAuditVO> result = adminService.getPosts(1, 0, null, null);
+        IPage<PostAuditVO> result = adminService.getPosts(1, 20, 0, null, null);
 
         assertNotNull(result);
         assertTrue(result.getTotal() >= 5);
@@ -213,12 +213,12 @@ class AdminServiceIntegrationTest extends IntegrationTestBase {
         postMapper.insert(approvedPost);
 
         // 查询待审核帖子
-        IPage<PostAuditVO> pendingResult = adminService.getPosts(1, 0, null, null);
+        IPage<PostAuditVO> pendingResult = adminService.getPosts(1, 20, 0, null, null);
         assertTrue(pendingResult.getRecords().stream()
                 .anyMatch(p -> p.getId().equals(pendingPost.getId())));
 
         // 查询已通过帖子
-        IPage<PostAuditVO> approvedResult = adminService.getPosts(1, 1, null, null);
+        IPage<PostAuditVO> approvedResult = adminService.getPosts(1, 20, 1, null, null);
         assertTrue(approvedResult.getRecords().stream()
                 .anyMatch(p -> p.getId().equals(approvedPost.getId())));
     }
@@ -236,7 +236,7 @@ class AdminServiceIntegrationTest extends IntegrationTestBase {
             commentMapper.insert(comment);
         }
 
-        IPage<CommentAuditVO> result = adminService.getComments(1, 0);
+        IPage<CommentAuditVO> result = adminService.getComments(1, 20, 0);
 
         assertNotNull(result);
         assertTrue(result.getTotal() >= 5);
@@ -262,12 +262,12 @@ class AdminServiceIntegrationTest extends IntegrationTestBase {
         commentMapper.insert(approvedComment);
 
         // 查询待审核评论
-        IPage<CommentAuditVO> pendingResult = adminService.getComments(1, 0);
+        IPage<CommentAuditVO> pendingResult = adminService.getComments(1, 20, 0);
         assertTrue(pendingResult.getRecords().stream()
                 .anyMatch(c -> c.getId().equals(pendingComment.getId())));
 
         // 查询已通过评论
-        IPage<CommentAuditVO> approvedResult = adminService.getComments(1, 1);
+        IPage<CommentAuditVO> approvedResult = adminService.getComments(1, 20, 1);
         assertTrue(approvedResult.getRecords().stream()
                 .anyMatch(c -> c.getId().equals(approvedComment.getId())));
     }

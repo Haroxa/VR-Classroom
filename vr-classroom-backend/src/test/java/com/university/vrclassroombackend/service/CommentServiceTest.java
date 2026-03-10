@@ -82,7 +82,7 @@ class CommentServiceTest {
         when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(commentPage);
         when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
 
-        IPage<CommentVO> result = commentService.getPostComments(1, 1);
+        IPage<CommentVO> result = commentService.getPostComments(1, 1, 20);
 
         assertNotNull(result);
         assertNotNull(result.getRecords());

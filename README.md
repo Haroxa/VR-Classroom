@@ -35,6 +35,7 @@
 - ✅ 座位预约：支持VR教室座位的查询和预约
 - ✅ 订单管理：支持订单创建、查询和状态更新
 - ✅ 论坛系统：支持帖子发布和评论
+- ✅ 图片上传：支持帖子图片上传，返回访问URL
 
 ### 扩展功能
 - 🚀 捐赠系统：支持用户捐赠（已标记为废弃）
@@ -158,50 +159,47 @@ java -jar target/vr-classroom-backend-0.0.1-SNAPSHOT.jar --spring.profiles.activ
 | JWT_SECRET | JWT密钥 | - |
 | OSS_ENDPOINT | OSS端点 | - |
 | WECHAT_APP_ID | 微信AppID | - |
+| FILE_UPLOAD_PATH | 文件上传路径 | ./uploads |
+| FILE_UPLOAD_SERVER_PATH | 服务器文件上传路径 | - |
+| FILE_ACCESS_URL | 文件访问URL | /assets |
 
 ---
 
 ## 📚 API文档
 
-### 用户接口
+详细的API接口文档已整理到 `apifox` 目录下，包含多个版本的接口定义：
 
-| 路径 | 方法 | 描述 |
-|------|------|------|
-| `/api/users/login` | POST | 微信登录（需要loginCode和phoneCode） |
-| `/api/users/login/phone` | POST | 手机号登录（测试用） |
-| `/api/users/info` | GET | 获取当前用户信息 |
-| `/api/users/update` | PUT | 更新用户信息 |
+| 文档文件 | 版本 | 说明 |
+|---------|------|------|
+| `apifox v5.0.md` | v5.0 | 最新版本，包含所有新增接口 |
+| `apifox v4.1.md` | v4.1 | 订单接口优化版本 |
+| `apifox v4.0.md` | v4.0 | 基础功能版本 |
+| `apifox v3.0.md` | v3.0 | 早期版本 |
 
-### 论坛接口
+### 主要接口类别
 
-| 路径 | 方法 | 描述 |
-|------|------|------|
-| `/api/posts` | GET | 获取帖子列表 |
-| `/api/posts` | POST | 创建帖子 |
-| `/api/posts/{id}` | GET | 获取帖子详情 |
-| `/api/posts/{id}/comments` | GET | 获取帖子评论 |
+#### 用户接口
+- 微信登录、手机号登录
+- 用户信息获取与更新
 
-### 订单接口
+#### 论坛接口
+- 帖子发布、查询、详情
+- 评论发布、查询
+- 点赞功能
 
-| 路径 | 方法 | 描述 |
-|------|------|------|
-| `/api/rooms/{roomId}/seats` | GET | 获取教室座位信息 |
-| `/api/orders` | POST | 创建订单（v4.1，需要campusId、buildingId、roomId和seatList） |
-| `/api/orders` | GET | 获取订单列表（v4.1，支持分页） |
-| `/api/orders/{orderId}` | GET | 获取订单详情（v4.1） |
-| `/api/orders/{orderId}` | PATCH | 更新订单状态（用于取消订单） |
-| `/api/mock/pay/notify` | POST | 模拟支付回调 |
+#### 图片接口
+- 帖子图片上传
 
-### 捐赠/支付接口（已废弃）
+#### 订单接口
+- 教室座位查询
+- 订单创建、查询、状态更新
+- 模拟支付回调
 
-| 路径 | 方法 | 描述 |
-|------|------|------|
-| `/api/donations` | POST | 创建捐赠订单 |
-| `/api/payments/create` | POST | 创建支付订单 |
-| `/api/payments/callback` | POST | 支付回调 |
-| `/api/donations/my` | GET | 获取我的捐赠记录 |
+#### 后台管理接口
+- 帖子审核
+- 评论审核
 
-> 注意：捐赠/支付相关接口已标记为@Deprecated，将在未来版本中移除
+> 详细接口定义请参考 `apifox` 目录下的对应版本文档
 
 ---
 
@@ -259,8 +257,9 @@ pytest -v
 
 | 测试文件 | 说明 | 测试场景 |
 |---------|------|---------|
-| `jmeter-server-test.jmx` | JMeter测试计划 | 100/500/1000并发用户测试 |
-| `JMeter服务器测试说明.md` | 测试使用说明 | 详细的使用指南和性能指标 |
+| `JMeter-test/jmeter-server-test.jmx` | JMeter测试计划 | 100/500/1000并发用户测试 |
+| `JMeter-test/JMeter服务器测试说明.md` | 测试使用说明 | 详细的使用指南和性能指标 |
+| `JMeter-test/JMeter测试方案.md` | 测试方案文档 | 完整的测试计划和场景设计 |
 
 #### 测试场景
 
@@ -284,10 +283,11 @@ sudo mv apache-jmeter-5.6.3 /opt/jmeter
 sudo ln -s /opt/jmeter/bin/jmeter /usr/local/bin/jmeter
 
 # 运行压力测试（非GUI模式）
-jmeter -n -t jmeter-server-test.jmx -l result.jtl -e -o report
+cd JMeter-test
+jmeter -n -t jmeter-server-test.jmx -l test-results/result.jtl -e -o test-results/report
 
 # 查看测试报告
-# 打开 report/index.html 查看详细报告
+# 打开 JMeter-test/test-results/report/index.html 查看详细报告
 ```
 
 #### 性能目标
@@ -311,32 +311,83 @@ VR教室/
 │   │   ├── main/
 │   │   │   ├── java/
 │   │   │   │   └── com/university/vrclassroombackend/  # 主包
-│   │   │   │       ├── config/      # 配置类
-│   │   │   │       ├── controller/  # 控制器
-│   │   │   │       ├── service/     # 服务层
-│   │   │   │       ├── mapper/      # MyBatis Mapper
-│   │   │   │       ├── entity/      # 实体类
-│   │   │   │       ├── dto/         # 数据传输对象
-│   │   │   │       └── util/        # 工具类
+│   │   │   │       ├── advice/         # 响应处理
+│   │   │   │       ├── annotation/     # 自定义注解
+│   │   │   │       ├── aspect/         # 切面
+│   │   │   │       ├── common/         # 公共类
+│   │   │   │       ├── config/         # 配置类
+│   │   │   │       ├── constant/       # 常量
+│   │   │   │       ├── exception/      # 异常处理
+│   │   │   │       ├── interceptor/    # 拦截器
+│   │   │   │       ├── module/         # 业务模块
+│   │   │   │       │   ├── admin/      # 后台管理模块
+│   │   │   │       │   ├── common/     # 通用模块
+│   │   │   │       │   ├── forum/      # 论坛模块
+│   │   │   │       │   ├── order/      # 订单模块
+│   │   │   │       │   ├── space/      # 空间管理模块
+│   │   │   │       │   ├── test/       # 测试模块
+│   │   │   │       │   └── user/       # 用户模块
+│   │   │   │       ├── util/           # 工具类
+│   │   │   │       └── VrClassroomBackendApplication.java  # 应用入口
 │   │   │   └── resources/
-│   │   │       ├── application.yml       # 主配置文件
-│   │   │       ├── application-dev.yml   # 开发环境配置
-│   │   │       ├── application-prod.yml  # 生产环境配置
-│   │   │       └── db/
-│   │   │           ├── schema.sql        # 数据库结构
-│   │   │           └── mock-data.sql     # 测试数据
-│   │   └── test/                 # 测试代码
-│   ├── Dockerfile                # Docker构建文件
-│   └── pom.xml                   # Maven配置
+│   │   │       ├── db/                 # 数据库文件
+│   │   │       ├── scripts/            # 脚本文件
+│   │   │       ├── application.yml     # 主配置文件
+│   │   │       ├── application-dev.yml # 开发环境配置
+│   │   │       ├── application-prod.yml # 生产环境配置
+│   │   │       ├── application-test.yml # 测试环境配置
+│   │   │       └── logback-spring.xml  # 日志配置
+│   │   └── test/                       # 测试代码
+│   ├── .env.example                    # 环境变量示例
+│   ├── .gitattributes                  # Git属性
+│   ├── Dockerfile                      # Docker构建文件
+│   ├── mvnw                            # Maven包装器（Linux）
+│   ├── mvnw.cmd                        # Maven包装器（Windows）
+│   └── pom.xml                         # Maven配置
 ├── mock-data/                    # 测试数据与脚本
 │   ├── data/                     # 测试数据
 │   ├── scripts/                  # 辅助脚本
 │   └── tests/                    # 测试脚本
-│       ├── test-api.py           # 基础API测试
+│       ├── __pycache__/          # 缓存文件
 │       ├── test-admin-api.py     # 管理员API测试
+│       ├── test-api.py           # 基础API测试
+│       ├── test-comprehensive.py # 综合测试
+│       ├── test-donation-payment.py # 捐赠支付测试
+│       ├── test-users.py         # 用户测试
 │       └── test_order_api_v4_1.py # 订单API测试
-├── nginx.conf                    # Nginx负载均衡配置
+├── JMeter-test/                  # JMeter测试相关文件
+│   ├── test-results/             # 测试结果
+│   │   ├── report-100/           # 100并发测试报告
+│   │   ├── load-100.jtl          # 100并发测试结果
+│   │   ├── scenario1.jtl         # 场景1测试结果
+│   │   ├── scenario2.jtl         # 场景2测试结果
+│   │   └── scenario3.jtl         # 场景3测试结果
+│   ├── JMeter服务器测试说明.md    # 测试说明
+│   ├── JMeter测试方案.md         # 测试方案
+│   ├── jmeter-load-test.jmx      # 负载测试计划
+│   ├── jmeter-server-test.jmx    # 服务器测试计划
+│   └── jmeter-test-direct.jmx    # 直接测试计划
+├── apifox/                       # API文档
+│   ├── apifox +1.0.md            # API文档版本1.0
+│   ├── apifox +2.0.md            # API文档版本2.0
+│   ├── apifox +3.0.md            # API文档版本3.0
+│   ├── apifox +4.0.md            # API文档版本4.0
+│   ├── apifox v1.0.md            # API文档版本1.0
+│   ├── apifox v2.0.md            # API文档版本2.0
+│   ├── apifox v3.0.md            # API文档版本3.0
+│   ├── apifox v4.0.md            # API文档版本4.0
+│   ├── apifox v4.1.md            # API文档版本4.1
+│   └── apifox v5.0.md            # API文档版本5.0
+├── doc/                          # 项目文档
+│   ├── VR Classroom v1.0.pdf     # 项目文档PDF
+│   ├── run.md                    # 运行说明
+│   ├── 接口详细文档.md            # 接口详细文档
+│   ├── 项目技术详解文档.md        # 项目技术详解
+│   └── 高并发优化待办.md          # 高并发优化计划
+├── .gitignore                    # Git忽略文件
 ├── docker-compose.yml            # Docker Compose配置（5实例）
+├── nginx.conf                    # Nginx负载均衡配置
+├── pytest.ini                    # pytest配置文件
 └── README.md                     # 项目说明
 ```
 

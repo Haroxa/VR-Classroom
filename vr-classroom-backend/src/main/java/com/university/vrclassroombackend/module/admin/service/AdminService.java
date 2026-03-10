@@ -14,21 +14,23 @@ import java.util.List;
 public interface AdminService {
     /**
      * 获取帖子列表（后台审核用）
-     * @param page 页码，每页固定20条数据
+     * @param page 页码
+     * @param pageSize 每页大小，默认20
      * @param status 状态，没传则查全部
      * @param categoryId 分类id，没传则查全部
      * @param keyword 搜索关键词
      * @return 分页帖子列表
      */
-    IPage<PostAuditVO> getPosts(Integer page, Integer status, Integer categoryId, String keyword);
+    IPage<PostAuditVO> getPosts(Integer page, Integer pageSize, Integer status, Integer categoryId, String keyword);
 
     /**
      * 获取评论列表（后台审核用）
-     * @param page 页码，每页固定20条数据
+     * @param page 页码
+     * @param pageSize 每页大小，默认20
      * @param status 状态，没传则查全部
      * @return 分页评论列表
      */
-    IPage<CommentAuditVO> getComments(Integer page, Integer status);
+    IPage<CommentAuditVO> getComments(Integer page, Integer pageSize, Integer status);
 
     /**
      * 审核帖子

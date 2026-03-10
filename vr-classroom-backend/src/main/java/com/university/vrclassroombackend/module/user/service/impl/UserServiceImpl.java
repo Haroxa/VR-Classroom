@@ -7,7 +7,9 @@ import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.forum.model.Comment;
 import com.university.vrclassroombackend.module.forum.model.Post;
 import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
+import com.university.vrclassroombackend.module.forum.mapper.CommentLikeMapper;
 import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
+import com.university.vrclassroombackend.module.forum.mapper.PostLikeMapper;
 import com.university.vrclassroombackend.module.user.model.User;
 import com.university.vrclassroombackend.module.user.mapper.UserMapper;
 import com.university.vrclassroombackend.module.user.service.UserService;
@@ -42,7 +44,13 @@ public class UserServiceImpl implements UserService {
     private PostMapper postMapper;
     
     @Autowired
+    private PostLikeMapper postLikeMapper;
+    
+    @Autowired
     private CommentMapper commentMapper;
+    
+    @Autowired
+    private CommentLikeMapper commentLikeMapper;
 
     @Override
     public User getUserById(Integer id) {
@@ -148,12 +156,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public IPage<UserPostVO> getUserPosts(Integer userId, Integer page) {
+    public IPage<UserPostVO> getUserPosts(Integer userId, Integer page, Integer pageSize) {
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Post::getAuthorId, userId);
         queryWrapper.orderByDesc(Post::getDate);
         
-        Page<Post> pageParam = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        Page<Post> pageParam = new Page<>(page, pageSize);
         IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);
         List<Post> posts = postPage.getRecords();
         List<UserPostVO> result = new ArrayList<>();
@@ -190,12 +198,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public IPage<UserCommentVO> getUserComments(Integer userId, Integer page) {
+    public IPage<UserCommentVO> getUserComments(Integer userId, Integer page, Integer pageSize) {
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getCommenterId, userId);
         queryWrapper.orderByDesc(Comment::getDate);
         
-        Page<Comment> pageParam = new Page<>(page, AppConstants.Pagination.DEFAULT_PAGE_SIZE);
+        Page<Comment> pageParam = new Page<>(page, pageSize);
         IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
         List<Comment> comments = commentPage.getRecords();
         List<UserCommentVO> result = new ArrayList<>();
@@ -213,6 +221,87 @@ public class UserServiceImpl implements UserService {
             result.add(vo);
         }
         
+        Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(result);
+        return resultPage;
+    }
+
+    @Override
+    public IPage<UserPostVO> getLikedPosts(Integer userId, Integer page, Integer pageSize) {
+        // 获取用户点赞的帖子ID列表
+        List<Integer> postIds = postLikeMapper.selectLikedPostIdsByUserId(userId);
+        if (postIds.isEmpty()) {
+            Page<UserPostVO> emptyPage = new Page<>(page, pageSize, 0);
+            emptyPage.setRecords(new ArrayList<>());
+            return emptyPage;
+        }
+
+        // 查询帖子信息
+        LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Post::getId, postIds);
+        queryWrapper.orderByDesc(Post::getDate);
+
+        Page<Post> pageParam = new Page<>(page, pageSize);
+        IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);
+        List<Post> posts = postPage.getRecords();
+        List<UserPostVO> result = new ArrayList<>();
+
+        for (Post post : posts) {
+            UserPostVO vo = new UserPostVO();
+            vo.setId(post.getId().toString());
+            vo.setDate(post.getDate());
+            vo.setTitle(post.getTitle());
+            vo.setSummary(post.getSummary());
+            vo.setImages(new ArrayList<>());
+            vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
+            vo.setLikeCount(post.getLikeCount());
+            vo.setShareCount(post.getShareCount());
+            vo.setCommentCount(post.getCommentCount());
+            vo.setStatus(post.getStatus());
+            vo.setRejectReason(post.getRejectReason());
+            vo.setCategoryName(getCategoryName(post.getCategoryId()));
+            vo.setLiked(true);
+            result.add(vo);
+        }
+
+        Page<UserPostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
+        resultPage.setRecords(result);
+        return resultPage;
+    }
+
+    @Override
+    public IPage<UserCommentVO> getLikedComments(Integer userId, Integer page, Integer pageSize) {
+        // 获取用户点赞的评论ID列表
+        List<Integer> commentIds = commentLikeMapper.selectLikedCommentIdsByUserId(userId);
+        if (commentIds.isEmpty()) {
+            Page<UserCommentVO> emptyPage = new Page<>(page, pageSize, 0);
+            emptyPage.setRecords(new ArrayList<>());
+            return emptyPage;
+        }
+
+        // 查询评论信息
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Comment::getId, commentIds);
+        queryWrapper.orderByDesc(Comment::getDate);
+
+        Page<Comment> pageParam = new Page<>(page, pageSize);
+        IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
+        List<Comment> comments = commentPage.getRecords();
+        List<UserCommentVO> result = new ArrayList<>();
+
+        for (Comment comment : comments) {
+            UserCommentVO vo = new UserCommentVO();
+            vo.setId(comment.getId());
+            vo.setDate(comment.getDate());
+            vo.setContent(comment.getContent());
+            vo.setLikeCount(comment.getLikeCount());
+            vo.setStatus(comment.getStatus());
+            vo.setRejectReason(comment.getRejectReason());
+            vo.setLiked(true);
+            vo.setRelatedPost(null);
+            result.add(vo);
+        }
+
         Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
         resultPage.setRecords(result);
         return resultPage;

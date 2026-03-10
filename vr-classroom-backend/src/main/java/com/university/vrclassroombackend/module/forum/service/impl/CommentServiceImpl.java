@@ -7,10 +7,13 @@ import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.forum.dto.CommentCreateDTO;
 import com.university.vrclassroombackend.module.forum.dto.CommentUpdateDTO;
 import com.university.vrclassroombackend.module.forum.model.Comment;
+import com.university.vrclassroombackend.module.forum.model.CommentLike;
 import com.university.vrclassroombackend.module.forum.model.Post;
 import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
+import com.university.vrclassroombackend.module.forum.mapper.CommentLikeMapper;
 import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
 import com.university.vrclassroombackend.module.forum.service.CommentService;
+import com.university.vrclassroombackend.module.forum.vo.CommentLikeActionVO;
 import com.university.vrclassroombackend.module.forum.vo.CommentVO;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
@@ -22,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -37,6 +41,9 @@ public class CommentServiceImpl implements CommentService {
     private CommentMapper commentMapper;
     
     @Autowired
+    private CommentLikeMapper commentLikeMapper;
+    
+    @Autowired
     private PostMapper postMapper;
     
     @Autowired
@@ -46,9 +53,10 @@ public class CommentServiceImpl implements CommentService {
      * 获取帖子评论列表
      */
     @Override
-    public IPage<CommentVO> getPostComments(Integer postId, Integer page) {
+    public IPage<CommentVO> getPostComments(Integer postId, Integer page, Integer pageSize) {
         int currentPage = page != null && page > 0 ? page : 1;
-        Page<Comment> pageParam = new Page<>(currentPage, Pagination.DEFAULT_PAGE_SIZE);
+        int size = pageSize != null && pageSize > 0 ? pageSize : Pagination.DEFAULT_PAGE_SIZE;
+        Page<Comment> pageParam = new Page<>(currentPage, size);
         
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Comment::getPostId, postId)
@@ -97,7 +105,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setCommenterId(commenterId);
         comment.setPostId(dto.getPostId());
         comment.setLikeCount(0);
-        comment.setStatus(Post.STATUS_PUBLISHED);
+        comment.setStatus(Post.STATUS_PENDING);
         comment.setDate(java.time.LocalDateTime.now());
         
         commentMapper.insert(comment);
@@ -231,19 +239,139 @@ public class CommentServiceImpl implements CommentService {
         if (post != null) {
             RelatedPostVO relatedPost = new RelatedPostVO();
             relatedPost.setId(post.getId());
-            relatedPost.setDate(post.getDate());
             relatedPost.setTitle(post.getTitle());
             relatedPost.setStatus(post.getStatus());
-            
-            UserPublicVO author = userMap.get(post.getAuthorId());
-            if (author != null) {
-                relatedPost.setAuthor(author);
-            }
             
             vo.setRelatedPost(relatedPost);
         }
         
         return vo;
+    }
+
+    @Override
+    @Transactional
+    public CommentLikeActionVO likeComment(Integer commentId, Integer userId) {
+        Comment comment = commentMapper.selectById(commentId);
+        if (comment == null) {
+            throw new RuntimeException("评论不存在");
+        }
+
+        // 检查是否已经点赞
+        if (commentLikeMapper.existsByUserIdAndCommentId(userId, commentId)) {
+            throw new RuntimeException("已经点过赞了");
+        }
+
+        // 创建点赞记录
+        CommentLike commentLike = new CommentLike();
+        commentLike.setUserId(userId);
+        commentLike.setCommentId(commentId);
+        commentLike.setCreatedAt(new Date());
+        commentLikeMapper.insert(commentLike);
+
+        // 增加评论点赞数
+        comment.setLikeCount(comment.getLikeCount() + 1);
+        commentMapper.updateById(comment);
+
+        // 构建返回结果
+        CommentLikeActionVO vo = new CommentLikeActionVO();
+        vo.setId(commentLike.getId());
+        vo.setLikeCount(comment.getLikeCount());
+        vo.setLiked(true);
+
+        return vo;
+    }
+
+    @Override
+    @Transactional
+    public CommentLikeActionVO unlikeComment(Integer commentId, Integer userId) {
+        Comment comment = commentMapper.selectById(commentId);
+        if (comment == null) {
+            throw new RuntimeException("评论不存在");
+        }
+
+        // 检查是否已经点赞
+        if (!commentLikeMapper.existsByUserIdAndCommentId(userId, commentId)) {
+            throw new RuntimeException("还没有点过赞");
+        }
+
+        // 删除点赞记录
+        commentLikeMapper.deleteByUserIdAndCommentId(userId, commentId);
+
+        // 减少评论点赞数
+        if (comment.getLikeCount() > 0) {
+            comment.setLikeCount(comment.getLikeCount() - 1);
+            commentMapper.updateById(comment);
+        }
+
+        // 构建返回结果
+        CommentLikeActionVO vo = new CommentLikeActionVO();
+        vo.setLikeCount(comment.getLikeCount());
+        vo.setLiked(false);
+
+        return vo;
+    }
+
+    @Override
+    public IPage<UserCommentVO> getLikedComments(Integer userId, Integer page) {
+        int currentPage = page != null && page > 0 ? page : 1;
+        Page<Comment> pageParam = new Page<>(currentPage, Pagination.DEFAULT_PAGE_SIZE);
+
+        // 获取用户点赞的评论ID列表
+        List<Integer> commentIds = commentLikeMapper.selectLikedCommentIdsByUserId(userId);
+        if (commentIds.isEmpty()) {
+            Page<UserCommentVO> emptyPage = new Page<>(pageParam.getCurrent(), pageParam.getSize(), 0);
+            emptyPage.setRecords(List.of());
+            return emptyPage;
+        }
+
+        // 查询评论信息
+        LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.in(Comment::getId, commentIds);
+        queryWrapper.orderByDesc(Comment::getDate);
+
+        IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);
+        List<Comment> comments = commentPage.getRecords();
+
+        if (comments.isEmpty()) {
+            Page<UserCommentVO> emptyPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+            emptyPage.setRecords(List.of());
+            return emptyPage;
+        }
+
+        List<Integer> postIds = comments.stream()
+                .map(Comment::getPostId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<Integer, Post> postMap = postIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        postMapper::selectById,
+                        (existing, replacement) -> existing
+                ));
+
+        List<Integer> authorIds = postMap.values().stream()
+                .filter(post -> post != null)
+                .map(Post::getAuthorId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+
+        Map<Integer, UserPublicVO> userMap = authorIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        userService::getUserPublicInfo,
+                        (existing, replacement) -> existing
+                ));
+
+        List<UserCommentVO> voList = comments.stream()
+                .map(comment -> convertToUserCommentVO(comment, postMap, userMap))
+                .collect(Collectors.toList());
+
+        Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(voList);
+        return resultPage;
     }
 }
 

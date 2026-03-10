@@ -9,7 +9,7 @@ public class PostDetailVO {
     private String id;
     private LocalDateTime date;
     private String title;
-    private String summary;
+    private String content;
     private List<String> images;
     private String categoryId;
     private Integer likeCount;
@@ -18,6 +18,7 @@ public class PostDetailVO {
     private Integer status;
     private String rejectReason;
     private String categoryName;
+    private boolean isLiked;
     private com.university.vrclassroombackend.module.user.vo.UserPublicVO author;
 
     public String getId() {
@@ -45,12 +46,12 @@ public class PostDetailVO {
         this.title = title;
     }
 
-    public String getSummary() {
-        return summary;
+    public String getContent() {
+        return content;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public List<String> getImages() {
@@ -115,6 +116,14 @@ public class PostDetailVO {
 
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
+    }
+
+    public boolean isLiked() {
+        return isLiked;
+    }
+
+    public void setLiked(boolean liked) {
+        isLiked = liked;
     }
 
     public com.university.vrclassroombackend.module.user.vo.UserPublicVO getAuthor() {

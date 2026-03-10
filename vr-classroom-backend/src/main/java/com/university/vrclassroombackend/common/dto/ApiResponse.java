@@ -1,8 +1,16 @@
 package com.university.vrclassroombackend.common.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "API响应通用格式")
 public class ApiResponse<T> {
+    @Schema(description = "响应码，0表示成功，其他表示失败", example = "0")
     private Integer code;
+    
+    @Schema(description = "响应消息", example = "success")
     private String msg;
+    
+    @Schema(description = "响应数据")
     private T data;
     
     public ApiResponse() {

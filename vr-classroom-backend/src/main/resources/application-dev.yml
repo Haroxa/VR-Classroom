@@ -80,6 +80,16 @@ wechat:
   accessTokenUrl: https://api.weixin.qq.com/cgi-bin/token
   phoneNumberUrl: https://api.weixin.qq.com/wxa/business/getuserphonenumber
 
+# 文件上传配置（开发环境使用本地存储）
+file:
+  upload:
+    path: ./uploads
+    server-path: ${FILE_UPLOAD_SERVER_PATH:}
+    url: /assets
+  static:
+    path: /assets/**
+    location: file:./uploads/
+
 # 安全配置
 management:
   endpoints:

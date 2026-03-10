@@ -11,6 +11,11 @@ import com.university.vrclassroombackend.module.user.vo.UserPostVO;
 import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
 import com.university.vrclassroombackend.util.JwtUtil;
 import com.university.vrclassroombackend.util.WechatUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -24,6 +29,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
+@Tag(name = "用户管理", description = "用户相关接口")
 public class UserController {
 
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -38,7 +44,9 @@ public class UserController {
     private WechatUtil wechatUtil;
 
     @PostMapping
-    public ResponseEntity<?> createUser(@RequestBody User user) {
+    @Operation(summary = "创建用户", description = "创建新用户")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    public ResponseEntity<?> createUser(@Parameter(description = "用户信息", required = true) @RequestBody User user) {
         if (user.getOpenId() == null || user.getOpenId().isEmpty()) {
             user.setOpenId("default_" + System.currentTimeMillis() + "_" + (int) (Math.random() * 10000));
         }
@@ -51,7 +59,11 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@Valid @RequestBody LoginDTO dto) {
+    @Operation(summary = "登录", description = "微信登录")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "请求错误")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> login(@Parameter(description = "登录参数", required = true) @Valid @RequestBody LoginDTO dto) {
         String loginCode = dto.getLoginCode();
         String phoneCode = dto.getPhoneCode();
 
@@ -134,7 +146,10 @@ public class UserController {
     }
 
     @PostMapping("/login/phone")
-    public ResponseEntity<?> loginByPhone(@RequestBody Map<String, String> request) {
+    @Operation(summary = "手机号登录", description = "使用手机号登录")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "请求错误")
+    public ResponseEntity<?> loginByPhone(@Parameter(description = "登录参数", required = true, example = "{\"phone\": \"13800138000\"}") @RequestBody Map<String, String> request) {
         String phone = request.get("phone");
 
         if (phone == null || phone.isEmpty()) {
@@ -173,6 +188,9 @@ public class UserController {
     }
 
     @GetMapping("/profile")
+    @Operation(summary = "获取用户信息", description = "获取当前用户的个人信息")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
     public ResponseEntity<?> getProfile(HttpServletRequest request) {
         Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
         if (userId == null) {
@@ -186,38 +204,90 @@ public class UserController {
     }
 
     @GetMapping("/posts")
+    @Operation(summary = "获取用户帖子", description = "获取当前用户发布的帖子列表")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
     public ResponseEntity<?> getUserPosts(HttpServletRequest request,
-                                          @RequestParam(defaultValue = "1") Integer page) {
+                                          @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
+                                          @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
         Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
         if (userId == null) {
             logger.warn("获取用户帖子失败: 未认证");
             return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
                     .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
-        IPage<UserPostVO> postPage = userService.getUserPosts(userId, page);
+        IPage<UserPostVO> postPage = userService.getUserPosts(userId, page, pageSize);
         Map<String, Object> data = new HashMap<>();
         data.put("current", (int) postPage.getCurrent());
         data.put("total", (int) postPage.getPages());
         data.put("records", postPage.getRecords());
-        logger.info("获取用户帖子成功: userId={}, page={}", userId, page);
+        logger.info("获取用户帖子成功: userId={}, page={}, pageSize={}", userId, page, pageSize);
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
 
     @GetMapping("/comments")
+    @Operation(summary = "获取用户评论", description = "获取当前用户发布的评论列表")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
     public ResponseEntity<?> getUserComments(HttpServletRequest request,
-                                             @RequestParam(defaultValue = "1") Integer page) {
+                                             @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
+                                             @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
         Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
         if (userId == null) {
             logger.warn("获取用户评论失败: 未认证");
             return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
                     .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
-        IPage<UserCommentVO> commentPage = userService.getUserComments(userId, page);
+        IPage<UserCommentVO> commentPage = userService.getUserComments(userId, page, pageSize);
         Map<String, Object> data = new HashMap<>();
         data.put("current", (int) commentPage.getCurrent());
         data.put("total", (int) commentPage.getPages());
         data.put("records", commentPage.getRecords());
-        logger.info("获取用户评论成功: userId={}, page={}", userId, page);
+        logger.info("获取用户评论成功: userId={}, page={}, pageSize={}", userId, page, pageSize);
+        return ResponseEntity.ok().body(ApiResponse.success(data));
+    }
+
+    @GetMapping("/liked-posts")
+    @Operation(summary = "获取用户点赞帖子", description = "获取当前用户点赞的帖子列表")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> getLikedPosts(HttpServletRequest request,
+                                           @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
+                                           @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
+        Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            logger.warn("获取用户点赞帖子失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+        }
+        IPage<UserPostVO> postPage = userService.getLikedPosts(userId, page, pageSize);
+        Map<String, Object> data = new HashMap<>();
+        data.put("current", (int) postPage.getCurrent());
+        data.put("total", (int) postPage.getPages());
+        data.put("records", postPage.getRecords());
+        logger.info("获取用户点赞帖子成功: userId={}, page={}, pageSize={}", userId, page, pageSize);
+        return ResponseEntity.ok().body(ApiResponse.success(data));
+    }
+
+    @GetMapping("/liked-comments")
+    @Operation(summary = "获取用户点赞评论", description = "获取当前用户点赞的评论列表")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> getLikedComments(HttpServletRequest request,
+                                              @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
+                                              @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
+        Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            logger.warn("获取用户点赞评论失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+        }
+        IPage<UserCommentVO> commentPage = userService.getLikedComments(userId, page, pageSize);
+        Map<String, Object> data = new HashMap<>();
+        data.put("current", (int) commentPage.getCurrent());
+        data.put("total", (int) commentPage.getPages());
+        data.put("records", commentPage.getRecords());
+        logger.info("获取用户点赞评论成功: userId={}, page={}, pageSize={}", userId, page, pageSize);
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
 }

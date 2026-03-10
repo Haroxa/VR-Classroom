@@ -12,6 +12,6 @@ public interface OrderService {
     OrderVO createOrder(Integer userId, CreateOrderDTO createOrderDTO);
     void updateOrder(String orderId, UpdateOrderDTO updateOrderDTO);
     void mockPayNotify(String orderId);
-    IPage<OrderListVO> getOrderList(Integer userId, Integer page, Integer size);
+    IPage<OrderListVO> getOrderList(Integer userId, Integer page, Integer pageSize);
     OrderListVO getOrder(Integer userId, String orderId);
 }
