@@ -25,16 +25,3 @@ order:
     price: 100000  # 座位单价（分），与数据库默认价格保持一致
 
 # 文件上传配置
-file:
-  upload:
-    # 本地开发环境上传路径（相对路径或绝对路径）
-    path: ./uploads
-    # 服务器环境上传路径（生产环境配置为实际路径）
-    # 示例: /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
-    server-path: ${FILE_UPLOAD_SERVER_PATH:}
-    # 文件访问URL前缀
-    url: ${FILE_ACCESS_URL:/assets}
-  # 静态资源映射路径
-  static:
-    path: ${FILE_STATIC_PATH:/assets/**}
-    location: ${FILE_STATIC_LOCATION:file:./uploads/}

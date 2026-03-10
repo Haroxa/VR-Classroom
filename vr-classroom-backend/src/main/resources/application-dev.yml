@@ -43,6 +43,12 @@ mybatis-plus:
         max-idle: 8
         min-idle: 0
 
+# Swagger配置（开发环境）
+swagger:
+  server:
+    port: 8082  # Swagger文档服务器端口
+    url: http://localhost:8082  # 开发环境使用本地URL
+
 # 日志配置
 logging:
   level:

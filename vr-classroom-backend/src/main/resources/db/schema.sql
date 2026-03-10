@@ -1,4 +1,4 @@
--- Active: 1771720784163@@127.0.0.1@3306@vr_classroom_test
+-- Active: 1771947726816@@192.168.247.150@3306@cj_vr
 -- 数据库初始化脚本
 -- 只包含表结构创建，不包含数据插入
 -- 数据插入操作请使用 mock-data/data.sql 文件
@@ -236,33 +236,40 @@ CREATE TABLE IF NOT EXISTS certificate (
     INDEX idx_certificate_donor_id (donor_id)
 );
 
-DROP TABLE IF EXISTS post_like;
--- 创建帖子点赞表
-CREATE TABLE IF NOT EXISTS post_like (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    post_id INT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (post_id) REFERENCES post(id),
-    UNIQUE KEY uk_user_post (user_id, post_id),
-    INDEX idx_post_like_user_id (user_id),
-    INDEX idx_post_like_post_id (post_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='帖子点赞表';
+DROP TABLE IF EXISTS `post_like`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `post_like` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '点赞id',
+  `userId` int NOT NULL COMMENT '点赞用户id',
+  `postId` int NOT NULL COMMENT '被点赞的帖子id',
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '点赞时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_post` (`userId`,`postId`),
+  KEY `idx_post_like_user_id` (`userId`),
+  KEY `idx_post_like_post_id` (`postId`),
+  CONSTRAINT `post_like_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `post_like_ibfk_2` FOREIGN KEY (`postId`) REFERENCES `post` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='帖子点赞表';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-DROP TABLE IF EXISTS comment_like;
--- 创建评论点赞表
-CREATE TABLE IF NOT EXISTS comment_like (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    comment_id INT NOT NULL,
-    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES user(id),
-    FOREIGN KEY (comment_id) REFERENCES comment(id),
-    UNIQUE KEY uk_user_comment (user_id, comment_id),
-    INDEX idx_comment_like_user_id (user_id),
-    INDEX idx_comment_like_comment_id (comment_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评论点赞表';
+
+DROP TABLE IF EXISTS `comment_like`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comment_like` (
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '点赞id',
+  `userId` int NOT NULL COMMENT '点赞用户id',
+  `commentId` int NOT NULL COMMENT '被点赞的评论id',
+  `createdAt` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '点赞时间',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_user_comment` (`userId`,`commentId`),
+  KEY `idx_comment_like_user_id` (`userId`),
+  KEY `idx_comment_like_comment_id` (`commentId`),
+  CONSTRAINT `comment_like_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `comment_like_ibfk_2` FOREIGN KEY (`commentId`) REFERENCES `comment` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='评论点赞表';
+/*!40101 SET character_set_client = @saved_cs_client */;
 
 -- 重置外键检查
 SET FOREIGN_KEY_CHECKS = 1;

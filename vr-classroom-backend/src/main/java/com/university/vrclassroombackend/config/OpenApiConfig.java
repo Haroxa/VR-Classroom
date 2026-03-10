@@ -6,9 +6,9 @@ import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,17 +16,18 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
     
-    @Value("${swagger.server.port:8082}")
-    private String swaggerServerPort;
+    @Value("${swagger.server.url:http://localhost:8082}")
+    private String swaggerServerUrl;
     
     @Bean
     public OpenAPI vrClassroomOpenAPI() {
         List<Server> servers = new ArrayList<>();
         
         // 负载均衡服务器（唯一入口）
+        // URL从环境配置文件中读取，dev和prod分别配置
         Server loadBalancerServer = new Server();
-        loadBalancerServer.setUrl("http://localhost:" + swaggerServerPort);
-        loadBalancerServer.setDescription("负载均衡入口");
+        loadBalancerServer.setUrl(swaggerServerUrl);
+        loadBalancerServer.setDescription("API服务器入口");
         servers.add(loadBalancerServer);
         
         return new OpenAPI()

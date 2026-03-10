@@ -98,6 +98,13 @@ jwt:
   secret: ${JWT_SECRET}
   expiration: 86400
 
+# Swagger配置（生产环境）
+swagger:
+  server:
+    port: 8082  # Swagger文档服务器端口
+    # 生产环境服务器URL（配置为实际服务器地址）
+    url: ${SWAGGER_SERVER_URL:http://10.86.136.242:8082}
+
 # OSS配置
 oss:
   endpoint: ${OSS_ENDPOINT}
