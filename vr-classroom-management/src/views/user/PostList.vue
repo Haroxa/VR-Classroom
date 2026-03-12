@@ -33,57 +33,64 @@
         <el-skeleton :rows="10" animated />
       </div>
       <div v-else class="post-list">
-        <el-card
-          v-for="post in postsData"
-          :key="post.id"
-          :class="['post-card', { 'liked': post.liked }]"
-          @click="viewPost(post.id)"
-          shadow="hover"
-        >
-          <template #header>
-            <div class="post-header">
-              <div class="post-header-top">
-                <div class="post-title-wrapper">
-                  <h3 class="post-title">{{ post.title }}</h3>
-                </div>
-                <div class="post-meta-info">
-                  <div class="post-author-info">
-                    <el-avatar :src="post.author?.avatar || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=default%20user%20avatar&image_size=square'" size="small" style="margin-right: 8px" />
-                    <span class="post-author">{{ post.author?.name || '未知作者' }}</span>
-                  </div>
-                  <span class="post-date">{{ post.date }}</span>
+        <el-row :gutter="20">
+          <el-col
+            v-for="post in postsData"
+            :key="post.id"
+            :xs="24"
+            :sm="12"
+            :md="8"
+          >
+            <el-card :class="['post-card', { 'liked': post.liked }]" @click="viewPost(post.id)" shadow="hover">
+              <!-- 头部：标题 -->
+              <div class="post-header">
+                <h3 class="post-title">{{ post.title }}</h3>
+                <div class="post-meta">
+                  <el-avatar :size="24" :src="post.author?.avatar || 'https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=default%20user%20avatar&image_size=square'" />
+                  <span class="author">{{ post.author?.name || '未知作者' }}</span>
+                  <span class="time">{{ post.date }}</span>
                 </div>
               </div>
-            </div>
-          </template>
-          <div class="post-content">{{ post.summary }}</div>
-          <div v-if="post.images && post.images.length > 0" class="post-images">
-            <el-image
-              v-for="(image, index) in post.images"
-              :key="index"
-              :src="image"
-              :preview-src-list="post.images"
-              style="width: 80px; height: 80px; margin-right: 10px"
-              fit="cover"
-            />
-          </div>
-          <div class="post-footer">
-            <div class="post-category-container">
-              <el-tag size="small" :type="getCategoryType(post.categoryName)" class="post-category-tag">{{ post.categoryName }}</el-tag>
-            </div>
-            <div class="post-stats">
-              <span class="post-stat" :class="{ 'liked': post.liked }">
-                <el-icon><Star /></el-icon> {{ post.likeCount || 0 }}
-              </span>
-              <span class="post-stat">
-                <el-icon><ChatDotRound /></el-icon> {{ post.commentCount || 0 }}
-              </span>
-              <span class="post-stat">
-                <el-icon><Share /></el-icon> {{ post.shareCount || 0 }}
-              </span>
-            </div>
-          </div>
-        </el-card>
+              
+              <!-- 内容：描述 -->
+              <div class="post-body">
+                <p class="post-desc">{{ post.summary }}</p>
+              </div>
+              
+              <!-- 图片区域（可选） -->
+              <div v-if="post.images && post.images.length > 0" class="post-images">
+                <el-image
+                  v-for="(image, index) in post.images.slice(0, 3)"
+                  :key="index"
+                  :src="image"
+                  :preview-src-list="post.images"
+                  fit="cover"
+                  class="post-img"
+                >
+                  <template #error>
+                    <div class="image-error">FAILED</div>
+                  </template>
+                </el-image>
+              </div>
+              
+              <!-- 底部：标签 + 互动数据（固定底部） -->
+              <div class="post-footer">
+                <el-tag size="small" :type="getCategoryType(post.categoryName)">{{ post.categoryName }}</el-tag>
+                <div class="post-actions">
+                  <span class="action-item" :class="{ 'liked': post.liked }">
+                    <el-icon><Star /></el-icon> {{ post.likeCount || 0 }}
+                  </span>
+                  <span class="action-item">
+                    <el-icon><ChatDotRound /></el-icon> {{ post.commentCount || 0 }}
+                  </span>
+                  <span class="action-item">
+                    <el-icon><Share /></el-icon> {{ post.shareCount || 0 }}
+                  </span>
+                </div>
+              </div>
+            </el-card>
+          </el-col>
+        </el-row>
         <div v-if="postsData.length === 0" class="empty-container">
           <el-empty description="暂无帖子" />
         </div>
@@ -461,13 +468,15 @@ const createPost = async () => {
 }
 
 .post-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
   margin-bottom: 20px;
 }
 
+/* 关键样式：Flex 布局实现底部固定 */
 .post-card {
+  height: 100%; /* 必须设置高度 */
+  min-height: 300px; /* 固定最小高度，确保所有卡片高度一致 */
+  display: flex;
+  flex-direction: column;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -477,111 +486,124 @@ const createPost = async () => {
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* 头部 */
 .post-header {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.post-header-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.post-title-wrapper {
-  flex: 1;
-  min-width: 0;
-  margin-right: 15px;
+  margin-bottom: 12px;
 }
 
 .post-title {
-  font-size: 18px;
-  font-weight: bold;
-  margin: 0;
-  line-height: 1.4;
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.post-meta-info {
+.post-meta {
   display: flex;
   align-items: center;
-  gap: 15px;
-  flex-shrink: 0;
-}
-
-.post-author-info {
-  display: flex;
-  align-items: center;
-  font-size: 14px;
-  color: #606266;
-  white-space: nowrap;
-}
-
-.post-date {
-  font-size: 12px;
+  gap: 8px;
   color: #909399;
-  white-space: nowrap;
+  font-size: 13px;
 }
 
-.post-title-wrapper {
-  flex: 1;
-  min-width: 0;
-  margin-right: 15px;
+.author {
+  color: #606266;
 }
 
-.post-content {
-  margin: 10px 0;
+.time {
+  color: #909399;
+  margin-left: auto;
+}
+
+/* 内容区域 - 关键：flex: 1 填充剩余空间 */
+.post-body {
+  flex: 1; /* 占据所有可用空间，将底部推下去 */
+  margin-bottom: 12px;
+}
+
+.post-desc {
+  margin: 0;
+  color: #606266;
+  font-size: 14px;
   line-height: 1.6;
-  overflow: hidden;
-  text-overflow: ellipsis;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
+/* 图片区域 */
 .post-images {
-  margin: 10px 0;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
+.post-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 4px;
+  background-color: #f5f7fa;
+}
+
+.image-error {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f7fa;
+  color: #909399;
+  font-size: 12px;
+}
+
+/* 底部区域 - 关键：始终固定在底部 */
 .post-footer {
-  margin-top: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 10px;
-  border-top: 1px solid #f0f0f0;
+  padding-top: 12px;
+  border-top: 1px solid #ebeef5;
+  margin-top: auto; /* 保险：确保贴底 */
 }
 
-.post-category-container {
+.post-actions {
   display: flex;
-  justify-content: flex-end;
+  gap: 16px;
 }
 
-.post-stats {
-  display: flex;
-  gap: 20px;
-  font-size: 14px;
-  color: #909399;
-  margin: 0;
-}
-
-.post-stat {
+.action-item {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
+  color: #909399;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color 0.3s;
 }
 
-.post-stat.liked {
+.action-item:hover {
+  color: #409eff;
+}
+
+.action-item.liked {
   color: #409eff;
   font-weight: bold;
 }
 
-.post-stat.liked .el-icon {
+.action-item.liked .el-icon {
   color: #409eff;
+}
+
+/* 确保 el-card 内部也是 flex 布局 */
+:deep(.el-card__body) {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .loading-container {
