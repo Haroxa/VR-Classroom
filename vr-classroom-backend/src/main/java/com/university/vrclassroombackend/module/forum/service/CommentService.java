@@ -8,7 +8,7 @@ import com.university.vrclassroombackend.module.forum.vo.CommentVO;
 import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
 
 public interface CommentService {
-    IPage<CommentVO> getPostComments(Integer postId, Integer page, Integer pageSize);
+    IPage<CommentVO> getPostComments(Integer postId, Integer page, Integer pageSize, Integer currentUserId);
     Integer createComment(CommentCreateDTO dto, Integer commenterId);
     boolean updateComment(Integer commentId, CommentUpdateDTO dto, Integer commenterId);
     boolean deleteComment(Integer commentId, Integer commenterId);

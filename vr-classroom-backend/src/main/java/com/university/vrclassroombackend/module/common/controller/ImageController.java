@@ -1,12 +1,15 @@
 package com.university.vrclassroombackend.module.common.controller;
 
 import com.university.vrclassroombackend.common.dto.ApiResponse;
+import com.university.vrclassroombackend.constant.AppConstants;
+import com.university.vrclassroombackend.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,14 +36,20 @@ public class ImageController {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageController.class);
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @Value("${file.upload.path:./uploads}")
     private String uploadPath;
 
-    @Value("${file.upload.server-path:}")
+    @Value("${file.upload.server-path:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index}")
     private String serverUploadPath;
 
     @Value("${file.access.url:/assets}")
     private String accessUrl;
+
+    @Value("${server.base-url:}")
+    private String serverBaseUrl;
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
     private static final String[] ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "gif", "webp"};
@@ -51,7 +60,7 @@ public class ImageController {
             @Parameter(description = "图片文件", required = true) @RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
 
-        Integer userId = (Integer) request.getAttribute("userId");
+        Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
         if (userId == null) {
             logger.warn("上传图片失败: 未认证");
             return ResponseEntity.status(401).body(ApiResponse.error(401, "请先登录"));
@@ -110,6 +119,15 @@ public class ImageController {
 
             // 生成访问URL
             String fileUrl = String.format("%s/%s/%s", accessUrl, datePath, newFilename);
+            
+            // 如果配置了服务器基础URL，添加完整的URL前缀
+            if (serverBaseUrl != null && !serverBaseUrl.isEmpty()) {
+                // 确保serverBaseUrl不以/结尾
+                String baseUrl = serverBaseUrl.endsWith("/") ? serverBaseUrl.substring(0, serverBaseUrl.length() - 1) : serverBaseUrl;
+                // 确保fileUrl不以/开头
+                String urlPath = fileUrl.startsWith("/") ? fileUrl.substring(1) : fileUrl;
+                fileUrl = baseUrl + "/" + urlPath;
+            }
 
             logger.info("上传图片成功: userId={}, filename={}, url={}", userId, newFilename, fileUrl);
 
@@ -126,27 +144,37 @@ public class ImageController {
 
     /**
      * 获取上传基础路径
-     * 优先使用服务器路径，否则使用本地路径
+     * 优先使用服务器路径，确保存储到指定的服务器目录
      */
     private String getUploadBasePath() {
-        // 如果配置了服务器路径且目录存在，使用服务器路径
-        if (serverUploadPath != null && !serverUploadPath.isEmpty()) {
-            File serverDir = new File(serverUploadPath);
-            if (serverDir.exists() || serverDir.mkdirs()) {
-                return serverUploadPath;
+        // 优先使用服务器路径，确保存储到指定的服务器目录
+        String targetPath = serverUploadPath;
+        File targetDir = new File(targetPath);
+        
+        // 确保目录存在
+        if (!targetDir.exists()) {
+            boolean created = targetDir.mkdirs();
+            if (created) {
+                logger.info("创建服务器上传目录: {}", targetPath);
+            } else {
+                logger.warn("创建服务器上传目录失败: {}", targetPath);
+                // 如果创建失败，尝试使用本地路径
+                targetPath = uploadPath;
+                if (!new File(targetPath).isAbsolute()) {
+                    String projectDir = System.getProperty("user.dir");
+                    targetPath = new File(projectDir, targetPath).getAbsolutePath();
+                    logger.info("使用本地上传目录: {}", targetPath);
+                }
+                // 确保本地目录存在
+                File localDir = new File(targetPath);
+                if (!localDir.exists()) {
+                    localDir.mkdirs();
+                    logger.info("创建本地上传目录: {}", targetPath);
+                }
             }
         }
         
-        // 否则使用本地路径，将相对路径转换为绝对路径
-        String localPath = uploadPath;
-        if (!new File(localPath).isAbsolute()) {
-            // 获取项目根目录的绝对路径
-            String projectDir = System.getProperty("user.dir");
-            localPath = new File(projectDir, localPath).getAbsolutePath();
-            logger.info("使用项目根目录: {}", localPath);
-        }
-        
-        return localPath;
+        return targetPath;
     }
 
     /**

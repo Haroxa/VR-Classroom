@@ -20,6 +20,7 @@ public class UserPostVO {
     private String rejectReason;
     private String categoryName;
     private boolean isLiked;
+    private UserPublicVO author;
 
     public String getId() {
         return id;
@@ -125,6 +126,14 @@ public class UserPostVO {
 
     public void setLiked(boolean liked) {
         isLiked = liked;
+    }
+
+    public UserPublicVO getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(UserPublicVO author) {
+        this.author = author;
     }
 }
 

@@ -36,6 +36,7 @@
 - ✅ 订单管理：支持订单创建、查询和状态更新
 - ✅ 论坛系统：支持帖子发布和评论
 - ✅ 图片上传：支持帖子图片上传，返回访问URL
+- ✅ 后台管理：支持用户管理、帖子审核等功能
 
 ### 扩展功能
 - 🚀 捐赠系统：支持用户捐赠（已标记为废弃）
@@ -98,6 +99,7 @@ java -jar target/vr-classroom-backend-0.0.1-SNAPSHOT.jar --spring.profiles.activ
 
 - 应用地址：http://localhost:8082（负载均衡入口）
 - API文档：http://localhost:8082/swagger-ui.html
+- 后台管理：http://localhost:8083（Management模块）
 
 ---
 
@@ -311,6 +313,12 @@ VR教室/
 │   │   ├── main/
 │   │   │   ├── java/
 │   │   │   │   └── com/university/vrclassroombackend/  # 主包
+├── vr-classroom-management/     # 后台管理前端项目
+│   ├── Dockerfile               # Docker构建文件
+│   ├── nginx.conf               # Nginx配置文件
+│   ├── package.json             # 前端依赖配置
+│   ├── src/                     # 前端源码
+│   └── dist/                    # 构建输出目录
 │   │   │   │       ├── advice/         # 响应处理
 │   │   │   │       ├── annotation/     # 自定义注解
 │   │   │   │       ├── aspect/         # 切面

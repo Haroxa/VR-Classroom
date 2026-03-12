@@ -12,6 +12,7 @@ import com.university.vrclassroombackend.module.forum.model.Post;
 import com.university.vrclassroombackend.module.forum.mapper.CommentMapper;
 import com.university.vrclassroombackend.module.forum.mapper.CommentLikeMapper;
 import com.university.vrclassroombackend.module.forum.mapper.PostMapper;
+import com.university.vrclassroombackend.exception.BusinessException;
 import com.university.vrclassroombackend.module.forum.service.CommentService;
 import com.university.vrclassroombackend.module.forum.vo.CommentLikeActionVO;
 import com.university.vrclassroombackend.module.forum.vo.CommentVO;
@@ -53,7 +54,7 @@ public class CommentServiceImpl implements CommentService {
      * 获取帖子评论列表
      */
     @Override
-    public IPage<CommentVO> getPostComments(Integer postId, Integer page, Integer pageSize) {
+    public IPage<CommentVO> getPostComments(Integer postId, Integer page, Integer pageSize, Integer currentUserId) {
         int currentPage = page != null && page > 0 ? page : 1;
         int size = pageSize != null && pageSize > 0 ? pageSize : Pagination.DEFAULT_PAGE_SIZE;
         Page<Comment> pageParam = new Page<>(currentPage, size);
@@ -86,7 +87,7 @@ public class CommentServiceImpl implements CommentService {
                 ));
         
         List<CommentVO> voList = comments.stream()
-                .map(comment -> convertToCommentVO(comment, userMap))
+                .map(comment -> convertToCommentVO(comment, userMap, currentUserId))
                 .collect(Collectors.toList());
         
         Page<CommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
@@ -100,18 +101,27 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public Integer createComment(CommentCreateDTO dto, Integer commenterId) {
+        // 检查帖子是否存在
+        Post post = postMapper.selectById(dto.getPostId());
+        if (post == null) {
+            throw new BusinessException(404, "POST_NOT_FOUND", "帖子不存在: postId=" + dto.getPostId());
+        }
+        
         Comment comment = new Comment();
         comment.setContent(dto.getContent());
         comment.setCommenterId(commenterId);
         comment.setPostId(dto.getPostId());
         comment.setLikeCount(0);
-        comment.setStatus(Post.STATUS_PENDING);
+        comment.setStatus(Comment.STATUS_PENDING);
         comment.setDate(java.time.LocalDateTime.now());
         
         commentMapper.insert(comment);
         
         // 使用原子操作增加评论数
-        postMapper.incrementCommentCount(dto.getPostId(), 1);
+        int rows = postMapper.incrementCommentCount(dto.getPostId(), 1);
+        if (rows == 0) {
+            throw new BusinessException(404, "POST_NOT_FOUND", "帖子不存在: postId=" + dto.getPostId());
+        }
         
         return comment.getId();
     }
@@ -208,14 +218,21 @@ public class CommentServiceImpl implements CommentService {
         return resultPage;
     }
     
-    private CommentVO convertToCommentVO(Comment comment, Map<Integer, UserPublicVO> userMap) {
+    private CommentVO convertToCommentVO(Comment comment, Map<Integer, UserPublicVO> userMap, Integer currentUserId) {
         CommentVO vo = new CommentVO();
         vo.setId(comment.getId());
         vo.setDate(comment.getDate());
         vo.setContent(comment.getContent());
         vo.setCommenterId(comment.getCommenterId());
         vo.setLikeCount(comment.getLikeCount());
-        vo.setLiked(false);
+        
+        // 设置是否被当前用户点赞
+        if (currentUserId != null) {
+            boolean isLiked = commentLikeMapper.existsByUserIdAndCommentId(currentUserId, comment.getId());
+            vo.setLiked(isLiked);
+        } else {
+            vo.setLiked(false);
+        }
         
         UserPublicVO commenter = userMap.get(comment.getCommenterId());
         if (commenter != null) {

@@ -44,10 +44,7 @@ mybatis-plus:
         min-idle: 0
 
 # Swagger配置（开发环境）
-swagger:
-  server:
-    port: 8082  # Swagger文档服务器端口
-    url: http://localhost:8082  # 开发环境使用本地URL
+# 注意：Swagger服务器URL现在使用server.base-url配置
 
 # 日志配置
 logging:
@@ -65,6 +62,7 @@ server:
   tomcat:
     max-threads: 200
     min-spare-threads: 20
+  base-url: http://localhost:8082
 
 # JWT配置
 jwt:

@@ -1,6 +1,7 @@
 package com.university.vrclassroombackend.module.forum.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -118,6 +119,7 @@ public class PostDetailVO {
         this.categoryName = categoryName;
     }
 
+    @JsonProperty("isLiked")
     public boolean isLiked() {
         return isLiked;
     }

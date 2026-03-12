@@ -8,7 +8,7 @@ import com.university.vrclassroombackend.module.forum.vo.PostLikeActionVO;
 import com.university.vrclassroombackend.module.forum.vo.PostVO;
 
 public interface PostService {
-    IPage<PostVO> getPublicPosts(Integer page, Integer pageSize, Integer categoryId, String keyword);
+    IPage<PostVO> getPublicPosts(Integer page, Integer pageSize, Integer categoryId, String keyword, Integer currentUserId);
     PostDetailVO getPostDetail(Integer postId, Integer currentUserId);
     Integer createPost(PostCreateDTO dto, Integer authorId);
     boolean updatePost(Integer postId, PostUpdateDTO dto, Integer authorId);

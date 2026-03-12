@@ -82,8 +82,8 @@ class CommentServiceTest {
         when(commentMapper.selectPage(any(Page.class), any(LambdaQueryWrapper.class))).thenReturn(commentPage);
         when(userService.getUserPublicInfo(1)).thenReturn(testUserPublicVO);
 
-        IPage<CommentVO> result = commentService.getPostComments(1, 1, 20);
-
+        IPage<CommentVO> result = commentService.getPostComments(1, 1, 20, 1);
+        
         assertNotNull(result);
         assertNotNull(result.getRecords());
         verify(commentMapper, times(1)).selectPage(any(Page.class), any(LambdaQueryWrapper.class));
@@ -95,6 +95,9 @@ class CommentServiceTest {
         dto.setContent("新评论");
         dto.setPostId(1);
 
+        // 模拟帖子存在
+        when(postMapper.selectById(1)).thenReturn(testPost);
+        
         // 使用ArgumentCaptor捕获insert的Comment对象，并设置id
         ArgumentCaptor<Comment> commentCaptor = ArgumentCaptor.forClass(Comment.class);
         when(commentMapper.insert(commentCaptor.capture())).thenAnswer(invocation -> {
@@ -109,6 +112,7 @@ class CommentServiceTest {
         assertNotNull(result);
         assertEquals(100, result);
         verify(commentMapper, times(1)).insert(any(Comment.class));
+        verify(postMapper, times(1)).selectById(1);
         verify(postMapper, times(1)).incrementCommentCount(1, 1);
     }
 

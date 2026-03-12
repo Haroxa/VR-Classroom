@@ -16,7 +16,7 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
     
-    @Value("${swagger.server.url:http://localhost:8082}")
+    @Value("${server.base-url:http://localhost:8082}")
     private String swaggerServerUrl;
     
     @Bean

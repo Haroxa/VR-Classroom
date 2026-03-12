@@ -34,46 +34,32 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns(
-                        "/api/posts", // 排除GET请求
-                        "/api/posts/**", // 排除GET请求
-                        "/api/comments", // 排除GET请求
-                        "/api/comments/**", // 排除GET请求
+                        "/api/posts/**", 
+                        "/api/comments/**", 
+
                         "/api/users/profile", 
                         "/api/users/posts", 
                         "/api/users/comments", 
-                        "/api/images/**" // 排除POST /api/images/post
+                        "/api/users/liked-posts",
+                        "/api/users/liked-comments",
+
+                        "/api/oss/sign", 
+
+                        "/api/orders", 
+                        "/api/orders/**",
+
+                        "/api/images/post"
                 )
                 .excludePathPatterns(
-                        // 登录相关
                         "/api/users/login", 
                         "/api/users/login/phone", 
                         "/api/users", 
-                        
-                        // 测试接口
+                        "/api/users/all",
+
                         "/api/test/**", 
-                        
-                        // 教室座位
-                        "/api/rooms/*/seats", 
-                        
-                        // 公开帖子列表
-                        "/api/posts", 
-                        
-                        // 帖子详情
-                        "/api/posts/*", 
-                        
-                        // 评论列表
-                        "/api/comments", 
-                        
-                        // 图片上传
-                        "/api/images/post", 
-                        
-                        // 点赞/取消点赞
-                        "/api/posts/*/likes", 
-                        "/api/comments/*/likes", 
-                        
-                        // 订单相关
-                        "/api/orders", 
-                        "/api/orders/*"
+
+                        "/api/rooms/*/seats"
+
                 );
     }
 

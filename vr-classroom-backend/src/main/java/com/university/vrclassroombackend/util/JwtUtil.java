@@ -39,6 +39,16 @@ public class JwtUtil {
         }
     }
     
+    // 测试用 setter 方法
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+    
+    // 测试用 setter 方法
+    public void setExpiration(Long expiration) {
+        this.expiration = expiration;
+    }
+    
     private SecretKey getSigningKey() {
         return signingKey;
     }

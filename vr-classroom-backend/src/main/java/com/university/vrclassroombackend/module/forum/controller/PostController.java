@@ -42,8 +42,10 @@ public class PostController {
             @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
             @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize,
             @Parameter(description = "分类ID，可选", example = "1") @RequestParam(required = false) Integer categoryId,
-            @Parameter(description = "关键词，可选", example = "VR技术") @RequestParam(required = false) String keyword) {
-        IPage<PostVO> postPage = postService.getPublicPosts(page, pageSize, categoryId, keyword);
+            @Parameter(description = "关键词，可选", example = "VR技术") @RequestParam(required = false) String keyword,
+            jakarta.servlet.http.HttpServletRequest request) {
+        Integer currentUserId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        IPage<PostVO> postPage = postService.getPublicPosts(page, pageSize, categoryId, keyword, currentUserId);
         Map<String, Object> data = new HashMap<>();
         data.put("current", (int) postPage.getCurrent());
         data.put("total", (int) postPage.getPages());

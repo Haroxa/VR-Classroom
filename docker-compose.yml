@@ -5,6 +5,7 @@ services:
     container_name: vr-classroom-backend-1
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+      - /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
@@ -43,6 +44,7 @@ services:
     container_name: vr-classroom-backend-2
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+      - /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
@@ -81,6 +83,7 @@ services:
     container_name: vr-classroom-backend-3
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+      - /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
@@ -119,6 +122,7 @@ services:
     container_name: vr-classroom-backend-4
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+      - /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
@@ -157,6 +161,7 @@ services:
     container_name: vr-classroom-backend-5
     volumes:
       - ./vr-classroom-backend/target/vr-classroom-backend-0.0.1-SNAPSHOT.jar:/app/app.jar:ro
+      - /opt/1panel/apps/openresty/openresty/www/sites/vr-static/index:/opt/1panel/apps/openresty/openresty/www/sites/vr-static/index
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://192.168.247.150:3306/cj_vr?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: cj
@@ -216,6 +221,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    restart: unless-stopped
+
+  # Management模块
+  vr-classroom-management:
+    build: ./vr-classroom-management
+    container_name: vr-classroom-management
+    ports:
+      - "8083:80"
+    depends_on:
+      - nginx
     restart: unless-stopped
 
 volumes:

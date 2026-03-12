@@ -17,6 +17,7 @@ import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
 import com.university.vrclassroombackend.module.user.vo.UserPostVO;
 import com.university.vrclassroombackend.module.user.vo.UserProfileVO;
 import com.university.vrclassroombackend.module.user.vo.UserPublicVO;
+import com.university.vrclassroombackend.module.forum.vo.RelatedPostVO;
 import com.university.vrclassroombackend.module.space.model.Category;
 import com.university.vrclassroombackend.module.space.mapper.CategoryMapper;
 import com.university.vrclassroombackend.module.space.model.College;
@@ -27,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -217,7 +220,27 @@ public class UserServiceImpl implements UserService {
             vo.setStatus(comment.getStatus());
             vo.setRejectReason(comment.getRejectReason());
             vo.setLiked(false);
-            vo.setRelatedPost(null);
+            
+            // 查询相关帖子信息
+            if (comment.getPostId() != null) {
+                Post post = postMapper.selectById(comment.getPostId());
+                if (post != null) {
+                    RelatedPostVO relatedPost = new RelatedPostVO();
+                    relatedPost.setId(post.getId());
+                    relatedPost.setTitle(post.getTitle());
+                    relatedPost.setStatus(post.getStatus());
+                    vo.setRelatedPost(relatedPost);
+                } else {
+                    vo.setRelatedPost(null);
+                }
+            } else {
+                vo.setRelatedPost(null);
+            }
+            
+            // 检查当前评论是否被用户点赞
+            boolean isLiked = commentLikeMapper.existsByUserIdAndCommentId(userId, comment.getId());
+            vo.setLiked(isLiked);
+            
             result.add(vo);
         }
         
@@ -246,13 +269,38 @@ public class UserServiceImpl implements UserService {
         List<Post> posts = postPage.getRecords();
         List<UserPostVO> result = new ArrayList<>();
 
+        // 批量获取作者信息
+        List<Integer> authorIds = posts.stream()
+                .map(Post::getAuthorId)
+                .filter(id -> id != null)
+                .distinct()
+                .collect(Collectors.toList());
+        
+        Map<Integer, UserPublicVO> authorMap = authorIds.stream()
+                .collect(Collectors.toMap(
+                        id -> id,
+                        this::getUserPublicInfo,
+                        (existing, replacement) -> existing
+                ));
+        
         for (Post post : posts) {
             UserPostVO vo = new UserPostVO();
             vo.setId(post.getId().toString());
             vo.setDate(post.getDate());
             vo.setTitle(post.getTitle());
             vo.setSummary(post.getSummary());
-            vo.setImages(new ArrayList<>());
+            // 将String类型的images转换为List<String>
+            if (post.getImages() != null && !post.getImages().equals("[]")) {
+                try {
+                    // 这里需要一个JSON解析工具来将String转换为List<String>
+                    // 暂时使用空列表，后续可以添加JSON解析逻辑
+                    vo.setImages(new ArrayList<>());
+                } catch (Exception e) {
+                    vo.setImages(new ArrayList<>());
+                }
+            } else {
+                vo.setImages(new ArrayList<>());
+            }
             vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
             vo.setLikeCount(post.getLikeCount());
             vo.setShareCount(post.getShareCount());
@@ -261,6 +309,12 @@ public class UserServiceImpl implements UserService {
             vo.setRejectReason(post.getRejectReason());
             vo.setCategoryName(getCategoryName(post.getCategoryId()));
             vo.setLiked(true);
+            
+            // 设置作者信息
+            if (post.getAuthorId() != null) {
+                vo.setAuthor(authorMap.get(post.getAuthorId()));
+            }
+            
             result.add(vo);
         }
 
@@ -298,11 +352,50 @@ public class UserServiceImpl implements UserService {
             vo.setStatus(comment.getStatus());
             vo.setRejectReason(comment.getRejectReason());
             vo.setLiked(true);
-            vo.setRelatedPost(null);
+            
+            // 查询相关帖子信息
+            if (comment.getPostId() != null) {
+                Post post = postMapper.selectById(comment.getPostId());
+                if (post != null) {
+                    RelatedPostVO relatedPost = new RelatedPostVO();
+                    relatedPost.setId(post.getId());
+                    relatedPost.setTitle(post.getTitle());
+                    relatedPost.setStatus(post.getStatus());
+                    vo.setRelatedPost(relatedPost);
+                } else {
+                    vo.setRelatedPost(null);
+                }
+            } else {
+                vo.setRelatedPost(null);
+            }
+            
             result.add(vo);
         }
 
         Page<UserCommentVO> resultPage = new Page<>(commentPage.getCurrent(), commentPage.getSize(), commentPage.getTotal());
+        resultPage.setRecords(result);
+        return resultPage;
+    }
+
+    @Override
+    public IPage<UserProfileVO> getAllUsers(Integer page, Integer pageSize) {
+        // 查询所有用户
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.orderByDesc(User::getId);
+        
+        Page<User> pageParam = new Page<>(page, pageSize);
+        IPage<User> userPage = userMapper.selectPage(pageParam, queryWrapper);
+        List<User> users = userPage.getRecords();
+        List<UserProfileVO> result = new ArrayList<>();
+        
+        for (User user : users) {
+            UserProfileVO vo = getUserProfile(user.getId());
+            if (vo != null) {
+                result.add(vo);
+            }
+        }
+        
+        Page<UserProfileVO> resultPage = new Page<>(userPage.getCurrent(), userPage.getSize(), userPage.getTotal());
         resultPage.setRecords(result);
         return resultPage;
     }

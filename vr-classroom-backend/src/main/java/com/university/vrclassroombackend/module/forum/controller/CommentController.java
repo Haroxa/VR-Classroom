@@ -42,8 +42,10 @@ public class CommentController {
     public ResponseEntity<?> getPostComments(
             @Parameter(description = "帖子ID", required = true, example = "1") @RequestParam Integer postId,
             @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
-            @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
-        IPage<CommentVO> commentPage = commentService.getPostComments(postId, page, pageSize);
+            @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize,
+            jakarta.servlet.http.HttpServletRequest request) {
+        Integer currentUserId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        IPage<CommentVO> commentPage = commentService.getPostComments(postId, page, pageSize, currentUserId);
         Map<String, Object> data = new HashMap<>();
         data.put("current", (int) commentPage.getCurrent());
         data.put("total", (int) commentPage.getPages());

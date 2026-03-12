@@ -37,6 +37,14 @@ public interface UserService {
      * @return 评论列表
      */
     IPage<UserCommentVO> getLikedComments(Integer userId, Integer page, Integer pageSize);
+    
+    /**
+     * 获取所有用户信息
+     * @param page 页码
+     * @param pageSize 每页大小
+     * @return 用户列表
+     */
+    IPage<UserProfileVO> getAllUsers(Integer page, Integer pageSize);
 }
 
 

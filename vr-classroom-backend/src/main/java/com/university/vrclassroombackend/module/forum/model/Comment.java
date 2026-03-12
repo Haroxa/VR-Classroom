@@ -8,6 +8,11 @@ import java.time.LocalDateTime;
 @TableName("comment")
 @Data
 public class Comment {
+    public static final int STATUS_DELETED = -1;
+    public static final int STATUS_PENDING = 0;
+    public static final int STATUS_PUBLISHED = 1;
+    public static final int STATUS_REJECTED = 2;
+    
     @TableId(type = IdType.AUTO)
     private Integer id;
     

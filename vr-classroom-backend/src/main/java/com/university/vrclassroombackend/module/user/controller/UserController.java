@@ -290,4 +290,19 @@ public class UserController {
         logger.info("获取用户点赞评论成功: userId={}, page={}, pageSize={}", userId, page, pageSize);
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
+    
+    @GetMapping("/all")
+    @Operation(summary = "获取所有用户信息", description = "获取所有用户的信息列表")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    public ResponseEntity<?> getAllUsers(
+                                         @Parameter(description = "页码，默认1", example = "1") @RequestParam(defaultValue = "1") Integer page,
+                                         @Parameter(description = "每页大小，默认20", example = "20") @RequestParam(defaultValue = "20") Integer pageSize) {
+        IPage<UserProfileVO> userPage = userService.getAllUsers(page, pageSize);
+        Map<String, Object> data = new HashMap<>();
+        data.put("current", (int) userPage.getCurrent());
+        data.put("total", (int) userPage.getPages());
+        data.put("records", userPage.getRecords());
+        logger.info("获取所有用户信息成功: page={}, pageSize={}", page, pageSize);
+        return ResponseEntity.ok().body(ApiResponse.success(data));
+    }
 }

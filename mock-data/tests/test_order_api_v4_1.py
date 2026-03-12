@@ -134,7 +134,7 @@ def generate_reports():
 atexit.register(generate_reports)
 
 # 基础URL
-base_url = "http://localhost:8080/api"
+base_url = "http://localhost:8082/api"
 server_url = "http://10.86.136.242:8082/api"
 is_server = False
 url = server_url if is_server else base_url

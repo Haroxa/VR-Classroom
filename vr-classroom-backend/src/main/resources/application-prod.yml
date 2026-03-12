@@ -92,6 +92,7 @@ server:
     min-spare-threads: 200
     accept-count: 1000
     connection-timeout: 20000
+  base-url: ${SERVER_BASE_URL:http://10.86.136.242:8082}
 
 # JWT配置
 jwt:
@@ -99,11 +100,7 @@ jwt:
   expiration: 86400
 
 # Swagger配置（生产环境）
-swagger:
-  server:
-    port: 8082  # Swagger文档服务器端口
-    # 生产环境服务器URL（配置为实际服务器地址）
-    url: ${SWAGGER_SERVER_URL:http://10.86.136.242:8082}
+# 注意：Swagger服务器URL现在使用server.base-url配置
 
 # OSS配置
 oss:

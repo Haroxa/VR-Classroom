@@ -56,7 +56,7 @@ public class PostServiceImpl implements PostService {
      * 获取公开帖子列表
      */
     @Override
-    public IPage<PostVO> getPublicPosts(Integer page, Integer pageSize, Integer categoryId, String keyword) {
+    public IPage<PostVO> getPublicPosts(Integer page, Integer pageSize, Integer categoryId, String keyword, Integer currentUserId) {
         int currentPage = page != null && page > 0 ? page : 1;
         int size = pageSize != null && pageSize > 0 ? pageSize : AppConstants.Pagination.DEFAULT_PAGE_SIZE;
         Page<Post> pageParam = new Page<>(currentPage, size);
@@ -110,7 +110,7 @@ public class PostServiceImpl implements PostService {
                 ));
         
         List<PostVO> voList = posts.stream()
-                .map(post -> convertToPostVO(post, userMap, categoryMap))
+                .map(post -> convertToPostVO(post, userMap, categoryMap, currentUserId))
                 .collect(Collectors.toList());
         
         Page<PostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
@@ -217,7 +217,7 @@ public class PostServiceImpl implements PostService {
         return resultPage;
     }
     
-    private PostVO convertToPostVO(Post post, Map<Integer, UserPublicVO> userMap, Map<Integer, Category> categoryMap) {
+    private PostVO convertToPostVO(Post post, Map<Integer, UserPublicVO> userMap, Map<Integer, Category> categoryMap, Integer currentUserId) {
         PostVO vo = new PostVO();
         vo.setId(post.getId().toString());
         vo.setDate(post.getDate());
@@ -233,7 +233,14 @@ public class PostServiceImpl implements PostService {
         vo.setLikeCount(post.getLikeCount());
         vo.setShareCount(post.getShareCount());
         vo.setCommentCount(post.getCommentCount());
-        vo.setLiked(false);
+        
+        // 设置是否被当前用户点赞
+        if (currentUserId != null) {
+            boolean isLiked = postLikeMapper.existsByUserIdAndPostId(currentUserId, post.getId());
+            vo.setLiked(isLiked);
+        } else {
+            vo.setLiked(false);
+        }
         
         if (post.getCategoryId() != null && post.getCategoryId() != 0) {
             Category category = categoryMap.get(post.getCategoryId());
@@ -495,7 +502,7 @@ public class PostServiceImpl implements PostService {
                 ));
 
         List<PostVO> voList = posts.stream()
-                .map(post -> convertToPostVO(post, userMap, categoryMap))
+                .map(post -> convertToPostVO(post, userMap, categoryMap, userId))
                 .collect(Collectors.toList());
 
         Page<PostVO> resultPage = new Page<>(postPage.getCurrent(), postPage.getSize(), postPage.getTotal());
