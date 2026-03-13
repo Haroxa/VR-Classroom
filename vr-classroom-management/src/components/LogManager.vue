@@ -20,6 +20,7 @@
           <el-form-item label="日志类型">
             <el-select v-model="filterForm.type" placeholder="全部" style="width: 120px;">
               <el-option label="全部" value="" />
+              <el-option label="API" value="api" />
               <el-option label="请求" value="request" />
               <el-option label="响应" value="response" />
               <el-option label="错误" value="error" />

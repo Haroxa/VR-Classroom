@@ -104,6 +104,15 @@ api.interceptors.request.use(
     console.log('请求头:', config.headers)
     console.log('==================')
     
+    // 保存请求开始日志到localStorage
+    saveLog(formatLog('request', `API请求开始: ${config.method} ${config.url}`, {
+      url: config.url,
+      method: config.method,
+      params: config.params,
+      data: config.data,
+      headers: config.headers
+    }))
+    
     return config
   },
   error => {

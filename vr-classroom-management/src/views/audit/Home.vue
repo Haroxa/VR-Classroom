@@ -20,6 +20,10 @@
             <el-icon><Document /></el-icon>
             <span>日志记录</span>
           </el-menu-item>
+          <el-menu-item index="api-docs">
+            <el-icon><Link /></el-icon>
+            <span>接口文档</span>
+          </el-menu-item>
         </el-menu>
         <div class="switch-btn">
           <el-button type="primary" size="small" @click="switchToUser">
@@ -44,7 +48,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Message, ChatDotRound, Document, User, House } from '@element-plus/icons-vue'
+import { Message, ChatDotRound, Document, User, House, Link } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()

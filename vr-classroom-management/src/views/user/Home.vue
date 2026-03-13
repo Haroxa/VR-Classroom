@@ -137,7 +137,7 @@
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { Message, ChatDotRound, ShoppingCart, Plus, View, House, User, Document, Star } from '@element-plus/icons-vue'
+import { Message, ChatDotRound, ShoppingCart, Plus, View, House, User, Document, Star, Link } from '@element-plus/icons-vue'
 import api from '../../services/api'
 
 const router = useRouter()

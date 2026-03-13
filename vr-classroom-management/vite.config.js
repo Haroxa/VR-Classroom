@@ -10,6 +10,17 @@ export default defineConfig({
         target: 'http://localhost:8082',
         changeOrigin: true,
         secure: false
+      },
+      '/swagger-ui': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+        secure: false,
+        rewrite: (path) => path
+      },
+      '/v3': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+        secure: false
       }
     }
   }

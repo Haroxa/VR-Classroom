@@ -26,6 +26,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +56,8 @@ public class UserServiceImpl implements UserService {
     
     @Autowired
     private CommentLikeMapper commentLikeMapper;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     public User getUserById(Integer id) {
@@ -175,7 +179,12 @@ public class UserServiceImpl implements UserService {
             vo.setDate(post.getDate());
             vo.setTitle(post.getTitle());
             vo.setSummary(post.getSummary());
-            vo.setImages(new ArrayList<>());
+            // 解析images字段
+            try {
+                vo.setImages(post.getImages() != null ? objectMapper.readValue(post.getImages(), List.class) : new ArrayList<>());
+            } catch (JsonProcessingException e) {
+                vo.setImages(new ArrayList<>());
+            }
             vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);
             vo.setLikeCount(post.getLikeCount());
             vo.setShareCount(post.getShareCount());
@@ -289,16 +298,10 @@ public class UserServiceImpl implements UserService {
             vo.setDate(post.getDate());
             vo.setTitle(post.getTitle());
             vo.setSummary(post.getSummary());
-            // 将String类型的images转换为List<String>
-            if (post.getImages() != null && !post.getImages().equals("[]")) {
-                try {
-                    // 这里需要一个JSON解析工具来将String转换为List<String>
-                    // 暂时使用空列表，后续可以添加JSON解析逻辑
-                    vo.setImages(new ArrayList<>());
-                } catch (Exception e) {
-                    vo.setImages(new ArrayList<>());
-                }
-            } else {
+            // 解析images字段
+            try {
+                vo.setImages(post.getImages() != null ? objectMapper.readValue(post.getImages(), List.class) : new ArrayList<>());
+            } catch (JsonProcessingException e) {
                 vo.setImages(new ArrayList<>());
             }
             vo.setCategoryId(post.getCategoryId() != null ? post.getCategoryId().toString() : null);

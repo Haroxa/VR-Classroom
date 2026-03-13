@@ -51,6 +51,11 @@ const routes = [
         path: 'logs',
         name: 'AuditLogList',
         component: AuditLogList
+      },
+      {
+        path: 'api-docs',
+        name: 'AuditApiDocs',
+        component: () => import('../views/audit/ApiDocs.vue')
       }
 
     ]
