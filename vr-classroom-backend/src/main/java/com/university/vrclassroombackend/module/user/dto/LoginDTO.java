@@ -22,7 +22,6 @@ public class LoginDTO {
     /**
      * 手机号授权码
      */
-    @NotBlank(message = "手机号授权码不能为空")
     @Size(max = 100, message = "手机号授权码长度不能超过100个字符")
     @Schema(description = "手机号授权码", example = "0a1b2c3d4e5f")
     private String phoneCode;

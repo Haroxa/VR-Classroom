@@ -130,6 +130,49 @@
         </span>
       </template>
     </el-dialog>
+    
+    <!-- 公告弹窗 -->
+    <el-dialog
+      v-model="announcementDialogVisible"
+      title="系统公告"
+      width="500px"
+      :close-on-click-modal="false"
+      center
+    >
+      <div v-if="activeAnnouncement" class="announcement-dialog-content">
+        <h3 class="announcement-title">{{ activeAnnouncement.title }}</h3>
+        <div class="announcement-meta">
+          <div class="meta-item">
+            <span class="meta-label">标签：</span>
+            <div class="tags-container">
+              <el-tag 
+                v-for="tag in activeAnnouncement.tags" 
+                :key="tag" 
+                :type="getTagType(tag)"
+                style="margin-right: 5px; margin-bottom: 5px;"
+              >{{ tag }}</el-tag>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">发布人：</span>
+            <span class="meta-value">{{ activeAnnouncement.author }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">发布时间：</span>
+            <span class="meta-value">{{ activeAnnouncement.createdAt }}</span>
+          </div>
+        </div>
+        <div class="announcement-content">
+          <div class="content-label">内容：</div>
+          <div class="content-text">{{ activeAnnouncement.content }}</div>
+        </div>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button type="primary" @click="announcementDialogVisible = false">我知道了</el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -139,6 +182,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { Message, ChatDotRound, ShoppingCart, Plus, View, House, User, Document, Star, Link } from '@element-plus/icons-vue'
 import api from '../../services/api'
+import { loadAnnouncements } from '../../services/fileStorage'
+import { saveLog, formatLog } from '../../services/logger'
 
 const router = useRouter()
 const route = useRoute()
@@ -241,7 +286,16 @@ const fetchUserList = async () => {
     }
   } catch (error) {
     console.error('获取用户列表错误:', error)
-    ElMessage.error('获取用户列表失败')
+    if (error.response) {
+      console.error('获取用户列表错误响应:', error.response)
+      ElMessage.error(`获取用户列表失败: ${error.response.data?.msg || error.response.status}`)
+    } else if (error.request) {
+      console.error('获取用户列表请求错误:', error.request)
+      ElMessage.error('获取用户列表失败: 服务器无响应')
+    } else {
+      console.error('获取用户列表错误信息:', error.message)
+      ElMessage.error(`获取用户列表失败: ${error.message}`)
+    }
   }
 }
 
@@ -276,22 +330,42 @@ const handleLogin = async (phone, loadingRef, successMessage) => {
     const response = await api.login(phone)
     console.log('登录响应：', response)
     if (response.data.code === 0) {
-      console.log('登录成功，token：', response.data.data.token)
-      console.log('用户信息：', response.data.data.user)
-      localStorage.setItem('token', response.data.data.token)
-      localStorage.setItem('userInfo', JSON.stringify(response.data.data.user))
-      console.log('存储后的token：', localStorage.getItem('token'))
-      console.log('存储后的用户信息：', localStorage.getItem('userInfo'))
-      // 更新登录状态
-      updateLoginStatus()
-      ElMessage.success(successMessage)
-      // 刷新页面以显示登录状态
-      setTimeout(() => {
-        console.log('刷新页面以显示登录状态')
-        window.location.reload()
-      }, 1000)
-      return true
-    } else {
+    console.log('登录成功，token：', response.data.data.token)
+    console.log('用户信息：', response.data.data.user)
+    localStorage.setItem('token', response.data.data.token)
+    localStorage.setItem('userInfo', JSON.stringify(response.data.data.user))
+    console.log('存储后的token：', localStorage.getItem('token'))
+    console.log('存储后的用户信息：', localStorage.getItem('userInfo'))
+    
+    // 记录登录成功日志，与其他接口日志格式一致
+    saveLog(formatLog('api', `API请求-响应: post /users/login/phone`, {
+      requestId: Date.now().toString(36) + Math.random().toString(36).substr(2),
+      request: {
+        url: '/users/login/phone',
+        method: 'post',
+        data: { phone },
+        timestamp: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+        timestampMs: Date.now()
+      },
+      response: {
+        status: 200,
+        data: response.data,
+        timestamp: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
+        timestampMs: Date.now()
+      },
+      requestTime: Date.now() - Date.now() // 模拟请求时间
+    }))
+    
+    // 更新登录状态
+    updateLoginStatus()
+    ElMessage.success(successMessage)
+    // 刷新页面以显示登录状态
+    setTimeout(() => {
+      console.log('刷新页面以显示登录状态')
+      window.location.reload()
+    }, 1000)
+    return true
+  } else {
       console.log('登录失败：', response.data.msg)
       ElMessage.error(response.data.msg)
       return false
@@ -354,17 +428,40 @@ const switchUserConfirm = async () => {
   }
 }
 
-const logout = () => {
-  // 清除所有与用户相关的存储项
-  localStorage.removeItem('token')
-  localStorage.removeItem('userInfo')
-  localStorage.removeItem('postListPagination')
-  localStorage.setItem('logoutFlag', 'true') // 添加退出登录标志
-  // 更新登录状态
-  updateLoginStatus()
-  ElMessage.success('已退出登录')
-  // 刷新页面以显示登录表单
-  window.location.reload()
+const logout = async () => {
+  try {
+    // 调用退出登录API
+    const response = await api.logout()
+    if (response.code === 0) {
+      // 清除所有与用户相关的存储项
+      localStorage.removeItem('token')
+      localStorage.removeItem('userInfo')
+      localStorage.removeItem('postListPagination')
+      localStorage.setItem('logoutFlag', 'true') // 添加退出登录标志
+      // 更新登录状态
+      updateLoginStatus()
+      ElMessage.success('已退出登录')
+      // 延迟刷新页面，让用户看到提示
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000)
+    } else {
+      ElMessage.error(response.msg || '退出登录失败')
+    }
+  } catch (error) {
+    console.error('退出登录错误:', error)
+    // 即使API调用失败，也要清除本地存储
+    localStorage.removeItem('token')
+    localStorage.removeItem('userInfo')
+    localStorage.removeItem('postListPagination')
+    localStorage.setItem('logoutFlag', 'true')
+    updateLoginStatus()
+    ElMessage.success('已退出登录')
+    // 延迟刷新页面，让用户看到提示
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000)
+  }
 }
 
 const switchToAudit = () => {
@@ -375,6 +472,40 @@ const goToHome = () => {
   router.push('/')
 }
 
+// 公告相关状态
+const announcementDialogVisible = ref(false)
+const activeAnnouncement = ref(null)
+
+// 获取标签类型
+const getTagType = (tag) => {
+  const tagTypes = {
+    '新增': 'success',
+    '修复': 'warning',
+    '实现': 'info',
+    '更新': 'primary',
+    '通知': 'danger'
+  }
+  return tagTypes[tag] || 'default'
+}
+
+// 加载活跃公告
+const loadActiveAnnouncement = async () => {
+  try {
+    // 使用loadAnnouncements函数加载公告，确保按照创建时间排序
+    const announcements = await loadAnnouncements()
+    if (announcements && announcements.length > 0) {
+      // 找到第一个isActive为true的公告
+      const active = announcements.find(a => a.isActive)
+      if (active) {
+        activeAnnouncement.value = active
+        announcementDialogVisible.value = true
+      }
+    }
+  } catch (error) {
+    console.error('加载公告失败:', error)
+  }
+}
+
 // 组件挂载时自动登录
 import { onMounted } from 'vue'
 onMounted(async () => {
@@ -382,6 +513,8 @@ onMounted(async () => {
   await fetchUserList()
   // 然后执行自动登录
   autoLogin()
+  // 检查是否有活跃公告
+  await loadActiveAnnouncement()
 })
 </script>
 
@@ -598,5 +731,77 @@ onMounted(async () => {
   padding: 20px;
   overflow-y: auto;
   height: 100%;
+}
+
+/* 公告弹窗样式 */
+.announcement-dialog-content {
+  padding: 10px 0;
+}
+
+.announcement-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin: 0 0 20px 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+}
+
+.announcement-meta {
+  margin: 0 0 20px 0;
+}
+
+.meta-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.meta-label {
+  font-weight: bold;
+  color: #666;
+  min-width: 80px;
+}
+
+.meta-value {
+  color: #333;
+  flex: 1;
+}
+
+.tags-container {
+  flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.announcement-content {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.content-label {
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.content-text {
+  line-height: 1.6;
+  white-space: pre-wrap;
+  color: #333;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 4px;
+  min-height: 100px;
+}
+
+.dialog-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 </style>

@@ -58,7 +58,6 @@ public class ImageController {
     @Operation(summary = "上传帖子图片", description = "上传帖子图片，返回图片URL")
     public ResponseEntity<?> uploadPostImage(
             @Parameter(description = "图片文件", required = true) @RequestParam("file") MultipartFile file,
-            @Parameter(description = "帖子ID", required = true) @RequestParam("postId") Integer postId,
             HttpServletRequest request) {
 
         Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
@@ -98,13 +97,12 @@ public class ImageController {
                 logger.info("创建上传目录: {}", basePath);
             }
 
-            // 生成存储路径: posts/{yyyy}/{MM}/{dd}/{postId}/
+            // 生成存储路径: posts/{yyyy}/{MM}/{dd}/
             LocalDate now = LocalDate.now();
-            String datePath = String.format("posts/%s/%s/%s/%d",
+            String datePath = String.format("posts/%s/%s/%s",
                     now.format(DateTimeFormatter.ofPattern("yyyy")),
                     now.format(DateTimeFormatter.ofPattern("MM")),
-                    now.format(DateTimeFormatter.ofPattern("dd")),
-                    postId);
+                    now.format(DateTimeFormatter.ofPattern("dd")));
 
             // 生成文件名: userId + 随机串.jpg
             String randomString = UUID.randomUUID().toString().replace("-", "").substring(0, 8);

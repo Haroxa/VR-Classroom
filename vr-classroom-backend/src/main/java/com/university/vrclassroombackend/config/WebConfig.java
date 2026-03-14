@@ -42,6 +42,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/api/users/comments", 
                         "/api/users/liked-posts",
                         "/api/users/liked-comments",
+                        "/api/users/logout",
+                        "/api/users/bind-phone",
 
                         "/api/oss/sign", 
 

@@ -30,10 +30,11 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { Refresh } from '@element-plus/icons-vue'
+import { ElLoading } from 'element-plus'
 
 const loading = ref(true)
-// const apiDocsUrl = 'http://localhost:8082/swagger-ui/index.html'
-const apiDocsUrl = '/swagger-ui/index.html'
+const apiDocsUrl = 'http://localhost:8082/swagger-ui/index.html'
+// const apiDocsUrl = '/swagger-ui/index.html'
 const iframeRef = ref(null)
 
 const onIframeLoad = () => {

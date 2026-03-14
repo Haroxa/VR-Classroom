@@ -464,6 +464,7 @@ public class PostServiceImpl implements PostService {
         // 查询帖子信息
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Post::getId, postIds);
+        queryWrapper.eq(Post::getStatus, Post.STATUS_PUBLISHED);
         queryWrapper.orderByDesc(Post::getDate);
 
         IPage<Post> postPage = postMapper.selectPage(pageParam, queryWrapper);

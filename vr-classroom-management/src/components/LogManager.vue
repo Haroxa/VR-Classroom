@@ -20,9 +20,11 @@
           <el-form-item label="日志类型">
             <el-select v-model="filterForm.type" placeholder="全部" style="width: 120px;">
               <el-option label="全部" value="" />
-              <el-option label="API" value="api" />
-              <el-option label="请求" value="request" />
-              <el-option label="响应" value="response" />
+              <el-option label="GET" value="get" />
+              <el-option label="POST" value="post" />
+              <el-option label="PUT" value="put" />
+              <el-option label="PATCH" value="patch" />
+              <el-option label="DELETE" value="delete" />
               <el-option label="错误" value="error" />
             </el-select>
           </el-form-item>
@@ -37,7 +39,12 @@
       </div>
       
       <div class="log-list">
-        <el-table :data="filteredLogs" style="width: 100%" border>
+        <el-table :data="paginatedLogs" style="width: 100%" border>
+          <el-table-column label="ID" width="80">
+            <template #default="scope">
+              {{ scope.row.id }}
+            </template>
+          </el-table-column>
           <el-table-column label="时间" width="200">
             <template #default="scope">
               {{ scope.row.timestamp }}
@@ -45,8 +52,8 @@
           </el-table-column>
           <el-table-column label="类型" width="100">
             <template #default="scope">
-              <el-tag :type="getLogTypeTag(scope.row.type)">
-                {{ getLogTypeText(scope.row.type) }}
+              <el-tag :type="getLogTypeTag(scope.row)" effect="dark">
+                {{ getLogTypeText(scope.row) }}
               </el-tag>
             </template>
           </el-table-column>
@@ -58,7 +65,10 @@
           <el-table-column label="操作" width="150" fixed="right">
             <template #default="scope">
               <el-button type="primary" size="small" @click="viewLogDetail(scope.row)">
-                查看详情
+                查看
+              </el-button>
+              <el-button type="danger" size="small" @click="deleteLog(scope.row)">
+                删除
               </el-button>
             </template>
           </el-table-column>
@@ -71,7 +81,7 @@
           v-model:page-size="pageSize"
           :page-sizes="[10, 20, 50, 100]"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="filteredLogs.length"
+          :total="numberedLogs.length"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           background
@@ -90,7 +100,7 @@
       <div v-if="currentLog" class="log-detail">
         <el-descriptions :column="1" border>
           <el-descriptions-item label="时间">{{ currentLog.timestamp }}</el-descriptions-item>
-          <el-descriptions-item label="类型">{{ getLogTypeText(currentLog.type) }}</el-descriptions-item>
+          <el-descriptions-item label="类型">{{ getLogTypeText(currentLog) }}</el-descriptions-item>
           <el-descriptions-item label="消息">{{ currentLog.message }}</el-descriptions-item>
           <el-descriptions-item label="详细数据">
             <div class="log-data-container">
@@ -130,7 +140,18 @@ const filterLogs = () => {
   
   // 按类型过滤
   if (filterForm.value.type) {
-    result = result.filter(log => log.type === filterForm.value.type)
+    if (filterForm.value.type === 'error') {
+      // 过滤错误类型
+      result = result.filter(log => log.type === 'error')
+    } else {
+      // 过滤HTTP方法
+      result = result.filter(log => {
+        if (log.type === 'api' && log.data.request) {
+          return log.data.request.method.toLowerCase() === filterForm.value.type
+        }
+        return false
+      })
+    }
   }
   
   // 按关键词过滤
@@ -145,6 +166,21 @@ const filterLogs = () => {
   filteredLogs.value = result
   page.value = 1
 }
+
+// 计算属性：带编号的日志列表
+const numberedLogs = computed(() => {
+  return filteredLogs.value.map((log, index) => ({
+    ...log,
+    id: index + 1
+  }))
+})
+
+// 计算属性：分页后的日志列表
+const paginatedLogs = computed(() => {
+  const start = (page.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  return numberedLogs.value.slice(start, end)
+})
 
 // 重置过滤器
 const resetFilter = () => {
@@ -202,26 +238,45 @@ const viewLogDetail = (log) => {
   detailDialogVisible.value = true
 }
 
-// 获取日志类型标签
-const getLogTypeTag = (type) => {
-  switch (type) {
-    case 'request': return 'info'
-    case 'response': return 'success'
-    case 'error': return 'danger'
-    case 'api': return 'info'
-    default: return 'info'
+// 删除日志
+const deleteLog = (log) => {
+  const index = logs.value.findIndex(item => item.timestampMs === log.timestampMs)
+  if (index !== -1) {
+    logs.value.splice(index, 1)
+    // 保存到localStorage
+    localStorage.setItem('api_logs', JSON.stringify(logs.value))
+    // 重新过滤
+    filterLogs()
+    ElMessage.success('日志删除成功')
   }
 }
 
-// 获取日志类型文本
-const getLogTypeText = (type) => {
-  switch (type) {
-    case 'request': return '请求'
-    case 'response': return '响应'
-    case 'error': return '错误'
-    case 'api': return 'API'
-    default: return type
+// 获取日志类型标签
+const getLogTypeTag = (log) => {
+  if (log.type === 'error') {
+    return 'danger'
+  } else if (log.type === 'api' && log.data.request) {
+    const method = log.data.request.method.toLowerCase()
+    switch (method) {
+      case 'get': return 'info'
+      case 'post': return 'success'
+      case 'put': return 'warning'
+      case 'patch': return 'primary'
+      case 'delete': return 'danger'
+      default: return 'info'
+    }
   }
+  return 'info'
+}
+
+// 获取日志类型文本
+const getLogTypeText = (log) => {
+  if (log.type === 'error') {
+    return '错误'
+  } else if (log.type === 'api' && log.data.request) {
+    return log.data.request.method.toUpperCase()
+  }
+  return log.type
 }
 
 // 格式化JSON，为长字符串添加换行

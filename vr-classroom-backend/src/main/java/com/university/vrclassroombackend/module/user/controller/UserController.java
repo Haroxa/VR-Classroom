@@ -65,7 +65,6 @@ public class UserController {
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
     public ResponseEntity<?> login(@Parameter(description = "登录参数", required = true) @Valid @RequestBody LoginDTO dto) {
         String loginCode = dto.getLoginCode();
-        String phoneCode = dto.getPhoneCode();
 
         if (loginCode == null || loginCode.isEmpty()) {
             logger.warn("登录失败: 缺少 loginCode 参数");
@@ -73,14 +72,7 @@ public class UserController {
                     .body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 loginCode 参数"));
         }
 
-        if (phoneCode == null || phoneCode.isEmpty()) {
-            logger.warn("登录失败: 缺少 phoneCode 参数");
-            return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST)
-                    .body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 phoneCode 参数"));
-        }
-
         String openId;
-        String phone;
         try {
             Map<String, String> wechatResult = wechatUtil.getOpenIdAndSessionKey(loginCode);
             openId = wechatResult.get("openId");
@@ -90,14 +82,6 @@ public class UserController {
                         .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "登录失败: 获取 openId 失败"));
             }
             logger.info("登录成功获取 openId: {}", openId);
-
-            phone = wechatUtil.getPhoneNumber(phoneCode);
-            if (phone == null || phone.isEmpty()) {
-                logger.warn("登录失败: 获取手机号失败");
-                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
-                        .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "登录失败: 获取手机号失败"));
-            }
-            logger.info("登录成功获取手机号: {}", phone);
         } catch (Exception e) {
             logger.error("微信登录失败: loginCode={}", dto.getLoginCode(), e);
             return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
@@ -105,14 +89,25 @@ public class UserController {
         }
 
         User user = userService.getUserByOpenId(openId);
-        if (user == null) {
+        Map<String, Object> data = new HashMap<>();
+        String token = jwtUtil.generateToken(0); // 临时token
+
+        if (user != null) {
+            // 用户存在，不需要绑定手机号
+            token = jwtUtil.generateToken(user.getId());
+            data.put("token", token);
+            data.put("needBindPhone", false);
+            data.put("user", userService.getUserProfile(user.getId()));
+            logger.info("登录成功: 老用户 userId={}, openId={}", user.getId(), openId);
+        } else {
+            // 用户不存在，需要绑定手机号
+            // 创建临时用户
             user = new User();
             user.setOpenId(openId);
-            user.setPhone(phone);
             if (dto.getNickName() != null && !dto.getNickName().isEmpty()) {
                 user.setName(dto.getNickName());
             } else {
-                user.setName("微信用户" + phone.substring(7));
+                user.setName("未认证");
             }
             if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().isEmpty()) {
                 user.setAvatar(dto.getAvatarUrl());
@@ -121,26 +116,12 @@ public class UserController {
             }
             user.setVerifyStatus(0);
             user = userService.saveUser(user);
-            logger.info("登录成功: 新用户 userId={}, openId={}, phone={}, name={}", user.getId(), openId, phone, user.getName());
-        } else {
-            if (!phone.equals(user.getPhone())) {
-                user.setPhone(phone);
-            }
-            if (dto.getNickName() != null && !dto.getNickName().isEmpty() && !"微信用户".equals(user.getName())) {
-                user.setName(dto.getNickName());
-            }
-            if (dto.getAvatarUrl() != null && !dto.getAvatarUrl().isEmpty() && "assets/default_avatar.png".equals(user.getAvatar())) {
-                user.setAvatar(dto.getAvatarUrl());
-            }
-            userService.updateUser(user);
-            logger.info("登录成功: 老用户 userId={}, openId={}, phone={}", user.getId(), openId, phone);
+            token = jwtUtil.generateToken(user.getId());
+            data.put("token", token);
+            data.put("needBindPhone", true);
+            data.put("user", null);
+            logger.info("登录成功: 新用户 userId={}, openId={}", user.getId(), openId);
         }
-
-        String token = jwtUtil.generateToken(user.getId());
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("token", token);
-        data.put("user", userService.getUserProfile(user.getId()));
 
         return ResponseEntity.ok().body(ApiResponse.success(data));
     }
@@ -201,6 +182,84 @@ public class UserController {
         UserProfileVO profile = userService.getUserProfile(userId);
         logger.info("获取用户信息成功: userId={}", userId);
         return ResponseEntity.ok().body(ApiResponse.success(profile));
+    }
+
+    @PostMapping("/profile")
+    @Operation(summary = "更新用户信息", description = "更新当前用户的个人信息")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> updateProfile(@Parameter(description = "用户信息", required = true) @RequestBody User user, HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            logger.warn("更新用户信息失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+        }
+        user.setId(userId);
+        User updatedUser = userService.updateUser(user);
+        logger.info("更新用户信息成功: userId={}", userId);
+        return ResponseEntity.ok().body(ApiResponse.success(userService.getUserProfile(userId)));
+    }
+
+    @PostMapping("/logout")
+    @Operation(summary = "退出登录", description = "退出当前登录状态")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        Integer userId = (Integer) request.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            logger.warn("退出登录失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+        }
+        // 这里可以添加退出登录的逻辑，比如清除token等
+        logger.info("退出登录成功: userId={}", userId);
+        return ResponseEntity.ok().body(ApiResponse.success(new HashMap<>()));
+    }
+
+    @PostMapping("/bind-phone")
+    @Operation(summary = "绑定手机号", description = "绑定用户手机号")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
+    public ResponseEntity<?> bindPhone(@Parameter(description = "绑定手机号参数", required = true) @RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
+        Integer userId = (Integer) httpRequest.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
+        if (userId == null) {
+            logger.warn("绑定手机号失败: 未认证");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
+        }
+        String phoneCode = request.get("phoneCode");
+        if (phoneCode == null || phoneCode.isEmpty()) {
+            logger.warn("绑定手机号失败: 缺少 phoneCode 参数");
+            return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.BAD_REQUEST, "缺少 phoneCode 参数"));
+        }
+        try {
+            String phone = wechatUtil.getPhoneNumber(phoneCode);
+            if (phone == null || phone.isEmpty()) {
+                logger.warn("绑定手机号失败: 获取手机号失败");
+                return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                        .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "获取手机号失败"));
+            }
+            User user = userService.getUserById(userId);
+            if (user == null) {
+                logger.warn("绑定手机号失败: 用户不存在 userId={}", userId);
+                return ResponseEntity.status(AppConstants.HttpStatusCode.NOT_FOUND)
+                        .body(ApiResponse.error(AppConstants.HttpStatusCode.NOT_FOUND, "用户不存在"));
+            }
+            user.setPhone(phone);
+            userService.updateUser(user);
+            logger.info("绑定手机号成功: userId={}, phone={}", userId, phone);
+            String token = jwtUtil.generateToken(userId);
+            Map<String, Object> data = new HashMap<>();
+            data.put("token", token);
+            data.put("user", userService.getUserProfile(userId));
+            return ResponseEntity.ok().body(ApiResponse.success(data));
+        } catch (Exception e) {
+            logger.error("绑定手机号失败: userId={}", userId, e);
+            return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
+                    .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, "绑定手机号失败: " + e.getMessage()));
+        }
     }
 
     @GetMapping("/posts")

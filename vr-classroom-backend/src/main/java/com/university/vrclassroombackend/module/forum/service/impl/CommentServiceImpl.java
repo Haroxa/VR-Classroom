@@ -344,6 +344,7 @@ public class CommentServiceImpl implements CommentService {
         // 查询评论信息
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Comment::getId, commentIds);
+        queryWrapper.eq(Comment::getStatus, Comment.STATUS_PUBLISHED);
         queryWrapper.orderByDesc(Comment::getDate);
 
         IPage<Comment> commentPage = commentMapper.selectPage(pageParam, queryWrapper);

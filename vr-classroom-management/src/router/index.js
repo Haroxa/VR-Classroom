@@ -56,6 +56,11 @@ const routes = [
         path: 'api-docs',
         name: 'AuditApiDocs',
         component: () => import('../views/audit/ApiDocs.vue')
+      },
+      {
+        path: 'announcements',
+        name: 'AuditAnnouncementManager',
+        component: () => import('../views/audit/AnnouncementManager.vue')
       }
 
     ]

@@ -79,13 +79,14 @@ api.interceptors.request.use(
     // 记录请求开始时间
     config.requestStartTime = Date.now()
     
-    // 存储请求信息
+    // 存储请求信息，对于登录请求不记录headers，避免记录无效token
     const requestInfo = {
       url: config.url,
       method: config.method,
       params: config.params,
       data: config.data,
-      headers: config.headers,
+      // 对于登录请求，不记录headers，避免记录无效token
+      headers: config.url.includes('/users/login') ? {} : config.headers,
       timestamp: new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' }),
       timestampMs: Date.now()
     }
@@ -104,14 +105,7 @@ api.interceptors.request.use(
     console.log('请求头:', config.headers)
     console.log('==================')
     
-    // 保存请求开始日志到localStorage
-    saveLog(formatLog('request', `API请求开始: ${config.method} ${config.url}`, {
-      url: config.url,
-      method: config.method,
-      params: config.params,
-      data: config.data,
-      headers: config.headers
-    }))
+    // 不再单独记录请求开始日志，只在响应时记录合并后的日志
     
     return config
   },
@@ -411,5 +405,9 @@ export default {
   // 获取所有用户
   getAllUsers(params) {
     return api.get('/users/all', { params })
+  },
+  // 退出登录
+  logout() {
+    return api.post('/users/logout')
   }
 }
