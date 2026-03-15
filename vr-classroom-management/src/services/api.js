@@ -3,9 +3,12 @@ import JSONBig from 'json-bigint'
 import { saveLog, formatLog } from './logger'
 import { ElMessage } from 'element-plus'
 
+// 从环境变量获取API基础URL，默认使用相对路径
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api'
+
 // 创建一个不使用拦截器的axios实例，用于登录请求
 const axiosInstance = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   transformResponse: [(data) => {
     if (typeof data === 'string') {
@@ -48,7 +51,7 @@ const generateRequestId = () => {
 }
 
 const api = axios.create({
-  baseURL: '/api',
+  baseURL: API_BASE_URL,
   timeout: 10000,
   transformResponse: [(data) => {
     if (typeof data === 'string') {

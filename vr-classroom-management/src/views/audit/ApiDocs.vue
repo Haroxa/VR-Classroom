@@ -33,7 +33,9 @@ import { Refresh } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 
 const loading = ref(true)
-const apiDocsUrl = 'http://localhost:8082/swagger-ui/index.html'
+// 根据环境动态设置API文档URL
+// 在Docker环境中，使用后端服务名或环境变量
+const apiDocsUrl = import.meta.env.VITE_API_DOCS_URL || 'http://localhost:8082/swagger-ui/index.html'
 // const apiDocsUrl = '/swagger-ui/index.html'
 const iframeRef = ref(null)
 

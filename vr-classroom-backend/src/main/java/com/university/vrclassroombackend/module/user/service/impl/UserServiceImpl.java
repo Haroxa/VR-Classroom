@@ -268,9 +268,10 @@ public class UserServiceImpl implements UserService {
             return emptyPage;
         }
 
-        // 查询帖子信息
+        // 查询帖子信息，只返回已发布状态
         LambdaQueryWrapper<Post> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Post::getId, postIds);
+        queryWrapper.eq(Post::getStatus, Post.STATUS_PUBLISHED);
         queryWrapper.orderByDesc(Post::getDate);
 
         Page<Post> pageParam = new Page<>(page, pageSize);
@@ -336,9 +337,10 @@ public class UserServiceImpl implements UserService {
             return emptyPage;
         }
 
-        // 查询评论信息
+        // 查询评论信息，只返回已发布状态
         LambdaQueryWrapper<Comment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.in(Comment::getId, commentIds);
+        queryWrapper.eq(Comment::getStatus, Comment.STATUS_PUBLISHED);
         queryWrapper.orderByDesc(Comment::getDate);
 
         Page<Comment> pageParam = new Page<>(page, pageSize);
