@@ -27,31 +27,37 @@
         </el-form>
       </div>
       <div class="table-container">
-        <el-table :data="ordersData" style="width: 100%" border>
-          <el-table-column label="ID" width="100">
+        <el-table :data="ordersData" border style="width: 100%">
+          <!-- ID 列固定宽度 -->
+          <el-table-column label="ID" width="60" align="left">
             <template #default="scope">
               {{ (page - 1) * pageSize + scope.$index + 1 }}
             </template>
           </el-table-column>
-          <el-table-column label="订单编号" width="200">
+          <!-- 订单编号列自适应 -->
+          <el-table-column label="订单编号" min-width="200" align="left">
             <template #default="scope">
               {{ scope.row.id.toString() }}
             </template>
           </el-table-column>
-          <el-table-column prop="amount" label="金额" width="100">
+          <!-- 金额列自适应 -->
+          <el-table-column prop="amount" label="金额" min-width="100" align="left">
             <template #default="scope">
               ¥{{ (scope.row.amount / 100).toFixed(2) }}
             </template>
           </el-table-column>
-          <el-table-column prop="createdAt" label="创建时间" width="180" />
-          <el-table-column prop="status" label="状态" width="100">
+          <!-- 创建时间列自适应 -->
+          <el-table-column prop="createdAt" label="创建时间" min-width="180" align="left" />
+          <!-- 状态列固定宽度 -->
+          <el-table-column prop="status" label="状态" width="100" align="left">
             <template #default="scope">
               <el-tag :type="getStatusType(scope.row.status)">
                 {{ getStatusText(scope.row.status) }}
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="240" fixed="right">
+          <!-- 操作列：固定宽度 + 右对齐 -->
+          <el-table-column label="操作" width="300" fixed="right" align="left">
             <template #default="scope">
               <div class="operation-buttons">
                 <el-button size="small" @click="viewOrder(scope.row.id)" class="operation-button">查看</el-button>

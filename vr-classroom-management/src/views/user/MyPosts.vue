@@ -26,7 +26,7 @@
               <el-tag :type="getStatusType(scope.row.status)">{{ getStatusText(scope.row.status) }}</el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="150" fixed="right">
+          <el-table-column label="操作" width="180" fixed="right">
             <template #default="scope">
               <div class="operation-buttons">
                 <el-button size="small" @click="viewPost(scope.row.id)" class="operation-button">查看</el-button>

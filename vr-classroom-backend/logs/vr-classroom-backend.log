@@ -164,3 +164,112 @@ Caused by: java.io.IOException: 你的主机中的软件中止了一个已建立
 2026-03-15 10:08:40.785 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
 2026-03-15 10:08:40.919 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
 2026-03-15 10:08:40.932 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.
+2026-03-15 10:31:48.412 [background-preinit] INFO  o.h.validator.internal.util.Version - HV000001: Hibernate Validator 8.0.3.Final
+2026-03-15 10:31:48.492 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Starting VrClassroomBackendApplication using Java 17.0.8 with PID 35796 (P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend\target\classes started by 23790 in P:\CODE\School\ZDD\Task\VR教室\vr-classroom-backend)
+2026-03-15 10:31:48.493 [restartedMain] DEBUG c.u.v.VrClassroomBackendApplication - Running with Spring Boot v3.5.9, Spring v6.2.15
+2026-03-15 10:31:48.494 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - The following 1 profile is active: "dev"
+2026-03-15 10:31:48.563 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-15 10:31:48.565 [restartedMain] INFO  o.s.b.d.e.DevToolsPropertyDefaultsPostProcessor - For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-15 10:31:49.964 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Multiple Spring Data modules found, entering strict repository configuration mode
+2026-03-15 10:31:49.968 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2026-03-15 10:31:50.026 [restartedMain] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 32 ms. Found 0 Redis repository interfaces.
+2026-03-15 10:31:51.223 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat initialized with port 8082 (http)
+2026-03-15 10:31:51.247 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8082"]
+2026-03-15 10:31:51.252 [restartedMain] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-03-15 10:31:51.253 [restartedMain] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/10.1.50]
+2026-03-15 10:31:51.349 [restartedMain] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring embedded WebApplicationContext
+2026-03-15 10:31:51.350 [restartedMain] INFO  o.s.b.w.s.c.ServletWebServerApplicationContext - Root WebApplicationContext: initialization completed in 2785 ms
+2026-03-15 10:31:51.694 [restartedMain] INFO  c.u.v.config.RedisConfig - === 创建Redis连接工厂 ===
+2026-03-15 10:31:51.695 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis配置: host=localhost, port=6379, password=123456, database=0
+2026-03-15 10:31:52.033 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始检查Redis连接 ===
+2026-03-15 10:31:52.034 [restartedMain] INFO  c.u.v.config.RedisConfig - === 开始加载环境变量到System Property ===
+2026-03-15 10:31:52.035 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_HOST=localhost
+2026-03-15 10:31:52.035 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PORT=6379
+2026-03-15 10:31:52.035 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_PASSWORD=123456
+2026-03-15 10:31:52.035 [restartedMain] INFO  c.u.v.config.RedisConfig - 设置环境变量: SPRING_REDIS_DATABASE=0
+2026-03-15 10:31:52.036 [restartedMain] INFO  c.u.v.config.RedisConfig - === 环境变量加载完成 ===
+2026-03-15 10:31:52.036 [restartedMain] INFO  c.u.v.config.RedisConfig - RedisConnectionFactory 类型: org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory
+2026-03-15 10:31:52.036 [restartedMain] INFO  c.u.v.config.RedisConfig - 尝试连接到Redis服务器...
+2026-03-15 10:31:52.994 [restartedMain] INFO  c.u.v.config.RedisConfig - Redis 连接成功: PONG
+2026-03-15 10:31:52.995 [restartedMain] INFO  c.u.v.config.RedisConfig - === Redis连接检查完成 ===
+2026-03-15 10:31:55.606 [restartedMain] INFO  c.u.v.config.AsyncConfig - 订单任务线程池初始化完成: corePoolSize=10, maxPoolSize=50, queueCapacity=100
+2026-03-15 10:31:55.616 [restartedMain] INFO  c.u.v.config.AsyncConfig - 通用任务线程池初始化完成: corePoolSize=5, maxPoolSize=20, queueCapacity=50
+2026-03-15 10:31:56.759 [restartedMain] INFO  o.s.b.d.a.OptionalLiveReloadServer - LiveReload server is running on port 35729
+2026-03-15 10:31:56.767 [restartedMain] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 5 endpoints beneath base path '/actuator'
+2026-03-15 10:31:56.833 [restartedMain] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8082"]
+2026-03-15 10:31:56.844 [restartedMain] INFO  o.s.b.w.e.tomcat.TomcatWebServer - Tomcat started on port 8082 (http) with context path '/'
+2026-03-15 10:31:56.865 [restartedMain] INFO  c.u.v.VrClassroomBackendApplication - Started VrClassroomBackendApplication in 9.212 seconds (process running for 9.913)
+2026-03-15 10:31:56.990 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Starting...
+2026-03-15 10:31:57.180 [scheduling-1] INFO  com.zaxxer.hikari.pool.HikariPool - HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@7f4170f
+2026-03-15 10:31:57.186 [scheduling-1] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Start completed.
+2026-03-15 10:31:58.159 [http-nio-8082-exec-1] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-03-15 10:31:58.160 [http-nio-8082-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-03-15 10:31:58.162 [http-nio-8082-exec-1] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
+2026-03-15 10:31:58.397 [http-nio-8082-exec-1] INFO  c.u.v.m.a.controller.AdminController - 获取帖子列表成功: page=1, status=null, categoryId=null, keyword=
+2026-03-15 10:32:00.891 [http-nio-8082-exec-4] INFO  c.u.v.m.u.controller.UserController - 获取所有用户信息成功: page=1, pageSize=20
+2026-03-15 10:32:19.636 [http-nio-8082-exec-6] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=1, phone=13800138001
+2026-03-15 10:32:21.257 [http-nio-8082-exec-7] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:32:34.359 [http-nio-8082-exec-1] INFO  c.u.v.m.u.controller.UserController - 手机号登录成功: 老用户 userId=1, phone=13800138001
+2026-03-15 10:32:36.084 [http-nio-8082-exec-4] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:38:19.151 [http-nio-8082-exec-3] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:40:48.813 [http-nio-8082-exec-5] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:40:54.302 [http-nio-8082-exec-2] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:40:58.115 [http-nio-8082-exec-6] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:40:59.126 [http-nio-8082-exec-7] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:41:00.688 [http-nio-8082-exec-8] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:41:01.610 [http-nio-8082-exec-9] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:41:03.406 [http-nio-8082-exec-10] INFO  c.u.v.m.s.s.impl.SpaceServiceImpl - 查询所有分类
+2026-03-15 10:41:03.410 [http-nio-8082-exec-10] INFO  c.u.v.m.s.controller.SpaceController - 获取分类列表成功: count=10
+2026-03-15 10:41:03.785 [http-nio-8082-exec-1] INFO  c.u.v.m.u.controller.UserController - 获取用户帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:41:05.758 [http-nio-8082-exec-4] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:41:07.341 [http-nio-8082-exec-3] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:42:21.398 [http-nio-8082-exec-5] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:42:48.110 [http-nio-8082-exec-2] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:43:09.577 [http-nio-8082-exec-6] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:43:13.213 [http-nio-8082-exec-7] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:43:14.860 [http-nio-8082-exec-8] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:43:31.775 [http-nio-8082-exec-9] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:46:50.754 [http-nio-8082-exec-10] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:47:00.826 [http-nio-8082-exec-1] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:47:09.118 [http-nio-8082-exec-4] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:47:18.544 [http-nio-8082-exec-3] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:47:19.929 [http-nio-8082-exec-5] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:47:32.885 [http-nio-8082-exec-2] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:47:35.521 [http-nio-8082-exec-6] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:47:37.441 [http-nio-8082-exec-7] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:51:20.302 [http-nio-8082-exec-8] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:51:25.534 [http-nio-8082-exec-9] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:54:38.577 [http-nio-8082-exec-10] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:54:38.868 [http-nio-8082-exec-1] INFO  c.u.v.m.u.controller.UserController - 获取用户帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:54:41.560 [http-nio-8082-exec-4] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:56:31.059 [http-nio-8082-exec-3] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:57:56.911 [http-nio-8082-exec-5] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:58:02.627 [http-nio-8082-exec-2] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:58:43.568 [http-nio-8082-exec-6] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 10:58:54.297 [http-nio-8082-exec-7] INFO  c.u.v.m.u.controller.UserController - 获取用户帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:00.963 [http-nio-8082-exec-8] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:02.974 [http-nio-8082-exec-9] INFO  c.u.v.m.u.controller.UserController - 获取用户帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:36.451 [http-nio-8082-exec-10] INFO  c.u.v.m.u.controller.UserController - 获取用户评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:38.431 [http-nio-8082-exec-1] INFO  c.u.v.m.s.s.impl.SpaceServiceImpl - 查询所有校区
+2026-03-15 10:59:38.441 [http-nio-8082-exec-1] INFO  c.u.v.m.s.controller.SpaceController - 获取校区列表成功: count=5
+2026-03-15 10:59:41.919 [http-nio-8082-exec-3] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞评论成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:42.937 [http-nio-8082-exec-5] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:50.384 [http-nio-8082-exec-6] INFO  c.u.v.m.s.s.impl.SpaceServiceImpl - 查询所有分类
+2026-03-15 10:59:50.387 [http-nio-8082-exec-6] INFO  c.u.v.m.s.controller.SpaceController - 获取分类列表成功: count=10
+2026-03-15 10:59:54.690 [http-nio-8082-exec-10] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞帖子成功: userId=1, page=1, pageSize=20
+2026-03-15 10:59:59.787 [http-nio-8082-exec-1] INFO  c.u.v.m.u.controller.UserController - 获取用户点赞评论成功: userId=1, page=1, pageSize=20
+2026-03-15 11:00:02.976 [http-nio-8082-exec-4] INFO  c.u.v.m.o.controller.OrderController - 查询订单列表成功: userId=1, page=1, pageSize=20, total=1
+2026-03-15 11:00:08.063 [http-nio-8082-exec-3] INFO  c.u.v.m.a.controller.AdminController - 获取帖子列表成功: page=1, status=null, categoryId=null, keyword=
+2026-03-15 11:00:09.945 [http-nio-8082-exec-5] INFO  c.u.v.m.a.controller.AdminController - 获取评论列表成功: page=1, status=null
+2026-03-15 11:00:17.247 [http-nio-8082-exec-7] INFO  o.s.api.AbstractOpenApiResource - Init duration for springdoc-openapi is: 1092 ms
+2026-03-15 11:00:18.519 [http-nio-8082-exec-8] INFO  c.u.v.m.a.controller.AdminController - 获取帖子列表成功: page=1, status=null, categoryId=null, keyword=
+2026-03-15 11:00:21.097 [http-nio-8082-exec-9] INFO  c.u.v.m.a.controller.AdminController - 获取评论列表成功: page=1, status=null
+2026-03-15 11:07:21.432 [http-nio-8082-exec-10] INFO  c.u.v.m.a.controller.AdminController - 获取帖子列表成功: page=1, status=null, categoryId=null, keyword=
+2026-03-15 11:07:28.208 [http-nio-8082-exec-5] INFO  c.u.v.m.u.controller.UserController - 获取所有用户信息成功: page=1, pageSize=20
+2026-03-15 11:09:35.013 [http-nio-8082-exec-4] INFO  c.u.v.m.a.controller.AdminController - 获取评论列表成功: page=1, status=null
+2026-03-15 11:15:32.319 [http-nio-8082-exec-4] INFO  c.u.v.m.u.controller.UserController - 获取所有用户信息成功: page=1, pageSize=20
+2026-03-15 11:16:11.129 [http-nio-8082-exec-8] INFO  c.u.v.m.u.controller.UserController - 获取所有用户信息成功: page=1, pageSize=20
+2026-03-15 11:16:39.684 [SpringApplicationShutdownHook] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-03-15 11:16:41.736 [tomcat-shutdown] INFO  o.s.b.w.e.tomcat.GracefulShutdown - Graceful shutdown complete
+2026-03-15 11:16:41.886 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown initiated...
+2026-03-15 11:16:41.892 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource - HikariPool-1 - Shutdown completed.

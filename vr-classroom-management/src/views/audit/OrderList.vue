@@ -47,10 +47,12 @@
               </el-tag>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="200" fixed="right">
+          <el-table-column label="操作" width="150" fixed="right">
             <template #default="scope">
-              <el-button type="primary" size="small" @click="auditOrder(scope.row)" :disabled="scope.row.status !== 0">审核</el-button>
-              <el-button size="small" @click="viewOrder(scope.row.id)">查看</el-button>
+              <div class="operation-buttons">
+                <el-button type="primary" size="small" @click="auditOrder(scope.row)" :disabled="scope.row.status !== 0" class="operation-button">审核</el-button>
+                <el-button size="small" @click="viewOrder(scope.row.id)" class="operation-button">查看</el-button>
+              </div>
             </template>
           </el-table-column>
         </el-table>
@@ -330,5 +332,19 @@ onMounted(() => {
   width: 100%;
   display: flex;
   justify-content: flex-end;
+}
+
+.operation-buttons {
+  display: flex;
+  gap: 5px;
+  box-sizing: border-box;
+  padding: 0 5px;
+}
+
+.operation-button {
+  width: 60px;
+  text-align: center;
+  padding: 0 8px;
+  font-size: 12px;
 }
 </style>
