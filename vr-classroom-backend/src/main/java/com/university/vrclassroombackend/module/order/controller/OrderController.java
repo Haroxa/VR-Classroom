@@ -6,6 +6,7 @@ import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.module.order.dto.CreateOrderDTO;
 import com.university.vrclassroombackend.module.order.dto.UpdateOrderDTO;
+import com.university.vrclassroombackend.module.order.dto.MockPayNotifyDTO;
 import com.university.vrclassroombackend.module.order.service.OrderService;
 import com.university.vrclassroombackend.module.order.vo.OrderListVO;
 import com.university.vrclassroombackend.module.order.vo.OrderVO;
@@ -105,8 +106,8 @@ public class OrderController {
     @Operation(summary = "模拟支付回调", description = "模拟支付成功后的回调通知")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "请求错误")
-    public ResponseEntity<?> mockPayNotify(@Parameter(description = "回调参数", required = true, example = "{\"orderId\": \"1\"}") @RequestBody Map<String, String> request) {
-        String orderId = request.get("orderId");
+    public ResponseEntity<?> mockPayNotify(@Parameter(description = "回调参数", required = true) @RequestBody MockPayNotifyDTO request) {
+        String orderId = request.getOrderId();
         if (orderId == null || orderId.isEmpty()) {
             logger.warn("模拟支付回调失败: 缺少 orderId 参数");
             return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST)

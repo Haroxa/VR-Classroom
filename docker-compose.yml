@@ -21,8 +21,8 @@ services:
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      WECHAT_APP_ID: your-wechat-app-id
-      WECHAT_APP_SECRET: your-wechat-app-secret
+      WECHAT_APP_ID: wx123e1139cfbd6562
+      WECHAT_APP_SECRET: 6ef8b7f456d3ddfdc227d126eba39085
     depends_on:
       redis:
         condition: service_started
@@ -60,8 +60,8 @@ services:
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      WECHAT_APP_ID: your-wechat-app-id
-      WECHAT_APP_SECRET: your-wechat-app-secret
+      WECHAT_APP_ID: wx123e1139cfbd6562
+      WECHAT_APP_SECRET: 6ef8b7f456d3ddfdc227d126eba39085
     depends_on:
       redis:
         condition: service_started
@@ -99,8 +99,8 @@ services:
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      WECHAT_APP_ID: your-wechat-app-id
-      WECHAT_APP_SECRET: your-wechat-app-secret
+      WECHAT_APP_ID: wx123e1139cfbd6562
+      WECHAT_APP_SECRET: 6ef8b7f456d3ddfdc227d126eba39085
     depends_on:
       redis:
         condition: service_started
@@ -138,8 +138,8 @@ services:
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      WECHAT_APP_ID: your-wechat-app-id
-      WECHAT_APP_SECRET: your-wechat-app-secret
+      WECHAT_APP_ID: wx123e1139cfbd6562
+      WECHAT_APP_SECRET: 6ef8b7f456d3ddfdc227d126eba39085
     depends_on:
       redis:
         condition: service_started
@@ -177,8 +177,8 @@ services:
       OSS_ACCESS_KEY_ID: your_oss_access_key_id
       OSS_ACCESS_KEY_SECRET: your_oss_access_key_secret
       OSS_BUCKET_NAME: vr-classroom-bucket
-      WECHAT_APP_ID: your-wechat-app-id
-      WECHAT_APP_SECRET: your-wechat-app-secret
+      WECHAT_APP_ID: wx123e1139cfbd6562
+      WECHAT_APP_SECRET: 6ef8b7f456d3ddfdc227d126eba39085
     depends_on:
       redis:
         condition: service_started

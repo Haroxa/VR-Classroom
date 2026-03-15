@@ -61,6 +61,11 @@ const routes = [
         path: 'announcements',
         name: 'AuditAnnouncementManager',
         component: () => import('../views/audit/AnnouncementManager.vue')
+      },
+      {
+        path: 'system-info',
+        name: 'AuditSystemInfo',
+        component: () => import('../views/audit/SystemInfo.vue')
       }
 
     ]

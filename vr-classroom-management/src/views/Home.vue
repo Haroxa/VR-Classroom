@@ -8,20 +8,21 @@
       <div class="module-card audit-module">
         <div class="module-header">
           <el-icon class="module-icon"><View /></el-icon>
-          <h2>审核管理</h2>
+          <h2>后台管理</h2>
         </div>
         <div class="module-content">
-          <p>审核管理模块用于管理和审核用户发布的帖子、评论等内容，确保内容符合平台规范。</p>
+          <p>后台管理模块用于管理和审核用户发布的内容，监控系统运行状态，以及发布系统公告。</p>
           <ul>
-            <li>帖子审核：查看和审核用户发布的帖子</li>
-            <li>评论审核：查看和审核用户发布的评论</li>
-            <li>日志记录：查看系统操作日志</li>
-            <li>接口文档：查看后端接口文档</li>
-            <li>公告管理：管理系统公告信息</li>
+            <li>帖子审核：审核用户发布的帖子，确保内容符合平台规范</li>
+            <li>评论审核：审核用户发布的评论，确保内容符合平台规范</li>
+            <li>日志记录：查看系统操作日志，了解系统运行状态</li>
+            <li>接口文档：查看后端API接口文档，了解接口使用方法</li>
+            <li>公告管理：管理系统公告，向用户发布重要信息</li>
+            <li>系统说明：查看系统功能和使用说明</li>
           </ul>
         </div>
         <div class="module-footer">
-          <el-button type="primary" size="large" @click="goToAudit">进入审核管理</el-button>
+          <el-button type="primary" size="large" @click="goToAudit">进入后台管理</el-button>
         </div>
       </div>
       <div class="module-card user-module">
@@ -30,17 +31,17 @@
           <h2>用户中心</h2>
         </div>
         <div class="module-content">
-          <p>用户中心模块用于用户管理个人信息、浏览帖子、管理评论、查看订单等操作。</p>
+          <p>用户中心模块用于用户浏览内容、管理个人信息、查看订单和预订座位等操作。</p>
           <ul>
-            <li>个人信息：查看和管理个人资料</li>
-            <li>浏览帖子：查看和搜索帖子</li>
-            <li>浏览座位：查看教室座位信息</li>
-            <li>我的帖子：管理用户自己的帖子</li>
-            <li>我的评论：管理用户自己的评论</li>
-            <li>我点赞的帖子：查看用户点赞的帖子</li>
-            <li>我点赞的评论：查看用户点赞的评论</li>
-            <li>我的订单：查看和管理订单</li>
-            <li>创建订单：创建新的订单</li>
+            <li>帖子浏览：浏览和搜索平台上的帖子，查看帖子详情</li>
+            <li>我的帖子：管理自己发布的帖子，查看帖子状态</li>
+            <li>我的评论：查看和管理自己发布的评论</li>
+            <li>我点赞的帖子：查看自己点赞过的帖子列表</li>
+            <li>我点赞的评论：查看自己点赞过的评论列表</li>
+            <li>我的订单：查看和管理VR教室的预订订单</li>
+            <li>创建订单：创建新的VR教室预订订单</li>
+            <li>座位管理：查看VR教室的座位布局，选择和预订座位</li>
+            <li>个人中心：管理个人信息，查看账号状态</li>
           </ul>
         </div>
         <div class="module-footer">

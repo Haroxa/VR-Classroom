@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.university.vrclassroombackend.constant.AppConstants;
 import com.university.vrclassroombackend.common.dto.ApiResponse;
 import com.university.vrclassroombackend.module.user.dto.LoginDTO;
+import com.university.vrclassroombackend.module.user.dto.PhoneLoginDTO;
+import com.university.vrclassroombackend.module.user.dto.BindPhoneDTO;
 import com.university.vrclassroombackend.module.user.model.User;
 import com.university.vrclassroombackend.module.user.service.UserService;
 import com.university.vrclassroombackend.module.user.vo.UserCommentVO;
@@ -130,8 +132,8 @@ public class UserController {
     @Operation(summary = "手机号登录", description = "使用手机号登录")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "请求错误")
-    public ResponseEntity<?> loginByPhone(@Parameter(description = "登录参数", required = true, example = "{\"phone\": \"13800138000\"}") @RequestBody Map<String, String> request) {
-        String phone = request.get("phone");
+    public ResponseEntity<?> loginByPhone(@Parameter(description = "登录参数", required = true) @RequestBody PhoneLoginDTO request) {
+        String phone = request.getPhone();
 
         if (phone == null || phone.isEmpty()) {
             logger.warn("手机号登录失败: 缺少 phone 参数");
@@ -221,14 +223,14 @@ public class UserController {
     @Operation(summary = "绑定手机号", description = "绑定用户手机号")
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "成功", content = @Content(schema = @Schema(implementation = ApiResponse.class)))
     @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "401", description = "未认证")
-    public ResponseEntity<?> bindPhone(@Parameter(description = "绑定手机号参数", required = true) @RequestBody Map<String, String> request, HttpServletRequest httpRequest) {
+    public ResponseEntity<?> bindPhone(@Parameter(description = "绑定手机号参数", required = true) @RequestBody BindPhoneDTO request, HttpServletRequest httpRequest) {
         Integer userId = (Integer) httpRequest.getAttribute(AppConstants.Auth.USER_ID_ATTRIBUTE);
         if (userId == null) {
             logger.warn("绑定手机号失败: 未认证");
             return ResponseEntity.status(AppConstants.HttpStatusCode.UNAUTHORIZED)
                     .body(ApiResponse.error(AppConstants.HttpStatusCode.UNAUTHORIZED, AppConstants.ErrorMessage.UNAUTHORIZED_USER));
         }
-        String phoneCode = request.get("phoneCode");
+        String phoneCode = request.getPhoneCode();
         if (phoneCode == null || phoneCode.isEmpty()) {
             logger.warn("绑定手机号失败: 缺少 phoneCode 参数");
             return ResponseEntity.status(AppConstants.HttpStatusCode.BAD_REQUEST)

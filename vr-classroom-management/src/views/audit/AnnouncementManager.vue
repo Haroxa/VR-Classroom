@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <div class="header-left">
-            <span class="page-title">公告管理</span>
+            <span>公告管理</span>
           </div>
           <div class="buttons-container">
             <!-- 暂时注释掉添加和清空按钮 -->
@@ -455,12 +455,7 @@ onMounted(() => {
   flex: 1;
 }
 
-.page-title {
-  font-size: 18px;
-  font-weight: normal;
-  color: #333;
-  margin: 0;
-}
+
 
 .buttons-container {
   display: flex;

@@ -2,7 +2,7 @@
   <div class="audit-home-container">
     <el-container>
       <el-aside width="200px" class="aside">
-        <div class="logo">审核管理</div>
+        <div class="logo">后台管理</div>
         <el-menu
           :default-active="activeMenu"
           class="el-menu-vertical-demo"
@@ -28,6 +28,10 @@
             <el-icon><Bell /></el-icon>
             <span>公告管理</span>
           </el-menu-item>
+          <el-menu-item index="system-info">
+            <el-icon><View /></el-icon>
+            <span>系统说明</span>
+          </el-menu-item>
         </el-menu>
         <div class="switch-btn">
           <el-button type="primary" size="small" @click="switchToUser">
@@ -52,7 +56,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { Message, ChatDotRound, Document, User, House, Link, Bell } from '@element-plus/icons-vue'
+import { Message, ChatDotRound, Document, User, House, Link, Bell, View } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const route = useRoute()

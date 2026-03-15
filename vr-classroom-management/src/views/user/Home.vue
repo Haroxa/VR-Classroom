@@ -89,7 +89,7 @@
           <div class="switch-btn">
             <el-button type="primary" size="small" @click="switchToAudit">
               <el-icon><View /></el-icon>
-              <span>审核页面</span>
+              <span>后台页面</span>
             </el-button>
           </div>
           <div class="home-btn">

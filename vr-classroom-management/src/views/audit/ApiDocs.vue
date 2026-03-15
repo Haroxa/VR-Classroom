@@ -33,7 +33,10 @@ import { Refresh } from '@element-plus/icons-vue'
 import { ElLoading } from 'element-plus'
 
 const loading = ref(true)
+// 本地使用绝对路径
 const apiDocsUrl = 'http://localhost:8082/swagger-ui/index.html'
+// 服务器使用相对路径
+// const apiDocsUrl = '/swagger-ui/index.html'
 const iframeRef = ref(null)
 
 const onIframeLoad = () => {
