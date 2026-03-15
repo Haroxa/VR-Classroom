@@ -62,6 +62,22 @@
               <p><strong>密码：</strong>5ee809e6cf</p>
             </div>
           </el-card>
+          
+          <el-card shadow="hover" class="link-card">
+            <template #header>
+              <div class="link-header">
+                <el-icon><Link /></el-icon>
+                <span>前端审核系统</span>
+              </div>
+            </template>
+            <div class="link-content">
+              <a href="http://10.86.136.242:9002/login" target="_blank" class="link">http://10.86.136.242:9002/login</a>
+              <el-button type="primary" size="small" @click="openLink('http://10.86.136.242:9002/login')">访问</el-button>
+            </div>
+            <div class="login-info">
+              <p><strong>说明：</strong>前端人员编写的审核系统</p>
+            </div>
+          </el-card>
         </div>
       </div>
     </el-card>

@@ -177,12 +177,11 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { ElMessage } from 'element-plus'
 import { Message, ChatDotRound, ShoppingCart, Plus, View, House, User, Document, Star, Link } from '@element-plus/icons-vue'
 import api from '../../services/api'
-import { loadAnnouncements } from '../../services/fileStorage'
+import { loadAnnouncements, checkAndUpdateAnnouncements } from '../../services/fileStorage'
 import { saveLog, formatLog } from '../../services/logger'
 
 const router = useRouter()
@@ -507,12 +506,13 @@ const loadActiveAnnouncement = async () => {
 }
 
 // 组件挂载时自动登录
-import { onMounted } from 'vue'
 onMounted(async () => {
   // 先获取用户列表
   await fetchUserList()
   // 然后执行自动登录
   autoLogin()
+  // 检查公告是否有更新
+  await checkAndUpdateAnnouncements()
   // 检查是否有活跃公告
   await loadActiveAnnouncement()
 })

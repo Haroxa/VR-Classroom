@@ -195,7 +195,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Plus, Delete, View, Check, Refresh } from '@element-plus/icons-vue'
-import { saveAnnouncements, loadAnnouncements, clearAnnouncements } from '../../services/fileStorage'
+import { saveAnnouncements, loadAnnouncements, clearAnnouncements, checkAndUpdateAnnouncements } from '../../services/fileStorage'
 
 const announcements = ref([])
 const dialogVisible = ref(false)
@@ -434,7 +434,13 @@ const openCreateDialog = () => {
 */
 
 // 组件挂载时加载数据
-onMounted(() => {
+onMounted(async () => {
+  // 检查公告是否有更新
+  const hasUpdate = await checkAndUpdateAnnouncements()
+  if (hasUpdate) {
+    ElMessage.success('公告已更新到最新版本')
+  }
+  // 加载公告数据
   loadAnnouncementsData()
 })
 </script>
